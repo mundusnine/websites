@@ -1,9 +1,16 @@
 @PageTitle { Foundry2D }
 
-Foundry2D is a creator centric engine which offers an all in one developpement experience.
+Foundry2D is a creator centric engine which offers an all in one developpement experience on all platforms.
 <br/>
 <br/>
 @Title{Are you Game to learn ?}
+@Image {""}
+
+@SubTitle{ True cross-platform:}
+
+With foundry you will be able to implement once, run everywhere. One Engine to rule them all.
+
+@Image {"data/platforms.png"}
 
 @SubTitle{ Project philosophy:}
 

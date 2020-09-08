@@ -8,7 +8,7 @@
     --weak-text-color:                rgb(120, 120, 120);
     --title-color:                    var(--highlight-color);
     --sub-title-color:                var(--highlight-color);
-    --content-width:                  55rem;
+    --content-width:                  100rem;
     /* NOTE: Need to update size media queries if this changes, because CSS sucks. */
 }
 
@@ -433,6 +433,61 @@ hr
     color: #ffffff;
     text-shadow: 4px 4px 12px #000;
 }
+
+.card {
+    width: 33%;
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(255, 255, 255, 0.2);
+    transition: 0.3s;
+  }
+  
+  /* On mouse-over, add a deeper shadow */
+  .card:hover {
+    box-shadow: 0 8px 16px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  .card_text {
+    min-height: 10rem;
+    font-size: 4rem;
+    text-align: center;
+    color: var(--default-text-color);
+  }
+
+  .card_text {
+    min-height: 10rem;
+    font-size: 2rem;
+    text-align: center;
+    color: var(--default-text-color);
+  }
+
+  .card_button {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+
+    margin: 0;
+    transform: translate(2em, -50%);
+    font-size: 4rem;
+    text-align: center;
+    color: var(--background-color);
+    background-color: var(--highlight-color);
+  }
+
+  .card_button:hover {
+    color: var(--highlight-color);
+    background-color: var(--page-container-color);
+  }
+  .card_title {
+    font-size: 2rem; 
+    padding-top:15px; 
+    padding-bottom:15px;
+    background: var(--page-container-alternate-color);
+  }
+  
+  /* Add some padding inside the card container */
+  .card_container {
+    padding: 2px 16px;
+  }
 
 .monospace
 {

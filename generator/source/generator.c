@@ -120,6 +120,7 @@ typedef enum PageNodeType
     PageNodeType_ThumbnailImage,
     PageNodeType_Link,
     PageNodeType_FeatureButton,
+    PageNodeType_Card,
     PageNodeType_Lister,
     PageNodeType_Date,
 }
@@ -192,7 +193,19 @@ struct PageNode
             int link_length;
         }
         feature_button;
-        
+
+        struct
+        {
+            char *title;
+            int title_length;
+            char *link;
+            int link_length;
+            i8 hasButton;
+            char *link_title;
+            int link_title_length;
+        }
+        card;
+
         struct
         {
             int year;
@@ -920,6 +933,56 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
                     PushParseError(context, tokenizer, "Expected '{'.");
                 }
             }
+
+            else if(TokenMatch(tag, "@Card"))
+            {
+                if(RequireToken(tokenizer, "{", 0))
+                {
+                    PageNode *node = ParseContextAllocateNode(context);
+                    node->type = PageNodeType_Card;
+                    node->text_style_flags = text_style_flags;
+                    *node_store_target = node;
+                    node_store_target = &(*node_store_target)->next;
+                    
+                    if(!ParseTextArgument(context, tokenizer, &node->card.title, &node->card.title_length))
+                    {
+                        PushParseError(context, tokenizer, "A card tag expects {<title>, <text>, <optional link>, <link title>} to follow.");
+                        goto end_Card_parse;
+                    }
+                    
+                    SkipToAfterNextComma(tokenizer);
+                    
+                    if(!ParseTextArgument(context, tokenizer, &node->string, &node->string_length))
+                    {
+                        PushParseError(context, tokenizer, "A card tag expects {<title>, <text>, <optional link>, <link title>} to follow.");
+                        goto end_Card_parse;
+                    }
+                    
+                    
+                    SkipToAfterNextComma(tokenizer);
+
+                    node->card.hasButton = ParseLink(context, tokenizer, &node->card.link, &node->card.link_length);
+                    
+                    if(node->card.hasButton){
+                        SkipToAfterNextComma(tokenizer);
+                        if(!ParseTextArgument(context, tokenizer, &node->card.link_title, &node->card.link_title_length)){
+                            PushParseError(context, tokenizer, "A card tag expects {<title>, <text>, <optional link>, <link title>} to follow.");
+                            goto end_Card_parse;
+                        }
+                    }
+
+                    if(!RequireToken(tokenizer, "}", 0))
+                    {
+                        PushParseError(context, tokenizer, "Missing '}'.");
+                    }
+                    
+                    end_Card_parse:;
+                }
+                else
+                {
+                    PushParseError(context, tokenizer, "Expected '{'.");
+                }
+            }
             
             else if(TokenMatch(tag, "@Lister"))
             {
@@ -1193,6 +1256,19 @@ ProcessedFileSortFunction(const void *file1_, const void *file2_)
     }
     
     return result;
+}
+
+static int 
+GetNextLine(char* buffer,int lastValue){
+    for(int i = lastValue; buffer[i]; ++i)
+    {
+        // NOTE(rjf): Newline
+        if(buffer[i] == '\\' && buffer[i+1] == 'n')
+        {
+            return i+1;
+        }
+    }
+    return -1;
 }
 
 static void
@@ -1601,6 +1677,58 @@ OutputHTMLFromPageNodeTreeToFile_(PageNode *node, FILE *file, int follow_next, P
                 fprintf(file, "</div>\n");
                 
                 fprintf(file, "</a>\n");
+                fprintf(file, "</div>\n");
+                break;
+            }
+            case PageNodeType_Card:
+            {
+                fprintf(file, "<div class=\"card\">\n");
+                
+                fprintf(file, "<div class=\"card_title\">\n");
+
+                fprintf(file,"<center>%.*s</center>\n",
+                        node->card.title_length, node->card.title);
+                
+                fprintf(file, "</div>\n");
+                
+                int last = 0;
+                while(last != -1){
+                    int before = last;
+                    last = GetNextLine(node->string,last);
+                    int length = last - before;
+                    int end = last;
+                    if(last == -1){
+                        if(before == 0){
+                            fprintf(file, "<div class=\"card_text\">\n");
+                            fprintf(file, "%.*s\n", node->string_length, node->string);
+                            fprintf(file, "</div>\n");
+                            break;
+                        }
+                        else{
+                            length = node->string_length-before;
+                            end = node->string_length;
+                            last--;
+                        }
+                    }
+                    char out[512];
+                    for(int i = 0; i + before < end-1;i++){
+                        out[i] = node->string[i+before];
+                    }
+                    fprintf(file, "<div class=\"card_text\">\n");
+                    fprintf(file, "%.*s\n",length, out);
+                    fprintf(file, "</div>\n");
+                    last++;
+                }
+                
+
+                if(node->card.hasButton){
+                    fprintf(file, "<a class=\"card_button\" href=\"%.*s\">\n",
+                        node->card.link_length, node->card.link);
+                    fprintf(file,"<center>%.*s</center>",
+                        node->card.link_title_length,node->card.link_title);
+                    fprintf(file, "</a>\n");
+                }
+                
                 fprintf(file, "</div>\n");
                 break;
             }
