@@ -3,25 +3,27 @@
 Foundry2D is a creator centric engine which offers an all in one developpement experience on all platforms.
 <br/>
 <br/>
-@Title{Are you Game to learn ?}
-@Image {""}
+
+@Title{Features:}
 
 @SubTitle{ True cross-platform:}
 
-With foundry you will be able to implement once, run everywhere. One Engine to rule them all.
+With foundry you will be able to implement once, run everywhere. One Engine to rule them all...&#128141;
 
 @Image {"data/platforms.png"}
 
 @SubTitle{ Project philosophy:}
 
-<span>&#8226;</span>  Performance first mentality
+&#8226; Performance first mentality
 
  <br/>
 
-<span>&#8226;</span>  Have tooling and export targets be platform agnostic
+&#8226; Have tooling and export targets be platform agnostic
 
 <br/>
 
-<span>&#8226;</span> Tooling that favors Versatily and  ease of use
+&#8226; Tooling that favors Versatily and  ease of use
 
 <br/>
+
+@Title{Are you Game to learn ?}

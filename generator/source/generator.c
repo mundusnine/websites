@@ -203,6 +203,8 @@ struct PageNode
             i8 hasButton;
             char *link_title;
             int link_title_length;
+            i8 isFirst;
+            i8 isLast;
         }
         card;
 
@@ -603,7 +605,8 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
     int text_style_flags = 0;
     
     PageNode **node_store_target = &result;
-    
+    PageNode *lastNode = NULL;
+
     while(token.type != Token_None)
     {
         Token tag = {0};
@@ -613,6 +616,10 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
         if(RequireTokenType(tokenizer, Token_Tag, &tag))
         {
             
+            if(lastNode != NULL && lastNode->type == PageNodeType_Card && !TokenMatch(tag, "@Card")){
+                lastNode->card.isLast = 1;
+            }
+
             if(TokenMatch(tag, "@PageTitle"))
             {
                 Token title_Text = {0};
@@ -630,6 +637,7 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
                         node->text_style_flags = text_style_flags;
                         *node_store_target = node;
                         node_store_target = &(*node_store_target)->next;
+                        lastNode = node;
                     }
                     else
                     {
@@ -664,6 +672,7 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
                         node->text_style_flags = text_style_flags;
                         *node_store_target = node;
                         node_store_target = &(*node_store_target)->next;
+                        lastNode = node;
                     }
                     else
                     {
@@ -698,6 +707,7 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
                         node->text_style_flags = text_style_flags;
                         *node_store_target = node;
                         node_store_target = &(*node_store_target)->next;
+                        lastNode = node;
                     }
                     else
                     {
@@ -732,6 +742,7 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
                         node->text_style_flags = text_style_flags;
                         *node_store_target = node;
                         node_store_target = &(*node_store_target)->next;
+                        lastNode = node;
                     }
                     else
                     {
@@ -758,7 +769,8 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
                     node->text_style_flags = text_style_flags;
                     *node_store_target = node;
                     node_store_target = &(*node_store_target)->next;
-                    
+                    lastNode = node;
+
                     if(ParseLink(context, tokenizer, &node->string, &node->string_length))
                     {
                         if(!RequireToken(tokenizer, "}", 0))
@@ -786,7 +798,8 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
                     node->text_style_flags = text_style_flags;
                     *node_store_target = node;
                     node_store_target = &(*node_store_target)->next;
-                    
+                    lastNode = node;
+
                     if(ParseLink(context, tokenizer, &node->string, &node->string_length))
                     {
                         if(!RequireToken(tokenizer, "}", 0))
@@ -840,7 +853,8 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
                     node->text_style_flags = text_style_flags;
                     *node_store_target = node;
                     node_store_target = &(*node_store_target)->next;
-                    
+                    lastNode = node;
+
                     tokenizer->at = link + link_length;
                     if(!RequireToken(tokenizer, "}", 0))
                     {
@@ -862,7 +876,8 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
                     node->text_style_flags = text_style_flags;
                     *node_store_target = node;
                     node_store_target = &(*node_store_target)->next;
-                    
+                    lastNode = node;
+
                     if(!ParseTextArgument(context, tokenizer, &node->string, &node->string_length))
                     {
                         PushParseError(context, tokenizer, "A link tag expects {<text>, <link>} to follow.");
@@ -898,7 +913,8 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
                     node->text_style_flags = text_style_flags;
                     *node_store_target = node;
                     node_store_target = &(*node_store_target)->next;
-                    
+                    lastNode = node;
+
                     if(!ParseTextArgument(context, tokenizer, &node->feature_button.image_path, &node->feature_button.image_path_length))
                     {
                         PushParseError(context, tokenizer, "A feature button tag expects {<image>, <text>, <link>} to follow.");
@@ -943,7 +959,12 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
                     node->text_style_flags = text_style_flags;
                     *node_store_target = node;
                     node_store_target = &(*node_store_target)->next;
-                    
+
+                    if(lastNode != NULL && lastNode->type != PageNodeType_Card){
+                        node->card.isFirst = 1;
+                    }
+                    lastNode = node;
+
                     if(!ParseTextArgument(context, tokenizer, &node->card.title, &node->card.title_length))
                     {
                         PushParseError(context, tokenizer, "A card tag expects {<title>, <text>, <optional link>, <link title>} to follow.");
@@ -1011,7 +1032,8 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
                     node->text_style_flags = text_style_flags;
                     *node_store_target = node;
                     node_store_target = &(*node_store_target)->next;
-                    
+                    lastNode = node;
+
                     tokenizer->at = text + text_length+1;
                     if(!RequireToken(tokenizer, "}", 0))
                     {
@@ -1093,7 +1115,8 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
                     node->text_style_flags = text_style_flags;
                     *node_store_target = node;
                     node_store_target = &(*node_store_target)->next;
-                    
+                    lastNode = node;
+
                     tokenizer->at = str;
                     if(!RequireToken(tokenizer, "}", 0))
                     {
@@ -1114,6 +1137,9 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
         }
         else if(RequireTokenType(tokenizer, Token_Text, &text))
         {
+            if(lastNode != NULL && lastNode->type == PageNodeType_Card){
+                lastNode->card.isLast = 1;
+            }
             PageNode *node = ParseContextAllocateNode(context);
             node->type = PageNodeType_Text;
             node->string = text.string;
@@ -1121,9 +1147,13 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
             node->text_style_flags = text_style_flags;
             *node_store_target = node;
             node_store_target = &(*node_store_target)->next;
+            lastNode = node;
         }
         else if(RequireTokenType(tokenizer, Token_Symbol, &symbol))
         {
+            if(lastNode != NULL && lastNode->type == PageNodeType_Card){
+                lastNode->card.isLast = 1;
+            }
             if(TokenMatch(symbol, "*"))
             {
                 text_style_flags ^= TextStyleFlag_Italics;
@@ -1144,6 +1174,9 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
         }
         else if(RequireTokenType(tokenizer, Token_DoubleNewline, &text))
         {
+            if(lastNode != NULL && lastNode->type == PageNodeType_Card){
+                lastNode->card.isLast = 1;
+            }
             PageNode *node = ParseContextAllocateNode(context);
             node->type = PageNodeType_ParagraphBreak;
             node->string = 0;
@@ -1151,10 +1184,14 @@ ParseText(ParseContext *context, Tokenizer *tokenizer)
             node->text_style_flags = text_style_flags;
             *node_store_target = node;
             node_store_target = &(*node_store_target)->next;
+            lastNode = node;
         }
         
         token = PeekToken(tokenizer);
-        
+        if(lastNode != NULL && lastNode->type == PageNodeType_Card && token.type == Token_None){
+            lastNode->card.isLast = 1;
+        }
+
         if(context->error_stack_size > 0)
         {
             break;
@@ -1266,6 +1303,9 @@ GetNextLine(char* buffer,int lastValue){
         if(buffer[i] == '\\' && buffer[i+1] == 'n')
         {
             return i+1;
+        }
+        if(buffer[i] == '"'){
+            return -1;
         }
     }
     return -1;
@@ -1682,14 +1722,17 @@ OutputHTMLFromPageNodeTreeToFile_(PageNode *node, FILE *file, int follow_next, P
             }
             case PageNodeType_Card:
             {
-                fprintf(file, "<div class=\"card\">\n");
+                if(node->card.isFirst){
+                    fprintf(file, "<div class=\"masonry\">\n");
+                }
+                fprintf(file, "\t<div class=\"card\">\n");
                 
-                fprintf(file, "<div class=\"card_title\">\n");
+                fprintf(file, "\t\t<div class=\"card_title\">\n");
 
-                fprintf(file,"<center>%.*s</center>\n",
+                fprintf(file,"\t\t\t<center>%.*s</center>\n",
                         node->card.title_length, node->card.title);
                 
-                fprintf(file, "</div>\n");
+                fprintf(file, "\t\t</div>\n");
                 
                 int last = 0;
                 while(last != -1){
@@ -1699,13 +1742,13 @@ OutputHTMLFromPageNodeTreeToFile_(PageNode *node, FILE *file, int follow_next, P
                     int end = last;
                     if(last == -1){
                         if(before == 0){
-                            fprintf(file, "<div class=\"card_text\">\n");
-                            fprintf(file, "%.*s\n", node->string_length, node->string);
-                            fprintf(file, "</div>\n");
+                            fprintf(file, "\t\t<div class=\"card_text\">\n");
+                            fprintf(file, "\t\t%.*s\n", node->string_length, node->string);
+                            fprintf(file, "\t\t</div>\n");
                             break;
                         }
                         else{
-                            length = node->string_length-before;
+                            length = (node->string_length++)-before;
                             end = node->string_length;
                             last--;
                         }
@@ -1714,22 +1757,28 @@ OutputHTMLFromPageNodeTreeToFile_(PageNode *node, FILE *file, int follow_next, P
                     for(int i = 0; i + before < end-1;i++){
                         out[i] = node->string[i+before];
                     }
-                    fprintf(file, "<div class=\"card_text\">\n");
-                    fprintf(file, "%.*s\n",length, out);
-                    fprintf(file, "</div>\n");
+                    const char* style = !before ? "card_text" : "card_subtext";
+                    fprintf(file, "\t\t<div class=\"%s\">\n",style);
+                    fprintf(file, "\t\t%.*s\n",length, out);
+                    fprintf(file, "\t\t</div>\n");
+                    fprintf(file, "\t\t<br/>\n");
                     last++;
                 }
                 
 
                 if(node->card.hasButton){
-                    fprintf(file, "<a class=\"card_button\" href=\"%.*s\">\n",
+                    fprintf(file, "\t\t<a class=\"card_button\" href=\"%.*s\">\n",
                         node->card.link_length, node->card.link);
-                    fprintf(file,"<center>%.*s</center>",
+                    fprintf(file,"\t\t\t%.*s\n",
                         node->card.link_title_length,node->card.link_title);
-                    fprintf(file, "</a>\n");
+                    fprintf(file, "\t\t</a>\n");
+                    fprintf(file, "\t\t<br/>\n");
                 }
                 
-                fprintf(file, "</div>\n");
+                fprintf(file, "\t</div>\n");
+                if(node->card.isLast){
+                    fprintf(file, "</div>\n");
+                }
                 break;
             }
             case PageNodeType_Lister:
