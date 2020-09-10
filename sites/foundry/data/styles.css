@@ -229,12 +229,12 @@ hr
     margin-right:0.5em;
 	line-height: 0;
     text-align: right;
-	border-bottom: 3px solid transparent;
+    border-bottom: 3px solid transparent;
 }
 
 .header_link:hover
 {
-    border-bottom: 3px solid;
+    font-size: 1.5em;
 }
 
 .footer
