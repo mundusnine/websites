@@ -1,0 +1,9 @@
+@PageTitle{ Education }
+
+@Title{Education licensing:}
+
+@Card { "Apprentice" , "30$/YR\nper seat\nPublish to the web", "home.html", "Buy now" }
+
+@Card { "Sith" , "50$/YR\nper seat \nPublish everywhere &sup1;", "home.html", "Buy now" }
+
+@Card { "Sith lord" , "90$/YR\nper seat \nPublish to consoles &sup2;", "home.html", "Buy now" }
