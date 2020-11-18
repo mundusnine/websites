@@ -1373,6 +1373,21 @@ EditorConsole.prototype = $extend(Tab.prototype,{
 	,typeImages: null
 	,outputTypes: null
 	,options: null
+	,isBaseType: function(v) {
+		if(typeof(v) == "number" && ((v | 0) === v)) {
+			return true;
+		}
+		if(typeof(v) == "string") {
+			return true;
+		}
+		if(typeof(v) == "number") {
+			return true;
+		}
+		if(((v) instanceof Array)) {
+			return true;
+		}
+		return false;
+	}
 	,log: function(v,infos) {
 		var type = 0;
 		if(infos != null && infos.customParams != null) {
@@ -1398,7 +1413,7 @@ EditorConsole.prototype = $extend(Tab.prototype,{
 		if(this.get_active()) {
 			this.redraw();
 		}
-		var str = typeof(v) == "string" ? haxe_Log.formatOutput(v,infos) : this.formatNonString(v);
+		var str = this.isBaseType(v) ? haxe_Log.formatOutput(v,infos) : this.formatNonString(v);
 		this.content.push({ type : type, content : str});
 	}
 	,formatNonString: function(data) {
@@ -5310,7 +5325,7 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 					found_State.active.cam.get_position().y += this.mouse.distY;
 				}
 			}
-			if(inSceneView && this.mouse.down("left") && this.mouse.moved) {
+			if(inSceneView && this.mouse.down("left") && (this.mouse.moved || this.keyboard.down("control"))) {
 				this.updateMouse(this.mouse.x,this.mouse.y,this.mouse.distX,this.mouse.distY);
 			} else if(!this.mouse.down("left") || !inSceneView) {
 				EditorUi.arrow = -1;
@@ -5338,6 +5353,8 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 	}
 	,lastMX: null
 	,lastMY: null
+	,distX: null
+	,distY: null
 	,updateMouse: function(x,y,cx,cy) {
 		if(this.inspector.index == -1) {
 			return;
@@ -5351,19 +5368,45 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 		var sy = cy / this.gameView.get_height();
 		if(doUpdate) {
 			if(EditorUi.arrowMode == 0 || EditorUi.arrow == 2) {
-				var canUpdate = Math.abs(this.lastMX - this.mouse.x) > found_Found.GRID || Math.abs(this.lastMY - this.mouse.y) > found_Found.GRID;
+				var canUpdate = Math.abs(this.distX) > found_Found.GRID || Math.abs(this.distY) > found_Found.GRID;
 				var ctrl = this.keyboard.down("control");
 				if(ctrl && canUpdate) {
 					if(EditorUi.arrow == 0) {
-						px *= this.lastMX - this.mouse.x > 0 ? 1 : -1;
+						if(!(this.distX > 0)) {
+							px += this.distX;
+						}
 					} else if(EditorUi.arrow == 1) {
-						py *= this.lastMY - this.mouse.y > 0 ? 1 : -1;
+						if(!(this.distY > 0)) {
+							py += this.distY;
+						}
+					} else {
+						if(Math.abs(this.distX) > found_Found.GRID) {
+							if(!(this.distX > 0)) {
+								px += this.distX;
+							}
+							this.distX = 0;
+						} else {
+							px = 0;
+						}
+						if(Math.abs(this.distY) > found_Found.GRID) {
+							if(!(this.distY > 0)) {
+								py += this.distY;
+							}
+							this.distY = 0;
+						} else {
+							py = 0;
+						}
 					}
 					this.updatePos(px,py,true);
-					this.lastMX = this.mouse.x;
-					this.lastMY = this.mouse.y;
+					if(EditorUi.arrow < 2) {
+						this.distX = 0;
+						this.distY = 0;
+					}
 				} else if(!ctrl) {
 					this.updatePos(px,py,false);
+				} else {
+					this.distX += px;
+					this.distY += py;
 				}
 			} else if(EditorUi.arrowMode == 1) {
 				var isDown = this.keyboard.down("control");
@@ -5481,7 +5524,7 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 				EditorUi.scenePath = path;
 				found_State.set(name,$bind(_gthis,_gthis.init));
 			} else {
-				found_tool_Log.error("file with name " + name + " is not a valid scene name or the path \"" + path + "\" was invalid ",{ fileName : "EditorUi.hx", lineNumber : 399, className : "EditorUi", methodName : "openScene"});
+				found_tool_Log.error("file with name " + name + " is not a valid scene name or the path \"" + path + "\" was invalid ",{ fileName : "EditorUi.hx", lineNumber : 422, className : "EditorUi", methodName : "openScene"});
 			}
 		};
 		FileBrowserDialog.open(done);
@@ -106650,7 +106693,7 @@ found_Found.fullscreen = false;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
 found_Found.sha = HxOverrides.substr("'3f30caf'",1,7);
-found_Found.date = "2020-11-17 22:22:27".split(" ")[0];
+found_Found.date = "2020-11-18 16:40:01".split(" ")[0];
 found_Found.collisionsDraw = false;
 found_Found.drawGrid = true;
 found_Found.sceneX = 0.0;
