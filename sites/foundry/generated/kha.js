@@ -71887,7 +71887,7 @@ kha__$Assets_SoundList.prototype = {
 	,__class__: kha__$Assets_SoundList
 };
 var kha__$Assets_BlobList = function() {
-	this.names = ["default_json","dexie_js","keepme","loading_json","main_json","projectView_json","temp_txt","wasmfs_js"];
+	this.names = ["default_json","dexie_js","keepme","listTraits_json","loading_json","main_json","projectView_json","temp_txt","wasmfs_js"];
 	this.wasmfs_jsDescription = { name : "wasmfs_js", file_sizes : [132297], files : ["wasmfs.js"], type : "blob"};
 	this.wasmfs_jsName = "wasmfs_js";
 	this.wasmfs_js = null;
@@ -71903,6 +71903,9 @@ var kha__$Assets_BlobList = function() {
 	this.loading_jsonDescription = { name : "loading_json", file_sizes : [1139], files : ["loading.json"], type : "blob"};
 	this.loading_jsonName = "loading_json";
 	this.loading_json = null;
+	this.listTraits_jsonDescription = { name : "listTraits_json", file_sizes : [3], files : ["listTraits.json"], type : "blob"};
+	this.listTraits_jsonName = "listTraits_json";
+	this.listTraits_json = null;
 	this.keepmeDescription = { name : "keepme", file_sizes : [0], files : ["keepme"], type : "blob"};
 	this.keepmeName = "keepme";
 	this.keepme = null;
@@ -71954,6 +71957,18 @@ kha__$Assets_BlobList.prototype = {
 	,keepmeUnload: function() {
 		this.keepme.unload();
 		this.keepme = null;
+	}
+	,listTraits_json: null
+	,listTraits_jsonName: null
+	,listTraits_jsonDescription: null
+	,listTraits_jsonLoad: function(done,failure) {
+		kha_Assets.loadBlob("listTraits_json",function(blob) {
+			done();
+		},failure,{ fileName : "kha/internal/AssetsBuilder.hx", lineNumber : 134, className : "kha._Assets.BlobList", methodName : "listTraits_jsonLoad"});
+	}
+	,listTraits_jsonUnload: function() {
+		this.listTraits_json.unload();
+		this.listTraits_json = null;
 	}
 	,loading_json: null
 	,loading_jsonName: null
@@ -106692,8 +106707,8 @@ found_Found.GRID = 64;
 found_Found.fullscreen = false;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
-found_Found.sha = HxOverrides.substr("'3f30caf'",1,7);
-found_Found.date = "2020-11-18 16:54:48".split(" ")[0];
+found_Found.sha = HxOverrides.substr("'5deaa01'",1,7);
+found_Found.date = "2020-11-18 19:16:54".split(" ")[0];
 found_Found.collisionsDraw = false;
 found_Found.drawGrid = true;
 found_Found.sceneX = 0.0;
