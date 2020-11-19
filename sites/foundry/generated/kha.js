@@ -162,7 +162,7 @@ AnimationEditor.prototype = {
 				} else {
 					var last = ui.t.ACCENT_COL;
 					ui.t.ACCENT_COL = kha_Color.fromFloats(1.0,0.0,0.0,0.7);
-					var txtHandle = zui_Handle.global.nest(106,null);
+					var txtHandle = zui_Handle.global.nest(107,null);
 					if(this.animIndex < 0) {
 						haxe_Log.trace("animIndex is bad at number: " + this.animIndex,{ fileName : "AnimationEditor.hx", lineNumber : 154, className : "AnimationEditor", methodName : "render"});
 					}
@@ -243,10 +243,11 @@ AnimationEditor.prototype = {
 				this.doUpdate = false;
 				this.timelineHandle.redraws = 2;
 			}
-			ui.row([0.75,0.25]);
-			ui.panel(zui_Handle.global.nest(107,{ selected : true}),"",false,false,false);
+			var div = ui.t.ELEMENT_W * ui.ops.scaleFactor / this.parent.get_w() * 2;
+			ui.row([1.0 - div,div]);
+			ui.panel(zui_Handle.global.nest(108,{ selected : true}),"",false,false,false);
 			var oldY = ui._y;
-			zui_Ext.panelList(ui,zui_Handle.global.nest(108,{ selected : true, layout : 0}),this.curFrames,$bind(this,this.addItem),$bind(this,this.removeItem),$bind(this,this.getName),$bind(this,this.setName),$bind(this,this.drawItem),false);
+			zui_Ext.panelList(ui,zui_Handle.global.nest(109,{ selected : true, layout : 0}),this.curFrames,$bind(this,this.addItem),$bind(this,this.removeItem),$bind(this,this.getName),$bind(this,this.setName),$bind(this,this.drawItem),false);
 			this.animationPreview(this.delta,AnimationEditor.width,this.viewHeight,oldY);
 		}
 	}
@@ -305,7 +306,7 @@ AnimationEditor.prototype = {
 				var frameWidth = 10 * sc;
 				ui._x = frame.start * 11 * sc;
 				ui._y = timelineLabelsHeight * 0.5 + timelineFramesHeight * 0.5 + frameWidth * 0.75;
-				var state = ui.image(AnimationEditor.dot,-256,null,0,0,frameWidth * 0.5 | 0,frameWidth * 0.5 | 0);
+				var state = ui.image(AnimationEditor.dot,-1,frameWidth,0,0,frameWidth | 0,frameWidth | 0);
 				ui._x = frame.start * 11 * sc;
 				ui._y = timelineLabelsHeight * 0.5 + timelineFramesHeight * 0.5 + frameWidth * 0.75;
 				if(ui.getHover()) {
@@ -444,12 +445,12 @@ AnimationEditor.prototype = {
 		this.canvas.get_g2().clear(0);
 	}
 	,drawDot: function() {
-		var frameWidth = (10 * this.ui.ops.scaleFactor | 0) * 4;
+		var frameWidth = 10 * this.ui.ops.scaleFactor | 0;
 		AnimationEditor.dot = kha_Image.createRenderTarget(frameWidth,frameWidth);
 		var g = AnimationEditor.dot.get_g2();
 		this.ui.g.end();
-		g.begin(true);
-		g.set_color(-65536);
+		g.begin(true,0);
+		g.set_color(kha_Color.fromString("#FFE8432E"));
 		g.fillTriangle(0,frameWidth,frameWidth * 0.5,0,frameWidth,frameWidth);
 		g.end();
 		this.ui.g.begin(false);
@@ -610,7 +611,9 @@ CollisionEditorDialog.open = function(p_sprite,p_tile) {
 		zui_Popup.show = false;
 	}
 	found_App.editorui.ui.enabled = false;
-	zui_Popup.showCustom(found_Found.popupZuiInstance,CollisionEditorDialog.collisionEditorPopupDraw,-1,-1,600,500);
+	var _this = found_Found.popupZuiInstance;
+	var _this1 = found_Found.popupZuiInstance;
+	zui_Popup.showCustom(found_Found.popupZuiInstance,CollisionEditorDialog.collisionEditorPopupDraw,-1,-1,_this.t.ELEMENT_W * _this.ops.scaleFactor * 4 | 0,_this1.t.ELEMENT_W * _this1.ops.scaleFactor * 3 | 0);
 };
 CollisionEditorDialog.initTileImage = function(ui) {
 	ui.g.end();
@@ -716,25 +719,25 @@ CollisionEditorDialog.collisionEditorPopupDraw = function(ui) {
 		var color = kha_Color.fromBytes(255,0,0,128);
 		switch(shape.type) {
 		case 0:
-			var xHandle = zui_Handle.global.nest(35,null);
+			var xHandle = zui_Handle.global.nest(36,null);
 			xHandle.value = shape.offset_x - _w * 0.5;
 			var x = ui.slider(xHandle,"X",0,CollisionEditorDialog.image.get_width());
 			if(xHandle.changed) {
 				shape.offset_x = x + _w * 0.5;
 			}
-			var yHandle = zui_Handle.global.nest(36,null);
+			var yHandle = zui_Handle.global.nest(37,null);
 			yHandle.value = shape.offset_y - _h * 0.5;
 			var y = ui.slider(yHandle,"Y",0,CollisionEditorDialog.image.get_height());
 			if(yHandle.changed) {
 				shape.offset_y = y + _h * 0.5;
 			}
-			var widthHandle = zui_Handle.global.nest(37,null);
+			var widthHandle = zui_Handle.global.nest(38,null);
 			widthHandle.value = shape.width;
 			var w = ui.slider(widthHandle,"Width",0.1,_w);
 			if(widthHandle.changed) {
 				shape.width = w;
 			}
-			var heightHandle = zui_Handle.global.nest(38,null);
+			var heightHandle = zui_Handle.global.nest(39,null);
 			heightHandle.value = shape.height;
 			var h = ui.slider(heightHandle,"Height",0.1,_h);
 			if(heightHandle.changed) {
@@ -745,19 +748,19 @@ CollisionEditorDialog.collisionEditorPopupDraw = function(ui) {
 			ui.g.set_color(-1);
 			break;
 		case 1:
-			var xHandle = zui_Handle.global.nest(39,null);
+			var xHandle = zui_Handle.global.nest(40,null);
 			xHandle.value = shape.offset_x - _w * 0.5;
 			var x = ui.slider(xHandle,"X",0,_w);
 			if(xHandle.changed) {
 				shape.offset_x = x + _w * 0.5;
 			}
-			var yHandle = zui_Handle.global.nest(40,null);
+			var yHandle = zui_Handle.global.nest(41,null);
 			yHandle.value = shape.offset_y - _h * 0.5;
 			var y = ui.slider(yHandle,"Y",0,_h);
 			if(yHandle.changed) {
 				shape.offset_y = y + _h * 0.5;
 			}
-			var radiusHandle = zui_Handle.global.nest(41,null);
+			var radiusHandle = zui_Handle.global.nest(42,null);
 			radiusHandle.value = shape.radius;
 			var maxRadius = _w > _h ? _w : _h;
 			var radius = ui.slider(radiusHandle,"Radius",1,maxRadius);
@@ -988,7 +991,9 @@ ConfigSettingsDialog.open = function() {
 		}
 		++index;
 	}
-	zui_Popup.showCustom(found_Found.popupZuiInstance,ConfigSettingsDialog.configSettingsPopupDraw,-1,-1,600,500);
+	var _this = found_Found.popupZuiInstance;
+	var _this1 = found_Found.popupZuiInstance;
+	zui_Popup.showCustom(found_Found.popupZuiInstance,ConfigSettingsDialog.configSettingsPopupDraw,-1,-1,_this.t.ELEMENT_W * _this.ops.scaleFactor * 4 | 0,_this1.t.ELEMENT_W * _this1.ops.scaleFactor * 3 | 0);
 };
 ConfigSettingsDialog.configSettingsPopupDraw = function(ui) {
 	zui_Popup.boxTitle = utilities_Translator.tr("Edit Config Settings");
@@ -1002,6 +1007,12 @@ ConfigSettingsDialog.configSettingsPopupDraw = function(ui) {
 	if(ConfigSettingsDialog.playModeHandle.changed) {
 		utilities_Config.raw.defaultPlayMode = value;
 	}
+	ConfigSettingsDialog.uiScaleHandle.value = utilities_Config.raw.window_scale != null ? utilities_Config.raw.window_scale : 1.0;
+	var factor = ui.slider(ConfigSettingsDialog.uiScaleHandle,"Ui scale",0.75,1.2,true);
+	if(ConfigSettingsDialog.uiScaleHandle.changed) {
+		utilities_Config.raw.window_scale = factor;
+		ConfigSettingsDialog.changedScale = true;
+	}
 	var border = zui_Popup.borderW * 2 + zui_Popup.borderOffset;
 	ui._y = ui._h - ui.t.BUTTON_H - ui.t.ELEMENT_H - border;
 	ui.row([0.5,0.5]);
@@ -1011,9 +1022,15 @@ ConfigSettingsDialog.configSettingsPopupDraw = function(ui) {
 	if(ui.button("Save Settings")) {
 		zui_Popup.show = false;
 		utilities_Config.save();
+		if(ConfigSettingsDialog.changedScale) {
+			found_App.editorui.setUIScale(factor);
+			found_App.editorui.redraw();
+		}
+		ConfigSettingsDialog.changedScale = false;
 	}
 	if(ui.button("Cancel")) {
 		zui_Popup.show = false;
+		ConfigSettingsDialog.changedScale = false;
 	}
 };
 var CustomExt = function() { };
@@ -1208,9 +1225,9 @@ EditorAnimationView.prototype = $extend(Tab.prototype,{
 	,__class__: EditorAnimationView
 });
 var EditorCodeView = function() {
-	this.codeScriptTextAreaHandle = zui_Handle.global.nest(58,null);
-	this.codeScriptWindowHandle = zui_Handle.global.nest(57,null);
-	this.traitNameWindowHandle = zui_Handle.global.nest(56,null);
+	this.codeScriptTextAreaHandle = zui_Handle.global.nest(59,null);
+	this.codeScriptWindowHandle = zui_Handle.global.nest(58,null);
+	this.traitNameWindowHandle = zui_Handle.global.nest(57,null);
 	this.currentlyDisplayedTrait = null;
 	this.lastDisplayedTrait = null;
 	Tab.call(this,utilities_Translator.tr("Code"));
@@ -1288,7 +1305,7 @@ EditorCodeView.prototype = $extend(Tab.prototype,{
 						found_tool_NodeEditor.selectedNode = visualTraitData;
 					});
 				} else if(StringTools.startsWith(this.currentlyDisplayedTrait.classname,"found.trait.internal") || StringTools.startsWith(this.currentlyDisplayedTrait.classname,"gameplay")) {
-					haxe_Log.trace("need to load internal trait",{ fileName : "EditorCodeView.hx", lineNumber : 93, className : "EditorCodeView", methodName : "updateDisplayedTraitData"});
+					haxe_Log.trace("need to load internal trait",{ fileName : "EditorCodeView.hx", lineNumber : 94, className : "EditorCodeView", methodName : "updateDisplayedTraitData"});
 				} else {
 					khafs_Fs.getContent(this.currentlyDisplayedTrait.classname,function(data) {
 						_gthis.codeScriptTextAreaHandle.text = data;
@@ -1340,9 +1357,9 @@ EditorCodeView.prototype = $extend(Tab.prototype,{
 });
 var EditorConsole = function() {
 	this.lineHeight = 0.0;
-	this.comboH = zui_Handle.global.nest(113,null);
+	this.comboH = zui_Handle.global.nest(114,null);
 	this.checkH = zui_Handle.global.nest(2,null);
-	this.handle = zui_Handle.global.nest(8,null);
+	this.handle = zui_Handle.global.nest(10,null);
 	this.typeImages = [];
 	this.content = [];
 	var _gthis = this;
@@ -1455,7 +1472,9 @@ EditorConsole.prototype = $extend(Tab.prototype,{
 	,render: function(pui) {
 		this.ui = pui;
 		if(this.ui.tab(this.parent.htab,utilities_Translator.tr(this.name))) {
-			this.ui.row([0.11,0.11,0.11,0.67]);
+			var _this = this.ui;
+			var div = _this.t.ELEMENT_W * _this.ops.scaleFactor / this.parent.get_w();
+			this.ui.row([div,div,div,1.0 - div * 3]);
 			if(this.ui.button(utilities_Translator.tr("Clear"))) {
 				this.clear();
 			}
@@ -1635,15 +1654,15 @@ var EditorHierarchy = function() {
 	this.objectNameDoubleClickTime = 0.0;
 	this.sceneNameDoubleClickTime = 0.0;
 	this.handles = [];
-	this.objectTypeHandle = zui_Handle.global.nest(80,null);
-	this.textInputHandle = zui_Handle.global.nest(79,null);
+	this.objectTypeHandle = zui_Handle.global.nest(81,null);
+	this.textInputHandle = zui_Handle.global.nest(80,null);
 	this.objectWithNameAlreadyExists = false;
 	this.sceneNameHandle = zui_Handle.global.nest(7,null);
 	this.sceneName = "";
 	this.selectedObjectUID = -1;
 	this.observers = [];
 	Tab.call(this,utilities_Translator.tr("Hierarchy"));
-	this.setSceneData(found_State.active.raw,true);
+	this.setSceneData(found_State.active.raw);
 };
 $hxClasses["EditorHierarchy"] = EditorHierarchy;
 EditorHierarchy.__name__ = true;
@@ -1694,12 +1713,10 @@ EditorHierarchy.prototype = $extend(Tab.prototype,{
 			item.notifyObjectSelectedInHierarchy(obj,uid);
 		}
 	}
-	,setSceneData: function(raw,onBoot) {
-		if(onBoot == null) {
-			onBoot = false;
-		}
+	,setSceneData: function(raw) {
 		this.sceneName = raw.name;
 		this.scene = raw;
+		this.redraw();
 	}
 	,makeDirty: function() {
 		if(!this.isDirty()) {
@@ -1762,14 +1779,16 @@ EditorHierarchy.prototype = $extend(Tab.prototype,{
 				i = this.itemDrawCb(ui,itemHandle,i,this.scene._entities);
 			}
 			if(ui.button(utilities_Translator.tr("New Object"))) {
-				zui_Popup.showCustom(found_Found.popupZuiInstance,$bind(this,this.objectCreationPopupDraw),-1,-1,600,500);
+				var _this = found_Found.popupZuiInstance;
+				var _this1 = found_Found.popupZuiInstance;
+				zui_Popup.showCustom(found_Found.popupZuiInstance,$bind(this,this.objectCreationPopupDraw),-1,-1,_this.t.ELEMENT_W * _this.ops.scaleFactor * 4 | 0,_this1.t.ELEMENT_W * _this1.ops.scaleFactor * 3 | 0);
 			}
 		}
 	}
 	,objectCreationPopupDraw: function(ui) {
 		zui_Popup.boxTitle = utilities_Translator.tr("Add an Object");
 		var border = 2 * zui_Popup.borderW + zui_Popup.borderOffset;
-		if(ui.panel(zui_Handle.global.nest(81,{ selected : true}),utilities_Translator.tr("Object Types") + ":",true)) {
+		if(ui.panel(zui_Handle.global.nest(82,{ selected : true}),utilities_Translator.tr("Object Types") + ":",true)) {
 			var index = 0;
 			var _g = 0;
 			var _g1 = this.objectTypes;
@@ -1917,14 +1936,14 @@ var EditorInspector = function() {
 	this.layersHandle = zui_Handle.global.nest(6,null);
 	this.objectTraitsChanged = false;
 	this.updateSelectedTraitIndex = false;
-	this.traitListHandle = zui_Handle.global.nest(13,null);
+	this.traitListHandle = zui_Handle.global.nest(15,null);
 	this.sceneHandle = zui_Handle.global.nest(5,null);
 	this.objectHandle = zui_Handle.global.nest(4,null);
 	this.objItemHandles = [];
 	this.itemsLength = 11;
 	this.changed = false;
 	Tab.call(this,utilities_Translator.tr("Inspector"));
-	var base = zui_Handle.global.nest(9,null);
+	var base = zui_Handle.global.nest(11,null);
 	var _g = 0;
 	var _g1 = this.itemsLength;
 	while(_g < _g1) {
@@ -2000,12 +2019,14 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 			this.traitListHandle.nest(0).position = 0;
 		} else {
 			this.selectedObjectData = null;
+			this.set_index(i);
 		}
 		this.redraw();
 	}
 	,selectScene: function() {
 		this.selectedObjectData = null;
 		this.selectedSceneData = found_State.active.raw;
+		this.set_index(-1);
 		this.redraw();
 	}
 	,notifySceneSelectedInHierarchy: function() {
@@ -2047,16 +2068,16 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 		var wHandle = this.objItemHandles[8];
 		var hHandle = this.objItemHandles[9];
 		var imagePathHandle = this.objItemHandles[10];
-		var kinematicHandle = zui_Handle.global.nest(45,null);
-		var massHandle = zui_Handle.global.nest(46,null);
-		var elasticityHandle = zui_Handle.global.nest(47,null);
-		var maxXvelHandle = zui_Handle.global.nest(48,null);
-		var maxYvelHandle = zui_Handle.global.nest(49,null);
-		var maxRotVelHandle = zui_Handle.global.nest(50,null);
-		var dragXHandle = zui_Handle.global.nest(51,null);
-		var dragYHandle = zui_Handle.global.nest(52,null);
-		var gravityScaleHandle = zui_Handle.global.nest(53,null);
-		var objectNameHandle = zui_Handle.global.nest(54,null);
+		var kinematicHandle = zui_Handle.global.nest(46,null);
+		var massHandle = zui_Handle.global.nest(47,null);
+		var elasticityHandle = zui_Handle.global.nest(48,null);
+		var maxXvelHandle = zui_Handle.global.nest(49,null);
+		var maxYvelHandle = zui_Handle.global.nest(50,null);
+		var maxRotVelHandle = zui_Handle.global.nest(51,null);
+		var dragXHandle = zui_Handle.global.nest(52,null);
+		var dragYHandle = zui_Handle.global.nest(53,null);
+		var gravityScaleHandle = zui_Handle.global.nest(54,null);
+		var objectNameHandle = zui_Handle.global.nest(55,null);
 		objectNameHandle.text = this.selectedObjectData.name;
 		ui.textInput(objectNameHandle,"");
 		if(objectNameHandle.changed && objectNameHandle.text != "") {
@@ -2073,7 +2094,9 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 			this.get_currentObject().dataChanged = true;
 			this.changed = true;
 		}
-		ui.row([0.1,0.45,0.45]);
+		var div = ui.t.ELEMENT_W * ui.ops.scaleFactor / this.parent.get_w();
+		var row = (1.0 - div * 0.2) * 0.5;
+		ui.row([div * 0.2,row,row]);
 		ui.text("P");
 		xPosHandle.value = found_math_Util.fround(this.selectedObjectData.position.x,2);
 		var px = zui_Ext.floatInput(ui,xPosHandle,"X",2);
@@ -2091,7 +2114,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 			this.get_currentObject().dataChanged = true;
 			this.changed = true;
 		}
-		ui.row([0.1,0.9]);
+		ui.row([div * 0.2,1.0 - div * 0.2]);
 		ui.text("R");
 		zRotHandle.value = this.selectedObjectData.rotation.z;
 		var rz = Math.abs(zui_Ext.floatInput(ui,zRotHandle,"",2));
@@ -2104,7 +2127,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 			this.get_currentObject().dataChanged = true;
 			this.changed = true;
 		}
-		ui.row([0.1,0.45,0.45]);
+		ui.row([div * 0.2,row,row]);
 		ui.text("S");
 		xScaleHandle.value = found_math_Util.fround(this.selectedObjectData.scale != null ? this.selectedObjectData.scale.x : 1.0,2);
 		var sx = zui_Ext.floatInput(ui,xScaleHandle,"X",2);
@@ -2122,7 +2145,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 			this.get_currentObject().dataChanged = true;
 			this.changed = true;
 		}
-		ui.row([0.15,0.85]);
+		ui.row([div * 0.5,1.0 - div * 0.5]);
 		ui.text("Layer: ");
 		if(found_State.active.raw.layers != null) {
 			layerHandle.position = this.selectedObjectData.layer;
@@ -2136,7 +2159,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 			var isZsort = found_State.active.raw._Zsort;
 			if(isZsort != null && isZsort) {
 				ui.indent();
-				ui.row([0.35,0.65]);
+				ui.row([div,1.0 - div]);
 				ui.text("Order in layer:");
 				depthHandle.value = this.selectedObjectData.depth;
 				var depth = zui_Ext.floatInput(ui,depthHandle);
@@ -2151,7 +2174,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 			this.selectScene();
 			return;
 		}
-		ui.row([0.5,0.5]);
+		ui.row([div,div]);
 		wHandle.value = this.selectedObjectData.width;
 		var width = zui_Ext.floatInput(ui,wHandle,"Width: ",2);
 		if(wHandle.changed) {
@@ -2170,7 +2193,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 		}
 		if(Object.prototype.hasOwnProperty.call(this.selectedObjectData,"imagePath")) {
 			var sprite = this.selectedObjectData;
-			ui.row([0.75,0.25]);
+			ui.row([1.0 - div * 0.5,div * 0.5]);
 			imagePathHandle.text = sprite.imagePath;
 			var path = ui.textInput(imagePathHandle,"Image:",2);
 			if(imagePathHandle.changed) {
@@ -2181,7 +2204,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				this.browseImage();
 			}
 		}
-		if(ui.panel(zui_Handle.global.nest(55,null),"Traits: ")) {
+		if(ui.panel(zui_Handle.global.nest(56,null),"Traits: ")) {
 			ui.indent();
 			var traits = this.selectedObjectData.traits != null ? this.selectedObjectData.traits : [];
 			var lastSelectedTraitIndex = this.traitListHandle.nest(0).position;
@@ -3668,7 +3691,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				_gthis.get_currentObject().dataChanged = true;
 				_gthis.changed = true;
 			};
-			if(ui.panel(zui_Handle.global.nest(62,null),"Rigidbody: ")) {
+			if(ui.panel(zui_Handle.global.nest(63,null),"Rigidbody: ")) {
 				if(ui.button(text)) {
 					addRigidbody(text);
 				}
@@ -3720,7 +3743,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 						this.changed = true;
 					}
 					maxYvelHandle.value = this.selectedObjectData.rigidBody.max_velocity_x;
-					var maxVelY = zui_Ext.floatInput(ui,zui_Handle.global.nest(63,null),"Max Y Velocity:",2);
+					var maxVelY = zui_Ext.floatInput(ui,zui_Handle.global.nest(64,null),"Max Y Velocity:",2);
 					if(maxYvelHandle.changed) {
 						this.selectedObjectData.rigidBody.max_velocity_y = maxVelY;
 						this.get_currentObject().body.max_velocity.y = this.selectedObjectData.rigidBody.max_velocity_y;
@@ -3728,7 +3751,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 						this.changed = true;
 					}
 					maxRotVelHandle.value = this.selectedObjectData.rigidBody.max_rotational_velocity;
-					var maxRot = zui_Ext.floatInput(ui,zui_Handle.global.nest(64,null),"Max Rotation Velocity:",2);
+					var maxRot = zui_Ext.floatInput(ui,zui_Handle.global.nest(65,null),"Max Rotation Velocity:",2);
 					if(maxRotVelHandle.changed) {
 						this.selectedObjectData.rigidBody.max_rotational_velocity = maxRot;
 						this.get_currentObject().body.max_rotational_velocity = this.selectedObjectData.rigidBody.max_rotational_velocity;
@@ -3736,7 +3759,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 						this.changed = true;
 					}
 					dragXHandle.value = this.selectedObjectData.rigidBody.drag_x;
-					var dragX = zui_Ext.floatInput(ui,zui_Handle.global.nest(65,null),"Drag X:",2);
+					var dragX = zui_Ext.floatInput(ui,zui_Handle.global.nest(66,null),"Drag X:",2);
 					if(dragXHandle.changed) {
 						this.selectedObjectData.rigidBody.drag_x = dragX;
 						this.get_currentObject().body.drag.x = this.selectedObjectData.rigidBody.drag_x;
@@ -3744,7 +3767,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 						this.changed = true;
 					}
 					dragYHandle.value = this.selectedObjectData.rigidBody.drag_y;
-					var dragY = zui_Ext.floatInput(ui,zui_Handle.global.nest(66,null),"Drag Y:",2);
+					var dragY = zui_Ext.floatInput(ui,zui_Handle.global.nest(67,null),"Drag Y:",2);
 					if(dragYHandle.changed) {
 						this.selectedObjectData.rigidBody.drag_y = dragY;
 						this.get_currentObject().body.drag.y = this.selectedObjectData.rigidBody.drag_y;
@@ -3787,14 +3810,14 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 		}
 	}
 	,drawSelectedSceneItems: function(ui) {
-		var sceneNameHandle = zui_Handle.global.nest(67,null);
+		var sceneNameHandle = zui_Handle.global.nest(68,null);
 		sceneNameHandle.text = this.selectedSceneData.name != null ? this.selectedSceneData.name : "Unavailable";
 		ui.textInput(sceneNameHandle,"");
 		if(sceneNameHandle.changed && sceneNameHandle.text != "" && sceneNameHandle.text != "Unavailable") {
 			this.selectedSceneData.name = sceneNameHandle.text;
 			this.changed = true;
 		}
-		var depthSortHandle = zui_Handle.global.nest(68,null);
+		var depthSortHandle = zui_Handle.global.nest(69,null);
 		depthSortHandle.selected = this.selectedSceneData._depth != null && this.selectedSceneData._depth;
 		if(ui.getHover()) {
 			ui.tooltip(this.depthSortText);
@@ -3806,7 +3829,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 			this.changed = true;
 		}
 		if(this.selectedSceneData._depth) {
-			var zsortHandle = zui_Handle.global.nest(69,null);
+			var zsortHandle = zui_Handle.global.nest(70,null);
 			zsortHandle.selected = this.selectedSceneData._Zsort != null ? this.selectedSceneData._Zsort : true;
 			if(ui.getHover()) {
 				ui.tooltip(this.zSortText);
@@ -3818,7 +3841,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				this.changed = true;
 			}
 		}
-		var cullHandle = zui_Handle.global.nest(70,null);
+		var cullHandle = zui_Handle.global.nest(71,null);
 		var cull = ui.check(cullHandle,"Cull");
 		if(cullHandle.changed && !cull) {
 			this.selectedSceneData.cullOffset = null;
@@ -3831,7 +3854,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				Reflect.setProperty(found_State.active,"cullOffset",this.selectedSceneData.cullOffset);
 				this.changed = true;
 			}
-			var cullOffsetHandle = zui_Handle.global.nest(71,null);
+			var cullOffsetHandle = zui_Handle.global.nest(72,null);
 			cullOffsetHandle.value = this.selectedSceneData.cullOffset;
 			var offset = ui.slider(cullOffsetHandle,"Cull offset",1,500);
 			if(cullOffsetHandle.changed) {
@@ -3842,12 +3865,12 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 		}
 		ui.row([0.5,0.5]);
 		var text = this.selectedSceneData.physicsWorld != null ? "-" : "+";
-		if(ui.panel(zui_Handle.global.nest(72,null),"Physics World: ")) {
+		if(ui.panel(zui_Handle.global.nest(73,null),"Physics World: ")) {
 			if(ui.button(text)) {
 				this.addPhysWorld(text,this.selectedSceneData);
 			}
 			if(this.selectedSceneData.physicsWorld != null) {
-				var widthHandle = zui_Handle.global.nest(73,null);
+				var widthHandle = zui_Handle.global.nest(74,null);
 				widthHandle.value = this.selectedSceneData.physicsWorld.width;
 				var width = zui_Ext.floatInput(ui,widthHandle,"Width:",2);
 				if(widthHandle.changed) {
@@ -3859,7 +3882,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					}
 					this.changed = true;
 				}
-				var heightHandle = zui_Handle.global.nest(74,null);
+				var heightHandle = zui_Handle.global.nest(75,null);
 				heightHandle.value = this.selectedSceneData.physicsWorld.height;
 				var height = zui_Ext.floatInput(ui,heightHandle,"Height:",2);
 				if(heightHandle.changed) {
@@ -3871,7 +3894,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					}
 					this.changed = true;
 				}
-				var gravityXHandle = zui_Handle.global.nest(75,null);
+				var gravityXHandle = zui_Handle.global.nest(76,null);
 				gravityXHandle.value = this.selectedSceneData.physicsWorld.gravity_x != null ? this.selectedSceneData.physicsWorld.gravity_x : 0;
 				var gravityX = zui_Ext.floatInput(ui,gravityXHandle,"Gravity X:",2);
 				if(gravityXHandle.changed) {
@@ -3879,7 +3902,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					found_State.active.physics_world.gravity.x = gravityX;
 					this.changed = true;
 				}
-				var gravityYHandle = zui_Handle.global.nest(76,null);
+				var gravityYHandle = zui_Handle.global.nest(77,null);
 				gravityYHandle.value = this.selectedSceneData.physicsWorld.gravity_y;
 				var gravityY = zui_Ext.floatInput(ui,gravityYHandle,"Gravity Y:",2);
 				if(gravityYHandle.changed) {
@@ -3887,7 +3910,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					found_State.active.physics_world.gravity.y = gravityY;
 					this.changed = true;
 				}
-				var iterationsHandle = zui_Handle.global.nest(77,null);
+				var iterationsHandle = zui_Handle.global.nest(78,null);
 				iterationsHandle.value = this.selectedSceneData.physicsWorld.iterations;
 				var iterations = ui.slider(iterationsHandle,"No. of iterations",1,20,false,1) | 0;
 				if(iterationsHandle.changed) {
@@ -3895,7 +3918,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					found_State.active.physics_world.iterations = iterations;
 					this.changed = true;
 				}
-				var historyHandle = zui_Handle.global.nest(78,null);
+				var historyHandle = zui_Handle.global.nest(79,null);
 				historyHandle.value = this.selectedSceneData.physicsWorld.history != null ? this.selectedSceneData.physicsWorld.history : 500;
 				var history = ui.slider(historyHandle,"History",1,1000,false,0.01) | 0;
 				if(historyHandle.changed) {
@@ -4042,15 +4065,23 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				return;
 			}
 			handle.changed = false;
-			found_tool_Log.warn("Prop: " + propName + " was not set because " + handle.text + " was entered",{ fileName : "EditorInspector.hx", lineNumber : 758, className : "EditorInspector", methodName : "multiDraw"});
+			found_tool_Log.warn("Prop: " + propName + " was not set because " + handle.text + " was entered",{ fileName : "EditorInspector.hx", lineNumber : 763, className : "EditorInspector", methodName : "multiDraw"});
 			return;
 		}
 	}
 	,drawTrait: function(handle,i) {
+		var _this = this.ui;
+		var div = _this.t.ELEMENT_W * _this.ops.scaleFactor / this.parent.get_w();
 		var trait = this.get_currentObject().get_raw().traits[i];
 		if(trait != null) {
-			this.ui.row([0.75,0.25]);
+			this.ui.row([1.0 - div * 0.75,div * 0.75]);
+			var _this = this.ui;
+			var fntSize = _this.t.FONT_SIZE * _this.ops.scaleFactor | 0;
+			var elemH = this.ui.t.ELEMENT_H;
+			this.ui.t.ELEMENT_H = this.ui.fontSize = fntSize * 0.65 | 0;
 			this.ui.text(trait.classname);
+			this.ui.fontSize = fntSize;
+			this.ui.t.ELEMENT_H = elemH;
 			var changed = false;
 			if(this.ui.button("New prop")) {
 				var def = "default~0~0";
@@ -4063,7 +4094,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				changed = true;
 			}
 			if(trait.props != null) {
-				var mainH = zui_Handle.global.nest(14,null);
+				var mainH = zui_Handle.global.nest(16,null);
 				var _g = 0;
 				var _g1 = trait.props.length;
 				while(_g < _g1) {
@@ -4322,10 +4353,10 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					error = false;
 					break;
 				default:
-					haxe_Log.trace("Error: file has filetype " + type + " which is not a valid filetype for images ",{ fileName : "EditorInspector.hx", lineNumber : 1010, className : "EditorInspector", methodName : "browseImage"});
+					haxe_Log.trace("Error: file has filetype " + type + " which is not a valid filetype for images ",{ fileName : "EditorInspector.hx", lineNumber : 1027, className : "EditorInspector", methodName : "browseImage"});
 				}
 				if(error) {
-					haxe_Log.trace("Error: file with name " + name + " is not a valid image name or the path \"" + path + "\" was invalid ",{ fileName : "EditorInspector.hx", lineNumber : 1013, className : "EditorInspector", methodName : "browseImage"});
+					haxe_Log.trace("Error: file with name " + name + " is not a valid image name or the path \"" + path + "\" was invalid ",{ fileName : "EditorInspector.hx", lineNumber : 1030, className : "EditorInspector", methodName : "browseImage"});
 				}
 			}
 		};
@@ -4379,7 +4410,8 @@ EditorMenu.__name__ = true;
 EditorMenu.__properties__ = {get_menuH:"get_menuH"};
 EditorMenu.menuH = null;
 EditorMenu.get_menuH = function() {
-	return 28 * EditorMenu.menuItemsCount[EditorMenu.menuCategory];
+	var _this = found_Found.popupZuiInstance;
+	return _this.t.ELEMENT_H * _this.ops.scaleFactor * EditorMenu.menuItemsCount[EditorMenu.menuCategory];
 };
 EditorMenu.render = function(g) {
 	var ui = found_Found.popupZuiInstance;
@@ -4388,13 +4420,11 @@ EditorMenu.render = function(g) {
 	ui.t.BUTTON_COL = ui.t.SEPARATOR_COL;
 	var ELEMENT_OFFSET = ui.t.ELEMENT_OFFSET;
 	ui.t.ELEMENT_OFFSET = 0;
-	var ELEMENT_H = ui.t.ELEMENT_H;
-	ui.t.ELEMENT_H = 28;
 	g.begin(false);
 	ui.beginRegion(g,EditorMenu.menuX,EditorMenu.menuY,EditorMenu.menuW);
 	var sepw = EditorMenu.menuW / ui.ops.scaleFactor;
 	ui.g.set_color(ui.t.SEPARATOR_COL);
-	ui.g.fillRect(EditorMenu.menuX,EditorMenu.menuY,EditorMenu.menuW,EditorMenu.get_menuH() * ui.ops.scaleFactor);
+	ui.g.fillRect(EditorMenu.menuX,EditorMenu.menuY,EditorMenu.menuW,EditorMenu.get_menuH());
 	if(EditorMenu.menuCategory == 0) {
 		if(ui.button("      " + utilities_Translator.tr("New Scene..."),0,utilities_Config.keymap.file_new)) {
 			EditorMenu.createScene();
@@ -4503,7 +4533,6 @@ EditorMenu.render = function(g) {
 	}
 	ui.t.BUTTON_COL = BUTTON_COL;
 	ui.t.ELEMENT_OFFSET = ELEMENT_OFFSET;
-	ui.t.ELEMENT_H = ELEMENT_H;
 	ui.endRegion();
 	g.end();
 };
@@ -4557,6 +4586,7 @@ View.__name__ = true;
 View.__isInterface__ = true;
 View.prototype = {
 	render: null
+	,redraw: null
 	,__class__: View
 };
 var EditorMenuBar = function() {
@@ -4624,6 +4654,9 @@ EditorMenuBar.prototype = {
 		}
 		ui.t.WINDOW_BG_COL = WINDOW_BG_COL;
 		ui.inputEnabled = !EditorMenu.show;
+	}
+	,redraw: function() {
+		this.menuHandle.redraws = 2;
 	}
 	,__class__: EditorMenuBar
 };
@@ -4702,6 +4735,9 @@ EditorPanel.prototype = {
 			r(ui);
 		}
 	}
+	,redraw: function() {
+		this.htab.redraws = this.windowHandle.redraws = 2;
+	}
 	,addTab: function(tab) {
 		if(this.tabs.indexOf(tab) == -1) {
 			tab.position = this.tabs.push(tab) - 1;
@@ -4731,6 +4767,7 @@ EditorTools.vertColl = null;
 EditorTools.hArrow = null;
 EditorTools.rect = null;
 EditorTools.render = function(ui,p_x,p_y,resetY) {
+	EditorTools.vArrow.size = EditorTools.hArrow.size = EditorTools.rect.size = EditorTools.vertColl.size = ui.t.ELEMENT_H * ui.ops.scaleFactor * 0.25;
 	var x = p_x + ui._x;
 	var y = p_y + resetY - EditorTools.vArrow.size;
 	ui._x = x - EditorTools.rect.size * 0.75;
@@ -4787,7 +4824,6 @@ EditorTools.prototype = {
 	__class__: EditorTools
 };
 var Arrow = function(type) {
-	this.size = 8.0;
 	this.y = 0;
 	this.x = 0;
 	this.type = 0;
@@ -4815,7 +4851,7 @@ Arrow.prototype = {
 			return;
 		}
 		var w = this.size * 10;
-		var h = w;
+		var h = this.size * 0.25;
 		var ty = this.size;
 		if(this.type == 0) {
 			if(this.horizontal == null) {
@@ -4825,7 +4861,7 @@ Arrow.prototype = {
 				ui.g.end();
 				this.horizontal.get_g2().begin(true,0);
 				this.horizontal.get_g2().set_color(-16711936);
-				this.horizontal.get_g2().fillRect(0,ty,w,2.0);
+				this.horizontal.get_g2().fillRect(0,ty,w,h);
 				if(EditorUi.arrowMode == 0) {
 					this.horizontal.get_g2().fillTriangle(w,ty + this.size,w,ty + -this.size,w + this.size * 2,ty);
 				} else {
@@ -4858,9 +4894,9 @@ Arrow.prototype = {
 				ui.g.end();
 				this.vertical.get_g2().begin(true,0);
 				this.vertical.get_g2().set_color(-65536);
-				this.vertical.get_g2().fillRect(0,ty,w,2.0);
+				this.vertical.get_g2().fillRect(0,ty,w,h);
 				if(EditorUi.arrowMode == 0) {
-					this.vertical.get_g2().fillTriangle(w,ty + this.size,w,ty + -this.size,w + this.size * 2 + 2.0,ty);
+					this.vertical.get_g2().fillTriangle(w,ty + this.size,w,ty + -this.size,w + this.size * 2 + h,ty);
 				} else {
 					this.vertical.get_g2().fillRect(w,0,this.size * 2,this.size * 2);
 				}
@@ -5026,7 +5062,7 @@ var EditorUi = function() {
 	var _gthis = this;
 	found_Trait.call(this);
 	kha_Window.get(0).notifyOnResize($bind(this,this.onResize));
-	this.ui = new zui_Zui({ font : kha_Assets.fonts.font_default, autoNotifyInput : false});
+	this.ui = new zui_Zui({ font : kha_Assets.fonts.font_default, theme : zui_Canvas.themes[0]});
 	khafs_Fs.init(function() {
 		utilities_Config.load(function() {
 			utilities_Config.init();
@@ -5048,13 +5084,13 @@ var EditorUi = function() {
 			};
 			if(!khafs_Fs.exists(EditorUi.cwd + "/pjml.found")) {
 				var projList = EditorUi.getLocalProjects();
-				_gthis.projectmanager = new ManagerView(projList);
+				_gthis.projectmanager = new ManagerView(projList,_gthis.ui);
 				done();
 			} else {
 				khafs_Fs.getContent(EditorUi.cwd + "/pjml.found",function(data) {
 					var out = JSON.parse(data);
 					out.list = out.list.concat(EditorUi.getLocalProjects());
-					_gthis.projectmanager = new ManagerView(out.list);
+					_gthis.projectmanager = new ManagerView(out.list,_gthis.ui);
 					done();
 				});
 				var key = haxe_ds_StringMap.keysIterator(khafs_Fs.dbKeys.h);
@@ -5066,7 +5102,7 @@ var EditorUi = function() {
 					}
 					khafs_Fs.getContent(key2[0],(function(key) {
 						return function(data) {
-							haxe_Log.trace("Fetched data from " + key[0],{ fileName : "EditorUi.hx", lineNumber : 110, className : "EditorUi", methodName : "new"});
+							haxe_Log.trace("Fetched data from " + key[0],{ fileName : "EditorUi.hx", lineNumber : 109, className : "EditorUi", methodName : "new"});
 						};
 					})(key2));
 				}
@@ -5202,6 +5238,17 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 	,keyboard: null
 	,mouse: null
 	,fsFiletypeExceptions: null
+	,redraw: function() {
+		var view = haxe_ds_StringMap.valueIterator(this.editor.toDraw.h);
+		while(view.hasNext()) {
+			var view1 = view.next();
+			view1.redraw();
+		}
+	}
+	,setUIScale: function(factor) {
+		found_Found.popupZuiInstance.setScale(factor);
+		this.ui.setScale(factor);
+	}
 	,onResize: function(w,h) {
 	}
 	,render: function(canvas) {
@@ -5319,7 +5366,7 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 				EditorTools.redrawArrows = true;
 			}
 			var inSceneView = this.mouse.x > this.gameView.get_x() && this.mouse.y > this.gameView.get_y() && this.mouse.x < this.gameView.get_x() + this.gameView.get_width() && this.mouse.y < this.gameView.get_y() + this.gameView.get_height();
-			if(inSceneView && this.mouse.down("middle") && this.mouse.moved) {
+			if((inSceneView || found_Found.fullscreen) && this.mouse.down("middle") && this.mouse.moved) {
 				if(found_State.active != null) {
 					found_State.active.cam.get_position().x += this.mouse.distX;
 					found_State.active.cam.get_position().y += this.mouse.distY;
@@ -5522,9 +5569,16 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 			if(name.indexOf(".json") != -1 && khafs_Fs.exists(path)) {
 				name = StringTools.replace(name,".json","");
 				EditorUi.scenePath = path;
-				found_State.set(name,$bind(_gthis,_gthis.init));
+				if(!Object.prototype.hasOwnProperty.call(found_State._states.h,name)) {
+					found_State.addState(name,EditorUi.scenePath);
+				}
+				_gthis.hierarchy.onSceneSelected();
+				found_State.set(name,function() {
+					_gthis.hierarchy.setSceneData(found_State.active.raw);
+					_gthis.hierarchy.onSceneSelected();
+				});
 			} else {
-				found_tool_Log.error("file with name " + name + " is not a valid scene name or the path \"" + path + "\" was invalid ",{ fileName : "EditorUi.hx", lineNumber : 422, className : "EditorUi", methodName : "openScene"});
+				found_tool_Log.error("file with name " + name + " is not a valid scene name or the path \"" + path + "\" was invalid ",{ fileName : "EditorUi.hx", lineNumber : 441, className : "EditorUi", methodName : "openScene"});
 			}
 		};
 		FileBrowserDialog.open(done);
@@ -5561,10 +5615,7 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 	,__class__: EditorUi
 	,__properties__: {set_isPlayMode:"set_isPlayMode",set_visible:"set_visible"}
 });
-var found_trait_internal_CanvasScript = function(canvasName,font,b_canvas,noWarn) {
-	if(noWarn == null) {
-		noWarn = false;
-	}
+var found_trait_internal_CanvasScript = function(canvasName,font,b_canvas) {
 	if(font == null) {
 		font = "font_default.ttf";
 	}
@@ -5575,15 +5626,6 @@ var found_trait_internal_CanvasScript = function(canvasName,font,b_canvas,noWarn
 	found_Trait.call(this);
 	this.customDraw = new haxe_ds_StringMap();
 	var done = function(blob) {
-		var tBlob = kha_Assets.blobs.get("_themes.json");
-		if(tBlob != null) {
-			zui_Canvas.themes = JSON.parse(tBlob.toString());
-		} else if(!noWarn) {
-			found_tool_Log.warn("\"_themes.json\" is empty! Using default theme instead.",{ fileName : "found/trait/internal/CanvasScript.hx", lineNumber : 47, className : "found.trait.internal.CanvasScript", methodName : "new"});
-		}
-		if(zui_Canvas.themes.length == 0) {
-			zui_Canvas.themes.push(zui_Themes.dark);
-		}
 		var onFontDone = function(f) {
 			var c = JSON.parse(blob.toString());
 			if(c.theme == null) {
@@ -5772,7 +5814,8 @@ found_trait_internal_CanvasScript.prototype = $extend(found_Trait.prototype,{
 });
 var EditorView = function(ui) {
 	this.ui = ui;
-	found_trait_internal_CanvasScript.call(this,"main","font_default.ttf",kha_Assets.blobs.get("main_json"),true);
+	found_trait_internal_CanvasScript.call(this,"main","font_default.ttf",kha_Assets.blobs.get("main_json"));
+	ui.ops.theme = zui_Canvas.themes[0];
 	this.toDraw = new haxe_ds_StringMap();
 	var _g = 0;
 	var _g1 = this.canvas.elements;
@@ -5803,7 +5846,7 @@ EditorView.prototype = $extend(found_trait_internal_CanvasScript.prototype,{
 		if(drawable != null) {
 			drawable.render(this.ui,element);
 		} else {
-			haxe_Log.trace("No ui will be drawn for element named: " + element.name,{ fileName : "EditorView.hx", lineNumber : 34, className : "EditorView", methodName : "drawEditorView"});
+			haxe_Log.trace("No ui will be drawn for element named: " + element.name,{ fileName : "EditorView.hx", lineNumber : 35, className : "EditorView", methodName : "drawEditorView"});
 		}
 		if(element.name == this.lastElem) {
 			this.ui.end();
@@ -5821,7 +5864,9 @@ FileBrowserDialog.open = function(onDone,currentPath) {
 	}
 	FileBrowserDialog.doneCallback = onDone;
 	FileBrowserDialog.fbHandle.text = currentPath != "" ? currentPath : EditorUi.cwd;
-	zui_Popup.showCustom(found_Found.popupZuiInstance,FileBrowserDialog.fileBrowserPopupDraw,-1,-1,600,500);
+	var _this = found_Found.popupZuiInstance;
+	var _this1 = found_Found.popupZuiInstance;
+	zui_Popup.showCustom(found_Found.popupZuiInstance,FileBrowserDialog.fileBrowserPopupDraw,-1,-1,_this.t.ELEMENT_W * _this.ops.scaleFactor * 4 | 0,_this1.t.ELEMENT_W * _this1.ops.scaleFactor * 3 | 0);
 };
 FileBrowserDialog.doneCallback = function(path) {
 };
@@ -5862,15 +5907,17 @@ GridSizeDialog.__name__ = true;
 GridSizeDialog.map = null;
 GridSizeDialog.open = function(p_map) {
 	GridSizeDialog.map = p_map;
-	zui_Popup.showCustom(found_Found.popupZuiInstance,GridSizeDialog.gridSizePopupDraw,-1,-1,600,500);
+	var _this = found_Found.popupZuiInstance;
+	var _this1 = found_Found.popupZuiInstance;
+	zui_Popup.showCustom(found_Found.popupZuiInstance,GridSizeDialog.gridSizePopupDraw,-1,-1,_this.t.ELEMENT_W * _this.ops.scaleFactor * 4 | 0,_this1.t.ELEMENT_W * _this1.ops.scaleFactor * 3 | 0);
 	found_tool_TileEditor.ui.enabled = false;
 };
 GridSizeDialog.gridSizePopupDraw = function(ui) {
 	zui_Popup.boxTitle = utilities_Translator.tr("Grid Size");
 	var border = 2 * zui_Popup.borderW + zui_Popup.borderOffset;
-	var gridSizeH = zui_Handle.global.nest(30,{ value : found_Found.GRID});
+	var gridSizeH = zui_Handle.global.nest(31,{ value : found_Found.GRID});
 	zui_Ext.floatInput(ui,gridSizeH,utilities_Translator.tr("Grid Size"));
-	var changeGrid = zui_Handle.global.nest(31,null);
+	var changeGrid = zui_Handle.global.nest(32,null);
 	ui.check(changeGrid,utilities_Translator.tr("Affect main Grid"));
 	ui._y = ui._h - ui.t.BUTTON_H - border;
 	ui.row([0.5,0.5]);
@@ -5989,20 +6036,20 @@ Main.__name__ = true;
 Main.main = function() {
 	found_Found.setup({ app : Project, title : "Foundry2d"});
 };
-var ManagerView = function(data) {
-	this.listHandle = zui_Handle.global.nest(84,null);
-	this.tabsHandle = zui_Handle.global.nest(83,null);
+var ManagerView = function(data,ui) {
+	this.listHandle = zui_Handle.global.nest(85,null);
+	this.tabsHandle = zui_Handle.global.nest(84,null);
 	this.titleElem = null;
 	this.selectedItem = null;
 	this.projects = [];
-	found_trait_internal_CanvasScript.call(this,"projectView","font_default.ttf",kha_Assets.blobs.get("projectView_json"),true);
+	found_trait_internal_CanvasScript.call(this,"projectView","font_default.ttf",kha_Assets.blobs.get("projectView_json"));
 	if(!khafs_Fs.exists(EditorUi.cwd + khafs_Fs.sep + "pjml.found")) {
 		khafs_Fs.saveContent(EditorUi.cwd + khafs_Fs.sep + "pjml.found","{\"list\":[]}");
 	}
+	this.ui = ui;
 	if(data != null) {
 		this.projects = data;
 	}
-	this.ui = new zui_Zui({ font : kha_Assets.fonts.font_default});
 	this.addCustomDraw("List",$bind(this,this.drawView));
 	found_Event.add("onRun",haxe_ds_Either.Left($bind(this,this.runProject)));
 	found_Event.add("onNew",haxe_ds_Either.Left($bind(this,this.createProject)));
@@ -6034,7 +6081,7 @@ ManagerView.prototype = $extend(found_trait_internal_CanvasScript.prototype,{
 		this.translate();
 		var elem = element;
 		this.ui.begin(g);
-		if(this.ui.window(zui_Handle.global.nest(82,null),Math.floor(elem.x),Math.floor(elem.y),elem.width,elem.height)) {
+		if(this.ui.window(zui_Handle.global.nest(83,null),Math.floor(elem.x),Math.floor(elem.y),elem.width,elem.height)) {
 			if(this.ui.tab(this.tabsHandle,utilities_Translator.tr("Projects"))) {
 				var selected = zui_Ext.list(this.ui,this.listHandle,this.projects,{ itemDrawCb : $bind(this,this.drawItems), getNameCb : $bind(this,this.projName), removeCb : $bind(this,this.deleteProject), showAdd : false, showRadio : true, editable : false});
 				this.selectedItem = this.projects[selected];
@@ -6157,7 +6204,7 @@ ManagerView.prototype = $extend(found_trait_internal_CanvasScript.prototype,{
 		khafs_Fs.curDir = EditorUi.cwd;
 		khafs_Fs.onInputDone = function(lastPath) {
 			if(!StringTools.endsWith(lastPath,".zip")) {
-				found_tool_Log.error("Is not a zip file: " + lastPath + " ",{ fileName : "ManagerView.hx", lineNumber : 195, className : "ManagerView", methodName : "importProject"});
+				found_tool_Log.error("Is not a zip file: " + lastPath + " ",{ fileName : "ManagerView.hx", lineNumber : 196, className : "ManagerView", methodName : "importProject"});
 				return;
 			}
 			var p = lastPath.split(khafs_Fs.sep);
@@ -6187,7 +6234,7 @@ ManagerView.prototype = $extend(found_trait_internal_CanvasScript.prototype,{
 						khafs_Fs.saveContent(path + khafs_Fs.sep + entry.fileName,data.toString());
 					} else {
 						var fname = entry.fileName;
-						haxe_Log.trace("Item with name " + fname + " is null at path: " + lastPath,{ fileName : "ManagerView.hx", lineNumber : 220, className : "ManagerView", methodName : "importProject"});
+						haxe_Log.trace("Item with name " + fname + " is null at path: " + lastPath,{ fileName : "ManagerView.hx", lineNumber : 221, className : "ManagerView", methodName : "importProject"});
 					}
 				}
 				if(project != null) {
@@ -6201,7 +6248,7 @@ ManagerView.prototype = $extend(found_trait_internal_CanvasScript.prototype,{
 						});
 					});
 				} else {
-					haxe_Log.trace("Zip did not have a project file. Aborting project creation...\n Project files will still be added to File System",{ fileName : "ManagerView.hx", lineNumber : 236, className : "ManagerView", methodName : "importProject"});
+					haxe_Log.trace("Zip did not have a project file. Aborting project creation...\n Project files will still be added to File System",{ fileName : "ManagerView.hx", lineNumber : 237, className : "ManagerView", methodName : "importProject"});
 				}
 			});
 		};
@@ -6216,7 +6263,7 @@ ManagerView.prototype = $extend(found_trait_internal_CanvasScript.prototype,{
 });
 Math.__name__ = true;
 var found__$App_FPS = function() {
-	this.fpsHandle = zui_Handle.global.nest(42,null);
+	this.fpsHandle = zui_Handle.global.nest(43,null);
 	this.lastFps = 0;
 	this.lastTime = 0.0;
 	this.time = 0.0;
@@ -6502,7 +6549,9 @@ ProjectCreator.__name__ = true;
 ProjectCreator.onDone = null;
 ProjectCreator.open = function(done) {
 	ProjectCreator.onDone = done;
-	zui_Popup.showCustom(found_Found.popupZuiInstance,ProjectCreator.projectCreatorPopupDraw,-1,-1,600,500);
+	var _this = found_Found.popupZuiInstance;
+	var _this1 = found_Found.popupZuiInstance;
+	zui_Popup.showCustom(found_Found.popupZuiInstance,ProjectCreator.projectCreatorPopupDraw,-1,-1,_this.t.ELEMENT_W * _this.ops.scaleFactor * 4 | 0,_this1.t.ELEMENT_W * _this1.ops.scaleFactor * 3 | 0);
 };
 ProjectCreator.projectCreatorPopupDraw = function(ui) {
 	zui_Popup.boxTitle = utilities_Translator.tr("New Project");
@@ -6562,10 +6611,10 @@ ProjectCreator.onBrowse = function() {
 	FileBrowserDialog.open(done);
 };
 var ProjectExplorer = function() {
-	this.fileExplorerHandle = zui_Handle.global.nest(112,null);
-	this.folderExplorerHandle = zui_Handle.global.nest(111,null);
-	this.windowHandle2 = zui_Handle.global.nest(110,null);
-	this.windowHandle = zui_Handle.global.nest(109,null);
+	this.fileExplorerHandle = zui_Handle.global.nest(113,null);
+	this.folderExplorerHandle = zui_Handle.global.nest(112,null);
+	this.windowHandle2 = zui_Handle.global.nest(111,null);
+	this.windowHandle = zui_Handle.global.nest(110,null);
 	this.init = false;
 	this.defaultPath = "/";
 	this.explorerXBrowserW = [0.25,0.75];
@@ -6847,11 +6896,13 @@ TraitsDialog.__name__ = true;
 TraitsDialog.open = function() {
 	TraitsDialog.traitsFolderPath = EditorUi.projectPath + "/Sources/Scripts/";
 	TraitsDialog.textInputHandle.text = "NewTrait";
-	zui_Popup.showCustom(found_Found.popupZuiInstance,TraitsDialog.traitCreationPopupDraw,-1,-1,600,500);
+	var _this = found_Found.popupZuiInstance;
+	var _this1 = found_Found.popupZuiInstance;
+	zui_Popup.showCustom(found_Found.popupZuiInstance,TraitsDialog.traitCreationPopupDraw,-1,-1,_this.t.ELEMENT_W * _this.ops.scaleFactor * 4 | 0,_this1.t.ELEMENT_W * _this1.ops.scaleFactor * 3 | 0);
 };
 TraitsDialog.traitCreationPopupDraw = function(ui) {
 	zui_Popup.boxTitle = "Add a trait";
-	if(ui.panel(zui_Handle.global.nest(11,{ selected : true}),"Existing Traits",true)) {
+	if(ui.panel(zui_Handle.global.nest(13,{ selected : true}),"Existing Traits",true)) {
 		var precompiledTraits = TraitsDialog.loadPrecompiledTraits();
 		var userCreatedTraits = TraitsDialog.loadUserCreatedTraits(TraitsDialog.traitsFolderPath);
 		TraitsDialog.arrayOfTraits = precompiledTraits.concat(userCreatedTraits);
@@ -56183,13 +56234,22 @@ found_Found.setup = function(config) {
 		kha_Assets.loadEverything(function() {
 			kha_Scheduler.addTimeTask(found_Found.update,0,1 / found_Found._fps);
 			found_Found.resize(kha_System.windowWidth(),kha_System.windowHeight());
+			var tBlob = config.defaultThemeFile != null ? kha_Assets.blobs.get(config.defaultThemeFile) : kha_Assets.blobs.get("_themes_json");
+			if(tBlob != null) {
+				zui_Canvas.themes = JSON.parse(tBlob.toString());
+			} else {
+				found_tool_Log.warn("\"_themes.json\" is empty! Using default theme instead.",{ fileName : "found/Found.hx", lineNumber : 156, className : "found.Found", methodName : "setup"});
+			}
+			if(zui_Canvas.themes.length == 0) {
+				zui_Canvas.themes.push(zui_Themes.dark);
+			}
 			found_Found._app = Type.createInstance(config.app,[]);
 			kha_Window.get(0).notifyOnResize(found_Found.resize);
 			kha_System.notifyOnFrames(function(framebuffer) {
 				found_Found.render(framebuffer[0]);
 			});
 			found_Found.tileeditor = new found_tool_TileEditor();
-			found_Found.popupZuiInstance = new zui_Zui({ font : kha_Assets.fonts.font_default});
+			found_Found.popupZuiInstance = new zui_Zui({ font : kha_Assets.fonts.font_default, theme : zui_Canvas.themes[0]});
 		});
 	});
 };
@@ -63554,9 +63614,9 @@ found_tool_Log.addCustomLogging = function(logger) {
 	found_tool_Log.customLogs.push(logger);
 };
 var found_tool_NodeEditor = function(ui,px,py,w,h) {
-	this.nodeMenuTabHandle = zui_Handle.global.nest(61,null);
-	this.nodeMenuWindowHandle = zui_Handle.global.nest(60,null);
-	this.nodeCanvasWindowHandle = zui_Handle.global.nest(59,null);
+	this.nodeMenuTabHandle = zui_Handle.global.nest(62,null);
+	this.nodeMenuWindowHandle = zui_Handle.global.nest(61,null);
+	this.nodeCanvasWindowHandle = zui_Handle.global.nest(60,null);
 	this.visible = false;
 	this.setAll(px,py,w,h);
 	ui.g.end();
@@ -63669,7 +63729,13 @@ found_tool_NodeEditor.prototype = {
 		if(ui.window(this.nodeCanvasWindowHandle,found_tool_NodeEditor.x,found_tool_NodeEditor.y,found_tool_NodeEditor.width,found_tool_NodeEditor.height)) {
 			ui.g.set_color(-1);
 			ui.g.drawImage(found_tool_NodeEditor.grid,nodePanX,nodePanY);
+			var t = ui.t;
+			ui.t = zui_Themes.dark;
+			var oldS = ui.ops.scaleFactor;
+			ui.setScale(ui.ops.scaleFactor * 1.5);
 			this.renderNodes(ui);
+			ui.t = t;
+			ui.setScale(oldS);
 		}
 		this.renderNodesMenu(ui);
 	}
@@ -63682,9 +63748,10 @@ found_tool_NodeEditor.prototype = {
 		if(found_tool_NodeEditor.selectedNode == null) {
 			return;
 		}
-		if(ui.window(this.nodeMenuWindowHandle,found_tool_NodeEditor.x,found_tool_NodeEditor.y,150,found_tool_NodeEditor.height * 0.75 | 0,true)) {
+		var numTabs = 3;
+		if(ui.window(this.nodeMenuWindowHandle,found_tool_NodeEditor.x,found_tool_NodeEditor.y,ui.t.ELEMENT_W * ui.ops.scaleFactor * 0.5 * numTabs | 0,found_tool_NodeEditor.height * 0.75 | 0,true)) {
 			if(ui.tab(this.nodeMenuTabHandle,"Std")) {
-				if(ui.panel(zui_Handle.global.nest(88,null),"Logic")) {
+				if(ui.panel(zui_Handle.global.nest(89,null),"Logic")) {
 					if(ui.button("Gate")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_LogicNode.gate);
 					}
@@ -63701,7 +63768,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_LogicNode.whileN);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(89,null),"Variable")) {
+				if(ui.panel(zui_Handle.global.nest(90,null),"Variable")) {
 					if(ui.button("String")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_VariableNode.string);
 					}
@@ -63724,7 +63791,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(def);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(90,null),"Std")) {
+				if(ui.panel(zui_Handle.global.nest(91,null),"Std")) {
 					if(ui.button("Print")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_StdNode.print);
 					}
@@ -63738,7 +63805,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_StdNode.floatToInt);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(91,null),"Math")) {
+				if(ui.panel(zui_Handle.global.nest(92,null),"Math")) {
 					if(ui.button("Maths")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_MathNode.maths);
 					}
@@ -63757,7 +63824,7 @@ found_tool_NodeEditor.prototype = {
 				}
 			}
 			if(ui.tab(this.nodeMenuTabHandle,"Foundry2d")) {
-				if(ui.panel(zui_Handle.global.nest(92,null),"Event")) {
+				if(ui.panel(zui_Handle.global.nest(93,null),"Event")) {
 					if(ui.button("On Add")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.onAddNode);
 					}
@@ -63777,7 +63844,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.sendEventNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(93,null),"Input")) {
+				if(ui.panel(zui_Handle.global.nest(94,null),"Input")) {
 					if(ui.button("On Mouse")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.onMouseNode);
 					}
@@ -63794,7 +63861,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.onGamepadButtonInputNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(94,null),"Math")) {
+				if(ui.panel(zui_Handle.global.nest(95,null),"Math")) {
 					if(ui.button("Split Vec2")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.splitVec2Node);
 					}
@@ -63811,7 +63878,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.multiplyVec2sNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(95,null),"Time")) {
+				if(ui.panel(zui_Handle.global.nest(96,null),"Time")) {
 					if(ui.button("Every X Seconds")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.everyXNode);
 					}
@@ -63819,7 +63886,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.cooldownNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(96,null),"Transform")) {
+				if(ui.panel(zui_Handle.global.nest(97,null),"Transform")) {
 					if(ui.button("Get Position")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.getPositionNode);
 					}
@@ -63845,7 +63912,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.rotateTowardPositionNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(97,null),"Object")) {
+				if(ui.panel(zui_Handle.global.nest(98,null),"Object")) {
 					if(ui.button("Get Object")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.getObjectNode);
 					}
@@ -63865,12 +63932,12 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.getRandomObjectNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(98,null),"Sprite")) {
+				if(ui.panel(zui_Handle.global.nest(99,null),"Sprite")) {
 					if(ui.button("Flip Sprite")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.flipSpriteNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(99,null),"Physics")) {
+				if(ui.panel(zui_Handle.global.nest(100,null),"Physics")) {
 					if(ui.button("On Collision Event")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.onCollisionNode);
 					}
@@ -63881,7 +63948,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.applyImpulseToRigidbodyNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(100,null),"Controllers")) {
+				if(ui.panel(zui_Handle.global.nest(101,null),"Controllers")) {
 					if(ui.button("Top-down Controller")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.topDownControllerNode);
 					}
@@ -63889,12 +63956,12 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.platformer2DControllerNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(101,null),"Movement")) {
+				if(ui.panel(zui_Handle.global.nest(102,null),"Movement")) {
 					if(ui.button("Bullet Movement")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.bulletMovementNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(102,null),"Camera")) {
+				if(ui.panel(zui_Handle.global.nest(103,null),"Camera")) {
 					if(ui.button("Set Camera Position")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.setCameraTargetPositionNode);
 					}
@@ -63902,12 +63969,12 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.setCameraFollowTargetNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(103,null),"Animation")) {
+				if(ui.panel(zui_Handle.global.nest(104,null),"Animation")) {
 					if(ui.button("Play Animation")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.playAnimationNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(104,null),"Audio")) {
+				if(ui.panel(zui_Handle.global.nest(105,null),"Audio")) {
 					if(ui.button("Play Music")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.playMusicNode);
 					}
@@ -63920,7 +63987,7 @@ found_tool_NodeEditor.prototype = {
 				var sec = haxe_ds_StringMap.keysIterator(found_tool_NodeEditor.gameplayNodes.h);
 				while(sec.hasNext()) {
 					var sec1 = sec.next();
-					if(ui.panel(zui_Handle.global.nest(105,null),sec1)) {
+					if(ui.panel(zui_Handle.global.nest(106,null),sec1)) {
 						var nodes = found_tool_NodeEditor.gameplayNodes.h[sec1];
 						var _g = 0;
 						while(_g < nodes.length) {
@@ -63999,22 +64066,22 @@ var found_tool_TileEditor = function(visible) {
 	}
 	this.endHeight = 0.0;
 	this.limit = 10048;
-	this.editorStateHandle = zui_Handle.global.nest(32,null);
-	this.mapHeightHandle = zui_Handle.global.nest(29,null);
-	this.mapWidthHandle = zui_Handle.global.nest(28,null);
-	this.tilsheetListHandle = zui_Handle.global.nest(27,null);
+	this.editorStateHandle = zui_Handle.global.nest(33,null);
+	this.mapHeightHandle = zui_Handle.global.nest(30,null);
+	this.mapWidthHandle = zui_Handle.global.nest(29,null);
+	this.tilsheetListHandle = zui_Handle.global.nest(28,null);
 	this.tilesheets = [];
-	this.editorWindowHandle = zui_Handle.global.nest(25,null);
+	this.editorWindowHandle = zui_Handle.global.nest(26,null);
 	this.state = found_tool_TileEditorState.Draw;
 	this.canDrawTile = false;
 	this.unusedIds = [];
-	this.tileHandle = zui_Handle.global.nest(33,{ value : 0});
+	this.tileHandle = zui_Handle.global.nest(34,{ value : 0});
 	this.tileSelected = null;
 	this.map = null;
 	this.y = 256;
 	this.x = 512;
 	this.visible = visible;
-	found_tool_TileEditor.ui = new zui_Zui({ font : kha_Assets.fonts.font_default, autoNotifyInput : false});
+	found_tool_TileEditor.ui = new zui_Zui({ font : kha_Assets.fonts.font_default, autoNotifyInput : false, theme : zui_Canvas.themes[0]});
 	this.width = found_Found.WIDTH * 0.175 | 0;
 	this.height = found_Found.HEIGHT * 0.8 | 0;
 	this.tilesheetListops = { addLabel : "New Tilesheet", addCb : $bind(this,this.addTilesheet), removeCb : $bind(this,this.removeTilesheet), getNameCb : $bind(this,this.getTilesheetName), setNameCb : $bind(this,this.setTilesheetName), itemDrawCb : $bind(this,this.drawTilesheetItem), showRadio : true};
@@ -64066,7 +64133,7 @@ found_tool_TileEditor.prototype = {
 		var vec = new kha_math_Vector2();
 		if(found_tool_TileEditor.ui.window(this.editorWindowHandle,this.x,this.y,this.width,this.height,true)) {
 			this.endHeight = found_tool_TileEditor.ui._y;
-			if(found_tool_TileEditor.ui.panel(zui_Handle.global.nest(26,{ selected : true}),"Tilemap editor")) {
+			if(found_tool_TileEditor.ui.panel(zui_Handle.global.nest(27,{ selected : true}),"Tilemap editor")) {
 				var changed = false;
 				found_tool_TileEditor.ui.indent();
 				found_tool_TileEditor.ui.text("Tilesheets: ");
@@ -64317,7 +64384,7 @@ found_tool_TileEditor.prototype = {
 			return;
 		}
 		var data = this.tilesheets[index];
-		var imagePathHandle = zui_Handle.global.nest(43,null);
+		var imagePathHandle = zui_Handle.global.nest(44,null);
 		imagePathHandle.text = data.imagePath;
 		found_tool_TileEditor.ui.indent();
 		found_tool_TileEditor.ui.row([0.8,0.2]);
@@ -71887,17 +71954,17 @@ kha__$Assets_SoundList.prototype = {
 	,__class__: kha__$Assets_SoundList
 };
 var kha__$Assets_BlobList = function() {
-	this.names = ["default_json","dexie_js","keepme","listTraits_json","loading_json","main_json","projectView_json","temp_txt","wasmfs_js"];
+	this.names = ["_themes_json","default_json","dexie_js","index_html","keepme","listTraits_json","loading_json","main_json","projectView_json","temp_txt","wasmfs_js"];
 	this.wasmfs_jsDescription = { name : "wasmfs_js", file_sizes : [132297], files : ["wasmfs.js"], type : "blob"};
 	this.wasmfs_jsName = "wasmfs_js";
 	this.wasmfs_js = null;
 	this.temp_txtDescription = { name : "temp_txt", file_sizes : [264], files : ["temp.txt"], type : "blob"};
 	this.temp_txtName = "temp_txt";
 	this.temp_txt = null;
-	this.projectView_jsonDescription = { name : "projectView_json", file_sizes : [1841], files : ["projectView.json"], type : "blob"};
+	this.projectView_jsonDescription = { name : "projectView_json", file_sizes : [1836], files : ["projectView.json"], type : "blob"};
 	this.projectView_jsonName = "projectView_json";
 	this.projectView_json = null;
-	this.main_jsonDescription = { name : "main_json", file_sizes : [1312], files : ["main.json"], type : "blob"};
+	this.main_jsonDescription = { name : "main_json", file_sizes : [1307], files : ["main.json"], type : "blob"};
 	this.main_jsonName = "main_json";
 	this.main_json = null;
 	this.loading_jsonDescription = { name : "loading_json", file_sizes : [1139], files : ["loading.json"], type : "blob"};
@@ -71909,18 +71976,36 @@ var kha__$Assets_BlobList = function() {
 	this.keepmeDescription = { name : "keepme", file_sizes : [0], files : ["keepme"], type : "blob"};
 	this.keepmeName = "keepme";
 	this.keepme = null;
+	this.index_htmlDescription = { name : "index_html", file_sizes : [449], files : ["index.html"], type : "blob"};
+	this.index_htmlName = "index_html";
+	this.index_html = null;
 	this.dexie_jsDescription = { name : "dexie_js", file_sizes : [176240], files : ["dexie.js"], type : "blob"};
 	this.dexie_jsName = "dexie_js";
 	this.dexie_js = null;
 	this.default_jsonDescription = { name : "default_json", file_sizes : [1380], files : ["default.json"], type : "blob"};
 	this.default_jsonName = "default_json";
 	this.default_json = null;
+	this._themes_jsonDescription = { name : "_themes_json", file_sizes : [678], files : ["_themes.json"], type : "blob"};
+	this._themes_jsonName = "_themes_json";
+	this._themes_json = null;
 };
 $hxClasses["kha._Assets.BlobList"] = kha__$Assets_BlobList;
 kha__$Assets_BlobList.__name__ = true;
 kha__$Assets_BlobList.prototype = {
 	get: function(name) {
 		return Reflect.field(this,name);
+	}
+	,_themes_json: null
+	,_themes_jsonName: null
+	,_themes_jsonDescription: null
+	,_themes_jsonLoad: function(done,failure) {
+		kha_Assets.loadBlob("_themes_json",function(blob) {
+			done();
+		},failure,{ fileName : "kha/internal/AssetsBuilder.hx", lineNumber : 134, className : "kha._Assets.BlobList", methodName : "_themes_jsonLoad"});
+	}
+	,_themes_jsonUnload: function() {
+		this._themes_json.unload();
+		this._themes_json = null;
 	}
 	,default_json: null
 	,default_jsonName: null
@@ -71945,6 +72030,18 @@ kha__$Assets_BlobList.prototype = {
 	,dexie_jsUnload: function() {
 		this.dexie_js.unload();
 		this.dexie_js = null;
+	}
+	,index_html: null
+	,index_htmlName: null
+	,index_htmlDescription: null
+	,index_htmlLoad: function(done,failure) {
+		kha_Assets.loadBlob("index_html",function(blob) {
+			done();
+		},failure,{ fileName : "kha/internal/AssetsBuilder.hx", lineNumber : 134, className : "kha._Assets.BlobList", methodName : "index_htmlLoad"});
+	}
+	,index_htmlUnload: function() {
+		this.index_html.unload();
+		this.index_html = null;
 	}
 	,keepme: null
 	,keepmeName: null
@@ -106606,13 +106703,15 @@ if(ArrayBuffer.prototype.slice == null) {
 AnimationEditor.timeline = null;
 AnimationEditor.dot = null;
 zui_Handle.global = new zui_Handle();
-CollisionEditorDialog.textInputHandle = zui_Handle.global.nest(44,null);
-CollisionEditorDialog.comboBoxHandle = zui_Handle.global.nest(34,null);
+CollisionEditorDialog.textInputHandle = zui_Handle.global.nest(45,null);
+CollisionEditorDialog.comboBoxHandle = zui_Handle.global.nest(35,null);
 CollisionEditorDialog.collisionTypes = ["Rect","Circle","Polygon"];
 CollisionEditorDialog.shouldTileInit = false;
 ConfigSettingsDialog.localeHandle = zui_Handle.global.nest(17,null);
 ConfigSettingsDialog.languages = [];
 ConfigSettingsDialog.playModeHandle = zui_Handle.global.nest(18,null);
+ConfigSettingsDialog.uiScaleHandle = zui_Handle.global.nest(19,null);
+ConfigSettingsDialog.changedScale = false;
 CustomExt.lastFiles = [];
 CustomExt.lastFolders = [];
 EditorMenu.show = false;
@@ -106626,12 +106725,12 @@ EditorMenu.menuCommands = null;
 EditorMenu.changeStarted = false;
 EditorMenu.showMenuFirst = true;
 EditorMenu.hideMenu = false;
-EditorMenu.drawGridHandle = zui_Handle.global.nest(19,{ selected : true});
-EditorMenu.physicsDebugHandle = zui_Handle.global.nest(20,{ selected : false});
-EditorMenu.camControlLeftHandle = zui_Handle.global.nest(21,null);
-EditorMenu.camControlRightHandle = zui_Handle.global.nest(22,null);
-EditorMenu.camControlUpHandle = zui_Handle.global.nest(23,null);
-EditorMenu.camControlDownHandle = zui_Handle.global.nest(24,null);
+EditorMenu.drawGridHandle = zui_Handle.global.nest(20,{ selected : true});
+EditorMenu.physicsDebugHandle = zui_Handle.global.nest(21,{ selected : false});
+EditorMenu.camControlLeftHandle = zui_Handle.global.nest(22,null);
+EditorMenu.camControlRightHandle = zui_Handle.global.nest(23,null);
+EditorMenu.camControlUpHandle = zui_Handle.global.nest(24,null);
+EditorMenu.camControlDownHandle = zui_Handle.global.nest(25,null);
 EditorMenu.menuItemsCount = [6,2,3,5,3];
 EditorMenuBar.defaultMenubarW = 330;
 EditorTools.redrawArrows = true;
@@ -106644,8 +106743,8 @@ EditorUi.arrow = -1;
 EditorUi.arrowMode = 0;
 FileBrowserDialog.inst = null;
 FileBrowserDialog.defaultPath = ".";
-FileBrowserDialog.fbHandle = zui_Handle.global.nest(15,null);
-FileBrowserDialog.textInputHandle = zui_Handle.global.nest(16,null);
+FileBrowserDialog.fbHandle = zui_Handle.global.nest(8,null);
+FileBrowserDialog.textInputHandle = zui_Handle.global.nest(9,null);
 found_App.onResets = null;
 found_App.onEndFrames = null;
 found_App.traitAwakes = [];
@@ -106656,14 +106755,14 @@ found_App.traitRenders = [];
 found_App.traitRenders2D = [];
 found_App.editorui = null;
 found_App.frameCounter = new found__$App_FPS();
-ProjectCreator.pathInputHandle = zui_Handle.global.nest(87,null);
-ProjectCreator.nameInputHandle = zui_Handle.global.nest(85,null);
-ProjectCreator.typeHandle = zui_Handle.global.nest(86,null);
+ProjectCreator.pathInputHandle = zui_Handle.global.nest(88,null);
+ProjectCreator.nameInputHandle = zui_Handle.global.nest(86,null);
+ProjectCreator.typeHandle = zui_Handle.global.nest(87,null);
 ProjectInit.path = "";
 ProjectInit.project = "";
 ProjectInit.hasHaxeui = true;
-TraitsDialog.textInputHandle = zui_Handle.global.nest(10,null);
-TraitsDialog.comboBoxHandle = zui_Handle.global.nest(12,null);
+TraitsDialog.textInputHandle = zui_Handle.global.nest(12,null);
+TraitsDialog.comboBoxHandle = zui_Handle.global.nest(14,null);
 TraitsDialog.traitsFolderPath = "";
 TraitsDialog.traitTypes = ["Visual Trait","Script Trait"];
 TraitsDialog.traitTypeExtensions = ["vhx","hx"];
@@ -106708,7 +106807,7 @@ found_Found.fullscreen = false;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
 found_Found.sha = HxOverrides.substr("'5deaa01'",1,7);
-found_Found.date = "2020-11-18 19:16:54".split(" ")[0];
+found_Found.date = "2020-11-19 22:16:37".split(" ")[0];
 found_Found.collisionsDraw = false;
 found_Found.drawGrid = true;
 found_Found.sceneX = 0.0;
