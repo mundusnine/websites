@@ -4593,23 +4593,56 @@ var EditorMenuBar = function() {
 	this.menubarw = 330;
 	this.menuHandle = new zui_Handle({ layout : 1});
 	this.workspaceHandle = new zui_Handle({ layout : 1});
-	this.playImage = kha_Assets.images.play;
-	this.pauseImage = kha_Assets.images.pause;
 };
 $hxClasses["EditorMenuBar"] = EditorMenuBar;
 EditorMenuBar.__name__ = true;
 EditorMenuBar.__interfaces__ = [View];
 EditorMenuBar.prototype = {
-	workspaceHandle: null
+	ui: null
+	,workspaceHandle: null
 	,menuHandle: null
 	,menubarw: null
 	,playImage: null
 	,pauseImage: null
+	,shouldRedraw: function(image,width,height) {
+		var should = image == null;
+		if(!should) {
+			should = image.get_width() != width || image.get_height() != height;
+		}
+		return should;
+	}
+	,redrawPlay: function(size,color) {
+		this.ui.g.end();
+		this.playImage = kha_Image.createRenderTarget(size | 0,size | 0);
+		this.playImage.get_g2().begin(true,0);
+		this.playImage.get_g2().set_color(color);
+		this.playImage.get_g2().fillTriangle(0,0,0,size,size,size * 0.5);
+		this.playImage.get_g2().end();
+		this.ui.g.begin(false);
+	}
+	,redrawPause: function(size,color) {
+		this.ui.g.end();
+		this.pauseImage = kha_Image.createRenderTarget(size | 0,size | 0);
+		this.pauseImage.get_g2().begin(true,0);
+		this.pauseImage.get_g2().set_color(color);
+		this.pauseImage.get_g2().fillRect(0,0,size * 0.15,size);
+		this.pauseImage.get_g2().fillRect(size * 0.5,0,size * 0.15,size);
+		this.pauseImage.get_g2().end();
+		this.ui.g.begin(false);
+	}
 	,render: function(ui,element) {
+		this.ui = ui;
 		ui.inputEnabled = true;
 		var WINDOW_BG_COL = ui.t.WINDOW_BG_COL;
 		ui.t.WINDOW_BG_COL = ui.t.SEPARATOR_COL;
 		if(ui.window(this.menuHandle,element.x | 0,element.y | 0,element.width | 0,element.height | 0)) {
+			var w = ui.t.BUTTON_H * ui.ops.scaleFactor > element.height ? element.height : ui.t.BUTTON_H * ui.ops.scaleFactor;
+			if(this.shouldRedraw(this.playImage,w,w)) {
+				this.redrawPlay(w,ui.t.ACCENT_COL);
+			}
+			if(this.shouldRedraw(this.pauseImage,w,w)) {
+				this.redrawPause(w,ui.t.ACCENT_COL);
+			}
 			var _w = ui._w;
 			ui._x += 1;
 			var ELEMENT_OFFSET = ui.t.ELEMENT_OFFSET;
@@ -4640,7 +4673,7 @@ EditorMenuBar.prototype = {
 			ui._w = _w;
 			ui._x = element.width * 0.5;
 			var origY = ui._y;
-			ui._y = element.height * 0.5 - this.playImage.get_height() * 0.25;
+			ui._y = element.height * 0.1;
 			var currentImage = found_App.editorui.isPlayMode ? this.pauseImage : this.playImage;
 			var state = ui.image(currentImage);
 			if(state == 3) {
@@ -106807,7 +106840,7 @@ found_Found.fullscreen = false;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
 found_Found.sha = HxOverrides.substr("'5deaa01'",1,7);
-found_Found.date = "2020-11-19 22:16:37".split(" ")[0];
+found_Found.date = "2020-11-23 23:23:05".split(" ")[0];
 found_Found.collisionsDraw = false;
 found_Found.drawGrid = true;
 found_Found.sceneX = 0.0;
