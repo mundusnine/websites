@@ -1206,17 +1206,13 @@ EReg.prototype = {
 	}
 	,__class__: EReg
 };
-var Tab = function(tabname,p_layout,p_canScroll) {
-	if(p_canScroll == null) {
-		p_canScroll = true;
-	}
+var Tab = function(tabname,p_layout) {
 	if(p_layout == null) {
 		p_layout = 0;
 	}
 	this.position = -1;
 	this.name = tabname;
 	this.layout = p_layout;
-	this.canScroll = p_canScroll;
 };
 $hxClasses["Tab"] = Tab;
 Tab.__name__ = true;
@@ -1229,10 +1225,6 @@ Tab.prototype = {
 	,get_layout: function() {
 		return this.layout;
 	}
-	,canScroll: null
-	,get_canScroll: function() {
-		return this.canScroll;
-	}
 	,get_active: function() {
 		if(this.parent == null) {
 			return false;
@@ -1244,7 +1236,7 @@ Tab.prototype = {
 	,render: function(ui) {
 	}
 	,__class__: Tab
-	,__properties__: {get_canScroll:"get_canScroll",get_layout:"get_layout",get_active:"get_active"}
+	,__properties__: {get_layout:"get_layout",get_active:"get_active"}
 };
 var EditorHierarchyObserver = function() { };
 $hxClasses["EditorHierarchyObserver"] = EditorHierarchyObserver;
@@ -1601,7 +1593,7 @@ var EditorGameView = function() {
 	this.drawHeight = 0.0;
 	this.drawWidth = 0.0;
 	this.drawTrait = new found_Trait();
-	Tab.call(this,utilities_Translator.tr("Game"),0,false);
+	Tab.call(this,utilities_Translator.tr("Game"));
 };
 $hxClasses["EditorGameView"] = EditorGameView;
 EditorGameView.__name__ = true;
@@ -4821,7 +4813,6 @@ EditorPanel.prototype = {
 		}
 		if(this.tabs.length > 0) {
 			this.windowHandle.layout = this.tabs[this.htab.position].get_layout();
-			this.windowHandle.scrollEnabled = this.tabs[this.htab.position].get_canScroll();
 		}
 		if(ui.window(this.windowHandle,this.get_x(),this.get_y(),this.get_w(),this.get_h())) {
 			var _g = 0;
@@ -106913,7 +106904,7 @@ found_Found.fullscreen = false;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
 found_Found.sha = HxOverrides.substr("'5deaa01'",1,7);
-found_Found.date = "2020-11-24 19:37:39".split(" ")[0];
+found_Found.date = "2020-11-24 19:39:27".split(" ")[0];
 found_Found.collisionsDraw = false;
 found_Found.drawGrid = true;
 found_Found.sceneX = 0.0;
