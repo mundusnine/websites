@@ -412,9 +412,9 @@ AnimationEditor.prototype = {
 		if(this.selectedUID > 0) {
 			var scale = 1.0;
 			if(width > height) {
-				scale = this.curSprite.get_width() > width * 0.25 ? width * 0.25 / this.curSprite.get_width() : 1.0;
+				scale = this.curSprite.get_width() > width * 0.25 ? width * 0.125 / this.curSprite.get_width() : 1.0;
 			} else {
-				scale = this.curSprite.get_height() > height * 0.25 ? height * 0.25 / this.curSprite.get_height() : 1.0;
+				scale = this.curSprite.get_height() > height * 0.25 ? height * 0.125 / this.curSprite.get_height() : 1.0;
 			}
 			this.origDimensions.x = this.curSprite.get_scale().x;
 			this.origDimensions.y = this.curSprite.get_scale().y;
@@ -806,7 +806,6 @@ CollisionEditorDialog.collisionEditorPopupDraw = function(ui) {
 		}
 	}
 	ui._x = initX;
-	ui._y = ui._h - ui.t.BUTTON_H - border;
 	ui.row([0.33,0.33,0.33]);
 	if(ui.button("Done")) {
 		if(CollisionEditorDialog.sprite != null) {
@@ -853,10 +852,73 @@ CollisionEditorDialog.collisionEditorPopupDraw = function(ui) {
 	if(ui.button("Cancel")) {
 		CollisionEditorDialog.exit();
 	}
+	ui._y += ui.t.ELEMENT_OFFSET * ui.ops.scaleFactor * 2;
 };
 CollisionEditorDialog.exit = function() {
 	found_App.editorui.ui.enabled = true;
 	zui_Popup.show = false;
+	if(CollisionEditorDialog.sprite != null && CollisionEditorDialog.sprite.body != null) {
+		var _this = CollisionEditorDialog.sprite.body;
+		var value = CollisionEditorDialog.sprite.get_position().x;
+		if(value != _this.frame.get_offset().x) {
+			var _this1 = _this.frame;
+			var this1 = _this.frame.get_offset();
+			var y = _this.frame.get_offset().y;
+			var self = this1;
+			self.x = value;
+			self.y = y;
+			_this1.set_offset(self);
+			_this.dirty = true;
+			if(!_this.sync_locked) {
+				if(_this.shapes.length > 0) {
+					var _g = 0;
+					var _g1 = _this.shapes;
+					while(_g < _g1.length) {
+						var shape = _g1[_g];
+						++_g;
+						shape.sync();
+					}
+				}
+				if(_this.mass <= 0 && _this.world != null) {
+					_this.bounds(_this.quadtree_data.bounds);
+					_this.world.static_quadtree.update(_this.quadtree_data);
+				}
+				if(_this.on_move != null) {
+					_this.on_move(_this.frame.get_offset().x,_this.frame.get_offset().y);
+				}
+			}
+		}
+		_this.frame.get_offset();
+		var _this = CollisionEditorDialog.sprite.body;
+		var value = CollisionEditorDialog.sprite.get_position().y;
+		if(value != _this.frame.get_offset().y) {
+			var _this1 = _this.frame;
+			var self = _this.frame.get_offset();
+			self.x = _this.frame.get_offset().x;
+			self.y = value;
+			_this1.set_offset(self);
+			_this.dirty = true;
+			if(!_this.sync_locked) {
+				if(_this.shapes.length > 0) {
+					var _g = 0;
+					var _g1 = _this.shapes;
+					while(_g < _g1.length) {
+						var shape = _g1[_g];
+						++_g;
+						shape.sync();
+					}
+				}
+				if(_this.mass <= 0 && _this.world != null) {
+					_this.bounds(_this.quadtree_data.bounds);
+					_this.world.static_quadtree.update(_this.quadtree_data);
+				}
+				if(_this.on_move != null) {
+					_this.on_move(_this.frame.get_offset().x,_this.frame.get_offset().y);
+				}
+			}
+		}
+		_this.frame.get_offset();
+	}
 };
 CollisionEditorDialog.toOptions = function(shape) {
 	var def = echo_Shape.get_defaults();
@@ -1144,13 +1206,17 @@ EReg.prototype = {
 	}
 	,__class__: EReg
 };
-var Tab = function(tabname,p_layout) {
+var Tab = function(tabname,p_layout,p_canScroll) {
+	if(p_canScroll == null) {
+		p_canScroll = true;
+	}
 	if(p_layout == null) {
 		p_layout = 0;
 	}
 	this.position = -1;
 	this.name = tabname;
 	this.layout = p_layout;
+	this.canScroll = p_canScroll;
 };
 $hxClasses["Tab"] = Tab;
 Tab.__name__ = true;
@@ -1163,6 +1229,10 @@ Tab.prototype = {
 	,get_layout: function() {
 		return this.layout;
 	}
+	,canScroll: null
+	,get_canScroll: function() {
+		return this.canScroll;
+	}
 	,get_active: function() {
 		if(this.parent == null) {
 			return false;
@@ -1174,7 +1244,7 @@ Tab.prototype = {
 	,render: function(ui) {
 	}
 	,__class__: Tab
-	,__properties__: {get_layout:"get_layout",get_active:"get_active"}
+	,__properties__: {get_canScroll:"get_canScroll",get_layout:"get_layout",get_active:"get_active"}
 };
 var EditorHierarchyObserver = function() { };
 $hxClasses["EditorHierarchyObserver"] = EditorHierarchyObserver;
@@ -1531,7 +1601,7 @@ var EditorGameView = function() {
 	this.drawHeight = 0.0;
 	this.drawWidth = 0.0;
 	this.drawTrait = new found_Trait();
-	Tab.call(this,utilities_Translator.tr("Game"));
+	Tab.call(this,utilities_Translator.tr("Game"),0,false);
 };
 $hxClasses["EditorGameView"] = EditorGameView;
 EditorGameView.__name__ = true;
@@ -1642,6 +1712,7 @@ EditorGameView.prototype = $extend(Tab.prototype,{
 					EditorTools.render(ui,tpos.x,tpos.y,y);
 				}
 			}
+			ui._y = y;
 		}
 		this.parent.windowHandle.redraws = 2;
 	}
@@ -4750,6 +4821,7 @@ EditorPanel.prototype = {
 		}
 		if(this.tabs.length > 0) {
 			this.windowHandle.layout = this.tabs[this.htab.position].get_layout();
+			this.windowHandle.scrollEnabled = this.tabs[this.htab.position].get_canScroll();
 		}
 		if(ui.window(this.windowHandle,this.get_x(),this.get_y(),this.get_w(),this.get_h())) {
 			var _g = 0;
@@ -6988,6 +7060,7 @@ TraitsDialog.traitCreationPopupDraw = function(ui) {
 	if(ui.button("Cancel")) {
 		zui_Popup.show = false;
 	}
+	ui._y += ui.t.ELEMENT_OFFSET * ui.ops.scaleFactor * 2;
 };
 TraitsDialog.loadPrecompiledTraits = function() {
 	var blob = kha_Assets.blobs.get("listTraits_json");
@@ -106840,7 +106913,7 @@ found_Found.fullscreen = false;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
 found_Found.sha = HxOverrides.substr("'5deaa01'",1,7);
-found_Found.date = "2020-11-23 23:23:05".split(" ")[0];
+found_Found.date = "2020-11-24 19:37:39".split(" ")[0];
 found_Found.collisionsDraw = false;
 found_Found.drawGrid = true;
 found_Found.sceneX = 0.0;
