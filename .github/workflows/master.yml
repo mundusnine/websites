@@ -1,7 +1,7 @@
 name: Lighthouse CI
 on:
   schedule:
-    - cron: "0 5 * * *" # 5 UTC == 0 in the morning EST
+    - cron: "0 5 * * 0" # 5 UTC == 0 in the morning EST
 jobs:
   lighthouse:
     runs-on: ubuntu-latest
