@@ -62854,18 +62854,24 @@ found_node_OnKeyboardNode.prototype = $extend(found_node_LogicNode.prototype,{
 	keyboardEventType: null
 	,keyCode: null
 	,isDown: null
+	,lastKey: null
+	,keyName: null
 	,update: function(dt) {
 		var keyboard = found_Input.getKeyboard();
 		var keyboardEventOccured = false;
+		if(this.lastKey != this.keyCode) {
+			this.keyName = found_Keyboard.keyCode(this.keyCode);
+			this.lastKey = this.keyCode;
+		}
 		switch(this.keyboardEventType) {
 		case "Down":
-			keyboardEventOccured = keyboard.down(this.keyCode);
+			keyboardEventOccured = keyboard.down(this.keyName);
 			break;
 		case "Pressed":
-			keyboardEventOccured = keyboard.started(this.keyCode);
+			keyboardEventOccured = keyboard.started(this.keyName);
 			break;
 		case "Released":
-			keyboardEventOccured = keyboard.released(this.keyCode);
+			keyboardEventOccured = keyboard.released(this.keyName);
 			break;
 		}
 		this.isDown = keyboardEventOccured;
@@ -62960,17 +62966,17 @@ found_node_Platformer2DControllerNode.prototype = $extend(found_node_LogicNode.p
 			var movementInput_x = 0;
 			var movementInput_y = 0;
 			if(this.inputType == "Use default input") {
-				if(keyboard.down(this.defaultLeftKeyCode)) {
+				if(keyboard.down(found_Keyboard.keyCode(this.defaultLeftKeyCode))) {
 					movementInput_x += -1;
 				}
-				if(keyboard.down(this.defaultRightKeyCode)) {
+				if(keyboard.down(found_Keyboard.keyCode(this.defaultRightKeyCode))) {
 					++movementInput_x;
 				}
 			} else {
 				movementInput_x = this.inputs[0].get().x;
 			}
 			this.tree.object.body.velocity.x = movementInput_x * speed;
-			if(keyboard.started(this.defaultJumpKeyCode)) {
+			if(keyboard.started(found_Keyboard.keyCode(this.defaultJumpKeyCode))) {
 				this.tree.object.body.velocity.y = -jumpForce;
 			}
 		}
@@ -63278,7 +63284,7 @@ var found_node_TopDownControllerNode = function(tree) {
 	found_node_LogicNode.call(this,tree);
 	tree.notifyOnInit(function() {
 		if(tree.object.body == null) {
-			found_tool_Log.error("Top-down controller needs the object to have a Rigidbody",{ fileName : "found/node/TopDownControllerNode.hx", lineNumber : 19, className : "found.node.TopDownControllerNode", methodName : "new"});
+			found_tool_Log.error("Top-down controller needs the object to have a Rigidbody",{ fileName : "found/node/TopDownControllerNode.hx", lineNumber : 20, className : "found.node.TopDownControllerNode", methodName : "new"});
 		}
 	});
 	tree.notifyOnUpdate($bind(this,this.update));
@@ -63299,16 +63305,16 @@ found_node_TopDownControllerNode.prototype = $extend(found_node_LogicNode.protot
 			var this1 = new hxmath_math_Vector2Default(0,0);
 			var movementInput = this1;
 			if(this.inputType == "Use default input") {
-				if(keyboard.down(this.defaultUpKeyCode)) {
+				if(keyboard.down(found_Keyboard.keyCode(this.defaultUpKeyCode))) {
 					movementInput.y += -1;
 				}
-				if(keyboard.down(this.defaultDownKeyCode)) {
+				if(keyboard.down(found_Keyboard.keyCode(this.defaultDownKeyCode))) {
 					movementInput.y += 1;
 				}
-				if(keyboard.down(this.defaultLeftKeyCode)) {
+				if(keyboard.down(found_Keyboard.keyCode(this.defaultLeftKeyCode))) {
 					movementInput.x += -1;
 				}
-				if(keyboard.down(this.defaultRightKeyCode)) {
+				if(keyboard.down(found_Keyboard.keyCode(this.defaultRightKeyCode))) {
 					movementInput.x += 1;
 				}
 			} else {
@@ -103813,20 +103819,22 @@ zui_Nodes.prototype = {
 				tmp4 = false;
 			}
 			if(tmp4) {
-				var _g2 = 0;
-				var _g3 = outs.length;
-				while(_g2 < _g3) {
-					var i = _g2++;
-					var zoomPan8 = (1.0 - this.zoom) * this.uiw / 2.5;
-					var sx = wx + (node.x * (this.scaleFactor * this.zoom) + (this.panX * (this.scaleFactor * this.zoom) + zoomPan8)) + (140 * (this.scaleFactor * this.zoom) | 0);
-					var zoomPan9 = (1.0 - this.zoom) * this.uih / 2.5;
-					var sy = wy + (node.y * (this.scaleFactor * this.zoom) + (this.panY * (this.scaleFactor * this.zoom) + zoomPan9)) + (((this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0) * 1.62 | 0) + i * (this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0));
-					if(ui.getInputInRect(sx - (this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0) / 2,sy - (this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0) / 2,this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0,this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0)) {
-						var l = { id : this.getLinkId(canvas.links), from_id : node.id, from_socket : i, to_id : -1, to_socket : -1};
-						canvas.links.push(l);
-						this.linkDrag = l;
-						this.isNewLink = true;
-						break;
+				if(this.linkDrag == null) {
+					var _g2 = 0;
+					var _g3 = outs.length;
+					while(_g2 < _g3) {
+						var i = _g2++;
+						var zoomPan8 = (1.0 - this.zoom) * this.uiw / 2.5;
+						var sx = wx + (node.x * (this.scaleFactor * this.zoom) + (this.panX * (this.scaleFactor * this.zoom) + zoomPan8)) + (140 * (this.scaleFactor * this.zoom) | 0);
+						var zoomPan9 = (1.0 - this.zoom) * this.uih / 2.5;
+						var sy = wy + (node.y * (this.scaleFactor * this.zoom) + (this.panY * (this.scaleFactor * this.zoom) + zoomPan9)) + (((this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0) * 1.62 | 0) + i * (this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0));
+						if(ui.getInputInRect(sx - (this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0) / 2,sy - (this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0) / 2,this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0,this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0)) {
+							var l = { id : this.getLinkId(canvas.links), from_id : node.id, from_socket : i, to_id : -1, to_socket : -1};
+							canvas.links.push(l);
+							this.linkDrag = l;
+							this.isNewLink = true;
+							break;
+						}
 					}
 				}
 				if(this.linkDrag == null) {
@@ -104252,6 +104260,14 @@ zui_Nodes.prototype = {
 				var buthandle = nhandle.nest(buti);
 				buthandle.position = but.default_value;
 				but.default_value = ui.combo(buthandle,texts,zui_Nodes.tr(but.name));
+			} else if(but.type == "KEY") {
+				ny += lineh;
+				ui._x = nx;
+				ui._y = ny;
+				ui._w = w;
+				var buthandle1 = nhandle.nest(buti);
+				buthandle1.value = but.default_value;
+				but.default_value = zui_Ext.keyInput(ui,buthandle1,zui_Nodes.tr(but.name));
 			} else if(but.type == "ARRAY") {
 				ny += lineh;
 				ui._x = nx;
@@ -104270,9 +104286,9 @@ zui_Nodes.prototype = {
 				var i = 0;
 				while(i < values.length) {
 					ui.row([0.74,0.25]);
-					var buthandle1 = nhandle.nest(buti + i);
-					buthandle1.position = values[i];
-					values[i] = ui.combo(buthandle1,texts1,"" + i);
+					var buthandle2 = nhandle.nest(buti + i);
+					buthandle2.position = values[i];
+					values[i] = ui.combo(buthandle2,texts1,"" + i);
 					if(ui.button("-")) {
 						values.splice(i,1);
 					} else {
@@ -106904,7 +106920,7 @@ found_Found.fullscreen = false;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
 found_Found.sha = HxOverrides.substr("'5deaa01'",1,7);
-found_Found.date = "2020-11-24 19:39:27".split(" ")[0];
+found_Found.date = "2020-11-25 14:50:34".split(" ")[0];
 found_Found.collisionsDraw = false;
 found_Found.drawGrid = true;
 found_Found.sceneX = 0.0;
@@ -106999,12 +107015,7 @@ found_node_data_FoundryNode.onMouseNode = (function($this) {
 	return $r;
 }(this));
 found_node_data_FoundryNode.mouseCoordNode = { id : 0, name : "Mouse Coord", type : "MouseCoordNode", x : 200, y : 200, inputs : [], outputs : [{ id : 0, node_id : 0, name : "Position", type : "VECTOR2", color : -7929601, default_value : ""},{ id : 0, node_id : 0, name : "Movement", type : "VECTOR2", color : -7929601, default_value : ""},{ id : 0, node_id : 0, name : "Wheel Delta", type : "VALUE", color : -10183681, default_value : ""}], buttons : [], color : -4962746};
-found_node_data_FoundryNode.onKeyboardNode = (function($this) {
-	var $r;
-	var tmp = { name : "keyboardEventType", type : "ENUM", data : found_node_OnKeyboardNode.getKeyboardEventTypes(), output : 0, default_value : 0};
-	$r = { id : 0, name : "On Keyboard", type : "OnKeyboardNode", x : 200, y : 200, inputs : [], outputs : [{ id : 0, node_id : 0, name : "Out", type : "ACTION", color : -5618620, default_value : ""},{ id : 1, node_id : 0, name : "isActive", type : "BOOLEAN", color : -10822566, default_value : 0.0}], buttons : [tmp,{ name : "keyCode", type : "ENUM", data : found_Keyboard.getKeyCodeStringValues(), output : 0, default_value : 0}], color : -4962746};
-	return $r;
-}(this));
+found_node_data_FoundryNode.onKeyboardNode = { id : 0, name : "On Keyboard", type : "OnKeyboardNode", x : 200, y : 200, inputs : [], outputs : [{ id : 0, node_id : 0, name : "Out", type : "ACTION", color : -5618620, default_value : ""},{ id : 1, node_id : 0, name : "isActive", type : "BOOLEAN", color : -10822566, default_value : 0.0}], buttons : [{ name : "keyboardEventType", type : "ENUM", data : found_node_OnKeyboardNode.getKeyboardEventTypes(), output : 0, default_value : 0},{ name : "keyCode", type : "KEY", output : 0, default_value : 65}], color : -4962746};
 found_node_data_FoundryNode.onGamepadAxisInputNode = { id : 0, name : "On Gamepad Axis Input", type : "OnGamepadAxisInputNode", x : 200, y : 200, inputs : [{ id : 0, node_id : 0, name : "Gamepad Index", type : "VALUE", color : -10183681, default_value : 0}], outputs : [{ id : 0, node_id : 0, name : "Out", type : "ACTION", color : -5618620, default_value : ""},{ id : 1, node_id : 0, name : "Float Axis Value", type : "FLOAT", color : -10183681, default_value : 0.0}], buttons : [{ name : "selectedAxisName", type : "ENUM", data : found_Gamepad.getAxisStringValues(), output : 0, default_value : 0}], color : -4962746};
 found_node_data_FoundryNode.onGamepadButtonInputNode = (function($this) {
 	var $r;
@@ -107036,25 +107047,8 @@ found_node_data_FoundryNode.isObjectOutsideViewNode = { id : 0, name : "Is Objec
 found_node_data_FoundryNode.flipSpriteNode = { id : 0, name : "Flip Sprite", type : "FlipSpriteNode", x : 200, y : 200, inputs : [{ id : 0, node_id : 0, name : "In", type : "ACTION", color : -5618620, default_value : ""},{ id : 1, node_id : 0, name : "selectedSpriteName", type : "OBJECT", color : -4934476, default_value : null},{ id : 2, node_id : 0, name : "FlipX", type : "BOOLEAN", color : -10822566, default_value : 0.0},{ id : 3, node_id : 0, name : "FlipY", type : "BOOLEAN", color : -10822566, default_value : 0.0}], outputs : [], buttons : [{ name : "selectedSpriteName", type : "ENUM", data : [""], output : 0, default_value : 0}], color : -4962746};
 found_node_data_FoundryNode.applyForceToRigidbodyNode = { id : 0, name : "Apply Force To Rigidbody", type : "ApplyForceToRigidbodyNode", x : 200, y : 200, color : -4962746, inputs : [{ id : 0, node_id : 0, name : "In", type : "ACTION", color : -5618620, default_value : ""},{ id : 0, node_id : 0, name : "Object", type : "OBJECT", color : -4934476, default_value : null},{ id : 0, node_id : 0, name : "Vec2", type : "VECTOR2", color : -7929601, default_value : new kha_math_FastVector2(0.0,0.0)}], outputs : [{ id : 0, node_id : 0, name : "Out", type : "ACTION", color : -5618620, default_value : ""}], buttons : []};
 found_node_data_FoundryNode.applyImpulseToRigidbodyNode = { id : 0, name : "Apply Impulse To Rigidbody", type : "ApplyImpulseToRigidbodyNode", x : 200, y : 200, color : -4962746, inputs : [{ id : 0, node_id : 0, name : "In", type : "ACTION", color : -5618620, default_value : ""},{ id : 0, node_id : 0, name : "Object", type : "OBJECT", color : -4934476, default_value : null},{ id : 0, node_id : 0, name : "Vec2", type : "VECTOR2", color : -7929601, default_value : new kha_math_FastVector2(0.0,0.0)}], outputs : [{ id : 0, node_id : 0, name : "Out", type : "ACTION", color : -5618620, default_value : ""}], buttons : []};
-found_node_data_FoundryNode.topDownControllerNode = (function($this) {
-	var $r;
-	var tmp = [{ id : 0, node_id : 0, name : "Custom Input Vec2", type : "VECTOR2", color : -7929601, default_value : new kha_math_FastVector2(0.0,0.0)},{ id : 1, node_id : 0, name : "Speed", type : "VALUE", color : -10183681, default_value : 300.0}];
-	var tmp1 = { name : "defaultUpKeyCode", type : "ENUM", data : found_Keyboard.getKeyCodeStringValues(), output : 0, default_value : found_Keyboard.getKeyCodeStringValues().indexOf("up")};
-	var tmp2 = { name : "defaultDownKeyCode", type : "ENUM", data : found_Keyboard.getKeyCodeStringValues(), output : 0, default_value : found_Keyboard.getKeyCodeStringValues().indexOf("down")};
-	var tmp3 = { name : "defaultLeftKeyCode", type : "ENUM", data : found_Keyboard.getKeyCodeStringValues(), output : 0, default_value : found_Keyboard.getKeyCodeStringValues().indexOf("left")};
-	var tmp4 = found_Keyboard.getKeyCodeStringValues();
-	$r = { id : 0, name : "Top-down Controller", type : "TopDownControllerNode", x : 200, y : 200, inputs : tmp, outputs : [], buttons : [{ name : "inputType", type : "ENUM", data : ["Use default input","Use custom input"], output : 0, default_value : 0},tmp1,tmp2,tmp3,{ name : "defaultRightKeyCode", type : "ENUM", data : tmp4, output : 0, default_value : found_Keyboard.getKeyCodeStringValues().indexOf("right")}], color : -4962746};
-	return $r;
-}(this));
-found_node_data_FoundryNode.platformer2DControllerNode = (function($this) {
-	var $r;
-	var tmp = [{ id : 0, node_id : 0, name : "Custom Input Vec2", type : "VECTOR2", color : -7929601, default_value : new kha_math_FastVector2(0.0,0.0)},{ id : 1, node_id : 0, name : "Speed", type : "VALUE", color : -10183681, default_value : 300.0},{ id : 2, node_id : 0, name : "Jump Force", type : "VALUE", color : -10183681, default_value : 1000.0}];
-	var tmp1 = { name : "defaultLeftKeyCode", type : "ENUM", data : found_Keyboard.getKeyCodeStringValues(), output : 0, default_value : found_Keyboard.getKeyCodeStringValues().indexOf("left")};
-	var tmp2 = { name : "defaultRightKeyCode", type : "ENUM", data : found_Keyboard.getKeyCodeStringValues(), output : 0, default_value : found_Keyboard.getKeyCodeStringValues().indexOf("right")};
-	var tmp3 = found_Keyboard.getKeyCodeStringValues();
-	$r = { id : 0, name : "Platformer 2D Controller", type : "Platformer2DControllerNode", x : 200, y : 200, inputs : tmp, outputs : [], buttons : [{ name : "inputType", type : "ENUM", data : ["Use default input","Use custom input"], output : 0, default_value : 0},tmp1,tmp2,{ name : "defaultJumpKeyCode", type : "ENUM", data : tmp3, output : 0, default_value : found_Keyboard.getKeyCodeStringValues().indexOf("space")}], color : -4962746};
-	return $r;
-}(this));
+found_node_data_FoundryNode.topDownControllerNode = { id : 0, name : "Top-down Controller", type : "TopDownControllerNode", x : 200, y : 200, inputs : [{ id : 0, node_id : 0, name : "Custom Input Vec2", type : "VECTOR2", color : -7929601, default_value : new kha_math_FastVector2(0.0,0.0)},{ id : 1, node_id : 0, name : "Speed", type : "VALUE", color : -10183681, default_value : 300.0}], outputs : [], buttons : [{ name : "inputType", type : "ENUM", data : ["Use default input","Use custom input"], output : 0, default_value : 0},{ name : "defaultUpKeyCode", type : "KEY", output : 0, default_value : 38},{ name : "defaultDownKeyCode", type : "KEY", output : 0, default_value : 40},{ name : "defaultLeftKeyCode", type : "KEY", output : 0, default_value : 37},{ name : "defaultRightKeyCode", type : "KEY", output : 0, default_value : 39}], color : -4962746};
+found_node_data_FoundryNode.platformer2DControllerNode = { id : 0, name : "Platformer 2D Controller", type : "Platformer2DControllerNode", x : 200, y : 200, inputs : [{ id : 0, node_id : 0, name : "Custom Input Vec2", type : "VECTOR2", color : -7929601, default_value : new kha_math_FastVector2(0.0,0.0)},{ id : 1, node_id : 0, name : "Speed", type : "VALUE", color : -10183681, default_value : 300.0},{ id : 2, node_id : 0, name : "Jump Force", type : "VALUE", color : -10183681, default_value : 1000.0}], outputs : [], buttons : [{ name : "inputType", type : "ENUM", data : ["Use default input","Use custom input"], output : 0, default_value : 0},{ name : "defaultLeftKeyCode", type : "KEY", output : 0, default_value : 37},{ name : "defaultRightKeyCode", type : "KEY", output : 0, default_value : 39},{ name : "defaultJumpKeyCode", type : "KEY", output : 0, default_value : 32}], color : -4962746};
 found_node_data_FoundryNode.bulletMovementNode = { id : 0, name : "Bullet Movement", type : "BulletMovementNode", x : 200, y : 200, inputs : [{ id : 0, node_id : 0, name : "Reset Vel & angle", type : "ACTION", color : -5618620, default_value : ""},{ id : 0, node_id : 0, name : "Speed", type : "VALUE", color : -10183681, default_value : 300.0}], outputs : [], buttons : [], color : -4962746};
 found_node_data_FoundryNode.setCameraTargetPositionNode = { id : 0, name : "Set Camera Target Position", type : "SetCameraTargetPositionNode", x : 200, y : 200, inputs : [{ id : 0, node_id : 0, name : "In", type : "ACTION", color : -5618620, default_value : ""},{ id : 1, node_id : 0, name : "Target Position Vec2", type : "VECTOR2", color : -7929601, default_value : new kha_math_FastVector2(0.0,0.0)}], outputs : [{ id : 0, node_id : 0, name : "Out", type : "ACTION", color : -5618620, default_value : ""}], buttons : [], color : -4962746};
 found_node_data_FoundryNode.setCameraFollowTargetNode = { id : 0, name : "Set Camera Follow Target", type : "SetCameraFollowTargetNode", x : 200, y : 200, inputs : [{ id : 0, node_id : 0, name : "In", type : "ACTION", color : -5618620, default_value : ""},{ id : 0, node_id : 0, name : "Object", type : "OBJECT", color : -4934476, default_value : null}], outputs : [{ id : 0, node_id : 0, name : "Out", type : "ACTION", color : -5618620, default_value : ""}], buttons : [], color : -4962746};
