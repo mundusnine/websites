@@ -15,7 +15,6 @@
 	"brush_opacity": "shift+f",
 	"brush_angle": "alt+f",
 	"brush_ruler": "shift",
-	"toggle_playmode": "ctrl+p",
 	"file_new": "ctrl+n",
 	"file_open": "ctrl+o",
 	"file_save": "ctrl+s",
@@ -58,5 +57,6 @@
 	"toggle_2d_view": "shift+tab",
 	"toggle_node_editor": "tab",
 	"toggle_browser": "`",
+	"toggle_playmode": "ctrl+p", 
 	"node_search": "space"
 }
