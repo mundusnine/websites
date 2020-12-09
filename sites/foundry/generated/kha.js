@@ -1265,6 +1265,11 @@ EditorAnimationView.prototype = $extend(Tab.prototype,{
 		this.animationEditor.set_selectedUID(-1);
 	}
 	,notifyObjectSelectedInHierarchy: function(selectedObject,selectedUID) {
+		if(this.animationEditor == null) {
+			if(!this.initAnimationEditor()) {
+				return;
+			}
+		}
 		this.animationEditor.set_selectedUID(selectedUID);
 	}
 	,notifyPlayPause: function() {
@@ -1272,6 +1277,13 @@ EditorAnimationView.prototype = $extend(Tab.prototype,{
 			return;
 		}
 		this.animationEditor.doUpdate = !this.animationEditor.doUpdate;
+	}
+	,initAnimationEditor: function() {
+		if(this.animationEditor == null && this.parent != null) {
+			this.animationEditor = new AnimationEditor(this.parent,this);
+			return true;
+		}
+		return false;
 	}
 	,render: function(ui) {
 		if(this.animationEditor == null && this.parent != null) {
@@ -1327,7 +1339,7 @@ EditorCodeView.prototype = $extend(Tab.prototype,{
 	}
 	,setDisplayedTrait: function(trait) {
 		this.currentlyDisplayedTrait = trait;
-		if(this.get_active()) {
+		if(this.get_active() && this.visualEditor != null) {
 			this.traitNameWindowHandle.redraws = this.codeScriptWindowHandle.redraws = this.codeScriptTextAreaHandle.redraws = 2;
 			this.visualEditor.redraw();
 		}
@@ -107409,7 +107421,7 @@ found_Found.fullscreen = false;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
 found_Found.sha = HxOverrides.substr("'5deaa01'",1,7);
-found_Found.date = "2020-12-09 20:14:25".split(" ")[0];
+found_Found.date = "2020-12-09 20:27:39".split(" ")[0];
 found_Found.collisionsDraw = false;
 found_Found.drawGrid = true;
 found_Found.sceneX = 0.0;
