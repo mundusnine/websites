@@ -606,7 +606,7 @@ CollisionEditorDialog.open = function(p_sprite,p_tile) {
 	} else if(CollisionEditorDialog.sprite != null && CollisionEditorDialog.sprite.get_raw().type == "object") {
 		CollisionEditorDialog.image = kha_Image.create(CollisionEditorDialog.sprite.get_width() | 0,CollisionEditorDialog.sprite.get_height() | 0);
 	} else {
-		found_tool_Log.error("CollisionEditor can not be opened without a Tile or a Sprite",{ fileName : "CollisionEditorDialog.hx", lineNumber : 41, className : "CollisionEditorDialog", methodName : "open"});
+		found_tool_Log.error("CollisionEditor can not be opened without a Tile or a Sprite",{ fileName : "CollisionEditorDialog.hx", lineNumber : 42, className : "CollisionEditorDialog", methodName : "open"});
 		found_App.editorui.ui.enabled = true;
 		zui_Popup.show = false;
 	}
@@ -853,6 +853,9 @@ CollisionEditorDialog.collisionEditorPopupDraw = function(ui) {
 		CollisionEditorDialog.exit();
 	}
 	ui._y += ui.t.ELEMENT_OFFSET * ui.ops.scaleFactor * 2;
+	if(ui._y < zui_Popup.modalH) {
+		ui._y = zui_Popup.modalH;
+	}
 };
 CollisionEditorDialog.exit = function() {
 	found_App.editorui.ui.enabled = true;
@@ -1094,6 +1097,9 @@ ConfigSettingsDialog.configSettingsPopupDraw = function(ui) {
 		zui_Popup.show = false;
 		ConfigSettingsDialog.changedScale = false;
 	}
+	if(ui._y < zui_Popup.modalH) {
+		ui._y = zui_Popup.modalH;
+	}
 };
 var CustomExt = function() { };
 $hxClasses["CustomExt"] = CustomExt;
@@ -1262,6 +1268,11 @@ EditorAnimationView.__super__ = Tab;
 EditorAnimationView.prototype = $extend(Tab.prototype,{
 	animationEditor: null
 	,notifySceneSelectedInHierarchy: function() {
+		if(this.animationEditor == null) {
+			if(!this.initAnimationEditor()) {
+				return;
+			}
+		}
 		this.animationEditor.set_selectedUID(-1);
 	}
 	,notifyObjectSelectedInHierarchy: function(selectedObject,selectedUID) {
@@ -2066,8 +2077,8 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 	}
 	,selectScene: function() {
 		this.selectedObjectData = null;
-		this.selectedSceneData = found_State.active.raw;
 		this.setObject(null,-1);
+		this.selectedSceneData = found_State.active.raw;
 		this.parent.visible = true;
 		this.redraw();
 	}
@@ -6026,6 +6037,9 @@ FileBrowserDialog.fileBrowserPopupDraw = function(ui) {
 		FileBrowserDialog.doneCallback = function(path) {
 		};
 	}
+	if(ui._y < zui_Popup.modalH) {
+		ui._y = zui_Popup.modalH;
+	}
 };
 FileBrowserDialog.prototype = {
 	__class__: FileBrowserDialog
@@ -6063,6 +6077,9 @@ GridSizeDialog.gridSizePopupDraw = function(ui) {
 		zui_Popup.show = false;
 		GridSizeDialog.map = null;
 		found_tool_TileEditor.ui.enabled = true;
+	}
+	if(ui._y < zui_Popup.modalH) {
+		ui._y = zui_Popup.modalH;
 	}
 };
 var HxOverrides = function() { };
@@ -107421,7 +107438,7 @@ found_Found.fullscreen = false;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
 found_Found.sha = HxOverrides.substr("'5deaa01'",1,7);
-found_Found.date = "2020-12-09 20:27:39".split(" ")[0];
+found_Found.date = "2020-12-09 21:47:22".split(" ")[0];
 found_Found.collisionsDraw = false;
 found_Found.drawGrid = true;
 found_Found.sceneX = 0.0;
