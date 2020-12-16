@@ -162,7 +162,7 @@ AnimationEditor.prototype = {
 				} else {
 					var last = ui.t.ACCENT_COL;
 					ui.t.ACCENT_COL = kha_Color.fromFloats(1.0,0.0,0.0,0.7);
-					var txtHandle = zui_Handle.global.nest(112,null);
+					var txtHandle = zui_Handle.global.nest(113,null);
 					if(this.animIndex < 0) {
 						haxe_Log.trace("animIndex is bad at number: " + this.animIndex,{ fileName : "AnimationEditor.hx", lineNumber : 154, className : "AnimationEditor", methodName : "render"});
 					}
@@ -245,9 +245,9 @@ AnimationEditor.prototype = {
 			}
 			var div = ui.t.ELEMENT_W * ui.ops.scaleFactor / this.parent.get_w() * 2;
 			ui.row([1.0 - div,div]);
-			ui.panel(zui_Handle.global.nest(113,{ selected : true}),"",false,false,false);
+			ui.panel(zui_Handle.global.nest(114,{ selected : true}),"",false,false,false);
 			var oldY = ui._y;
-			zui_Ext.panelList(ui,zui_Handle.global.nest(114,{ selected : true, layout : 0}),this.curFrames,$bind(this,this.addItem),$bind(this,this.removeItem),$bind(this,this.getName),$bind(this,this.setName),$bind(this,this.drawItem),false);
+			zui_Ext.panelList(ui,zui_Handle.global.nest(115,{ selected : true, layout : 0}),this.curFrames,$bind(this,this.addItem),$bind(this,this.removeItem),$bind(this,this.getName),$bind(this,this.setName),$bind(this,this.drawItem),false);
 			this.animationPreview(this.delta,AnimationEditor.width,this.viewHeight,oldY);
 		}
 	}
@@ -719,25 +719,25 @@ CollisionEditorDialog.collisionEditorPopupDraw = function(ui) {
 		var color = kha_Color.fromBytes(255,0,0,128);
 		switch(shape.type) {
 		case 0:
-			var xHandle = zui_Handle.global.nest(47,null);
+			var xHandle = zui_Handle.global.nest(48,null);
 			xHandle.value = shape.offset_x - _w * 0.5;
 			var x = ui.slider(xHandle,"X",0,CollisionEditorDialog.image.get_width());
 			if(xHandle.changed) {
 				shape.offset_x = x + _w * 0.5;
 			}
-			var yHandle = zui_Handle.global.nest(48,null);
+			var yHandle = zui_Handle.global.nest(49,null);
 			yHandle.value = shape.offset_y - _h * 0.5;
 			var y = ui.slider(yHandle,"Y",0,CollisionEditorDialog.image.get_height());
 			if(yHandle.changed) {
 				shape.offset_y = y + _h * 0.5;
 			}
-			var widthHandle = zui_Handle.global.nest(49,null);
+			var widthHandle = zui_Handle.global.nest(50,null);
 			widthHandle.value = shape.width;
 			var w = ui.slider(widthHandle,"Width",0.1,_w);
 			if(widthHandle.changed) {
 				shape.width = w;
 			}
-			var heightHandle = zui_Handle.global.nest(50,null);
+			var heightHandle = zui_Handle.global.nest(51,null);
 			heightHandle.value = shape.height;
 			var h = ui.slider(heightHandle,"Height",0.1,_h);
 			if(heightHandle.changed) {
@@ -748,19 +748,19 @@ CollisionEditorDialog.collisionEditorPopupDraw = function(ui) {
 			ui.g.set_color(-1);
 			break;
 		case 1:
-			var xHandle = zui_Handle.global.nest(51,null);
+			var xHandle = zui_Handle.global.nest(52,null);
 			xHandle.value = shape.offset_x - _w * 0.5;
 			var x = ui.slider(xHandle,"X",0,_w);
 			if(xHandle.changed) {
 				shape.offset_x = x + _w * 0.5;
 			}
-			var yHandle = zui_Handle.global.nest(52,null);
+			var yHandle = zui_Handle.global.nest(53,null);
 			yHandle.value = shape.offset_y - _h * 0.5;
 			var y = ui.slider(yHandle,"Y",0,_h);
 			if(yHandle.changed) {
 				shape.offset_y = y + _h * 0.5;
 			}
-			var radiusHandle = zui_Handle.global.nest(53,null);
+			var radiusHandle = zui_Handle.global.nest(54,null);
 			radiusHandle.value = shape.radius;
 			var maxRadius = _w > _h ? _w : _h;
 			var radius = ui.slider(radiusHandle,"Radius",1,maxRadius);
@@ -1071,6 +1071,11 @@ ConfigSettingsDialog.configSettingsPopupDraw = function(ui) {
 	var value = ui.check(ConfigSettingsDialog.playModeHandle,utilities_Translator.tr("Boot in Play Mode"));
 	if(ConfigSettingsDialog.playModeHandle.changed) {
 		utilities_Config.raw.defaultPlayMode = value;
+	}
+	ConfigSettingsDialog.hideMenuHandle.selected = utilities_Config.raw.autoHideMenuBar;
+	var value = ui.check(ConfigSettingsDialog.hideMenuHandle,utilities_Translator.tr("Auto Hide Menu Bar in Scene View"));
+	if(ConfigSettingsDialog.hideMenuHandle.changed) {
+		utilities_Config.raw.autoHideMenuBar = value;
 	}
 	ConfigSettingsDialog.uiScaleHandle.value = utilities_Config.raw.window_scale != null ? utilities_Config.raw.window_scale : 1.0;
 	var factor = ui.slider(ConfigSettingsDialog.uiScaleHandle,"Ui scale",0.75,1.2,true);
@@ -1446,7 +1451,7 @@ EditorCodeView.prototype = $extend(Tab.prototype,{
 });
 var EditorConsole = function() {
 	this.lineHeight = 0.0;
-	this.comboH = zui_Handle.global.nest(115,null);
+	this.comboH = zui_Handle.global.nest(116,null);
 	this.checkH = zui_Handle.global.nest(2,null);
 	this.handle = zui_Handle.global.nest(21,null);
 	this.typeImages = [];
@@ -1704,8 +1709,8 @@ var EditorHierarchy = function() {
 	this.objectNameDoubleClickTime = 0.0;
 	this.sceneNameDoubleClickTime = 0.0;
 	this.handles = [];
-	this.objectTypeHandle = zui_Handle.global.nest(85,null);
-	this.textInputHandle = zui_Handle.global.nest(84,null);
+	this.objectTypeHandle = zui_Handle.global.nest(86,null);
+	this.textInputHandle = zui_Handle.global.nest(85,null);
 	this.objectWithNameAlreadyExists = false;
 	this.sceneNameHandle = zui_Handle.global.nest(17,null);
 	this.sceneName = "";
@@ -1796,7 +1801,7 @@ EditorHierarchy.prototype = $extend(Tab.prototype,{
 		if(this.scene == null) {
 			return;
 		}
-		if(ui.panel(zui_Handle.global.nest(86,null),this.name)) {
+		if(ui.panel(zui_Handle.global.nest(87,null),this.name)) {
 			this.sceneNameHandle.text = this.scene.name;
 			if(kha_Scheduler.time() - this.sceneNameDoubleClickTime > 1.0) {
 				this.sceneNameHandle.position = 0;
@@ -1838,7 +1843,7 @@ EditorHierarchy.prototype = $extend(Tab.prototype,{
 	,objectCreationPopupDraw: function(ui) {
 		zui_Popup.boxTitle = utilities_Translator.tr("Add an Object");
 		var border = 2 * zui_Popup.borderW + zui_Popup.borderOffset;
-		if(ui.panel(zui_Handle.global.nest(87,{ selected : true}),utilities_Translator.tr("Object Types") + ":",true)) {
+		if(ui.panel(zui_Handle.global.nest(88,{ selected : true}),utilities_Translator.tr("Object Types") + ":",true)) {
 			var index = 0;
 			var _g = 0;
 			var _g1 = this.objectTypes;
@@ -2129,16 +2134,16 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 		var wHandle = this.objItemHandles[8];
 		var hHandle = this.objItemHandles[9];
 		var imagePathHandle = this.objItemHandles[10];
-		var kinematicHandle = zui_Handle.global.nest(56,null);
-		var massHandle = zui_Handle.global.nest(57,null);
-		var elasticityHandle = zui_Handle.global.nest(58,null);
-		var maxXvelHandle = zui_Handle.global.nest(59,null);
-		var maxYvelHandle = zui_Handle.global.nest(60,null);
-		var maxRotVelHandle = zui_Handle.global.nest(61,null);
-		var dragXHandle = zui_Handle.global.nest(62,null);
-		var dragYHandle = zui_Handle.global.nest(63,null);
-		var gravityScaleHandle = zui_Handle.global.nest(64,null);
-		var objectNameHandle = zui_Handle.global.nest(65,null);
+		var kinematicHandle = zui_Handle.global.nest(57,null);
+		var massHandle = zui_Handle.global.nest(58,null);
+		var elasticityHandle = zui_Handle.global.nest(59,null);
+		var maxXvelHandle = zui_Handle.global.nest(60,null);
+		var maxYvelHandle = zui_Handle.global.nest(61,null);
+		var maxRotVelHandle = zui_Handle.global.nest(62,null);
+		var dragXHandle = zui_Handle.global.nest(63,null);
+		var dragYHandle = zui_Handle.global.nest(64,null);
+		var gravityScaleHandle = zui_Handle.global.nest(65,null);
+		var objectNameHandle = zui_Handle.global.nest(66,null);
 		objectNameHandle.text = this.selectedObjectData.name;
 		ui.textInput(objectNameHandle,"");
 		if(objectNameHandle.changed && objectNameHandle.text != "") {
@@ -2265,7 +2270,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				this.browseImage();
 			}
 		}
-		if(ui.panel(zui_Handle.global.nest(66,null),"Traits: ")) {
+		if(ui.panel(zui_Handle.global.nest(67,null),"Traits: ")) {
 			ui.indent();
 			var traits = this.selectedObjectData.traits != null ? this.selectedObjectData.traits : [];
 			var lastSelectedTraitIndex = this.traitListHandle.nest(0).position;
@@ -3752,7 +3757,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				_gthis.get_currentObject().dataChanged = true;
 				_gthis.changed = true;
 			};
-			if(ui.panel(zui_Handle.global.nest(67,null),"Rigidbody: ")) {
+			if(ui.panel(zui_Handle.global.nest(68,null),"Rigidbody: ")) {
 				if(ui.button(text)) {
 					addRigidbody(text);
 				}
@@ -3804,7 +3809,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 						this.changed = true;
 					}
 					maxYvelHandle.value = this.selectedObjectData.rigidBody.max_velocity_x;
-					var maxVelY = zui_Ext.floatInput(ui,zui_Handle.global.nest(68,null),"Max Y Velocity:",2);
+					var maxVelY = zui_Ext.floatInput(ui,zui_Handle.global.nest(69,null),"Max Y Velocity:",2);
 					if(maxYvelHandle.changed) {
 						this.selectedObjectData.rigidBody.max_velocity_y = maxVelY;
 						this.get_currentObject().body.max_velocity.y = this.selectedObjectData.rigidBody.max_velocity_y;
@@ -3812,7 +3817,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 						this.changed = true;
 					}
 					maxRotVelHandle.value = this.selectedObjectData.rigidBody.max_rotational_velocity;
-					var maxRot = zui_Ext.floatInput(ui,zui_Handle.global.nest(69,null),"Max Rotation Velocity:",2);
+					var maxRot = zui_Ext.floatInput(ui,zui_Handle.global.nest(70,null),"Max Rotation Velocity:",2);
 					if(maxRotVelHandle.changed) {
 						this.selectedObjectData.rigidBody.max_rotational_velocity = maxRot;
 						this.get_currentObject().body.max_rotational_velocity = this.selectedObjectData.rigidBody.max_rotational_velocity;
@@ -3820,7 +3825,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 						this.changed = true;
 					}
 					dragXHandle.value = this.selectedObjectData.rigidBody.drag_x;
-					var dragX = zui_Ext.floatInput(ui,zui_Handle.global.nest(70,null),"Drag X:",2);
+					var dragX = zui_Ext.floatInput(ui,zui_Handle.global.nest(71,null),"Drag X:",2);
 					if(dragXHandle.changed) {
 						this.selectedObjectData.rigidBody.drag_x = dragX;
 						this.get_currentObject().body.drag.x = this.selectedObjectData.rigidBody.drag_x;
@@ -3828,7 +3833,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 						this.changed = true;
 					}
 					dragYHandle.value = this.selectedObjectData.rigidBody.drag_y;
-					var dragY = zui_Ext.floatInput(ui,zui_Handle.global.nest(71,null),"Drag Y:",2);
+					var dragY = zui_Ext.floatInput(ui,zui_Handle.global.nest(72,null),"Drag Y:",2);
 					if(dragYHandle.changed) {
 						this.selectedObjectData.rigidBody.drag_y = dragY;
 						this.get_currentObject().body.drag.y = this.selectedObjectData.rigidBody.drag_y;
@@ -3871,14 +3876,14 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 		}
 	}
 	,drawSelectedSceneItems: function(ui) {
-		var sceneNameHandle = zui_Handle.global.nest(72,null);
+		var sceneNameHandle = zui_Handle.global.nest(73,null);
 		sceneNameHandle.text = this.selectedSceneData.name != null ? this.selectedSceneData.name : "Unavailable";
 		ui.textInput(sceneNameHandle,"");
 		if(sceneNameHandle.changed && sceneNameHandle.text != "" && sceneNameHandle.text != "Unavailable") {
 			this.selectedSceneData.name = sceneNameHandle.text;
 			this.changed = true;
 		}
-		var depthSortHandle = zui_Handle.global.nest(73,null);
+		var depthSortHandle = zui_Handle.global.nest(74,null);
 		depthSortHandle.selected = this.selectedSceneData._depth != null && this.selectedSceneData._depth;
 		if(ui.getHover()) {
 			ui.tooltip(this.depthSortText);
@@ -3890,7 +3895,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 			this.changed = true;
 		}
 		if(this.selectedSceneData._depth) {
-			var zsortHandle = zui_Handle.global.nest(74,null);
+			var zsortHandle = zui_Handle.global.nest(75,null);
 			zsortHandle.selected = this.selectedSceneData._Zsort != null ? this.selectedSceneData._Zsort : true;
 			if(ui.getHover()) {
 				ui.tooltip(this.zSortText);
@@ -3902,7 +3907,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				this.changed = true;
 			}
 		}
-		var cullHandle = zui_Handle.global.nest(75,null);
+		var cullHandle = zui_Handle.global.nest(76,null);
 		var cull = ui.check(cullHandle,"Cull");
 		if(cullHandle.changed && !cull) {
 			this.selectedSceneData.cullOffset = null;
@@ -3915,7 +3920,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				Reflect.setProperty(found_State.active,"cullOffset",this.selectedSceneData.cullOffset);
 				this.changed = true;
 			}
-			var cullOffsetHandle = zui_Handle.global.nest(76,null);
+			var cullOffsetHandle = zui_Handle.global.nest(77,null);
 			cullOffsetHandle.value = this.selectedSceneData.cullOffset;
 			var offset = ui.slider(cullOffsetHandle,"Cull offset",1,500);
 			if(cullOffsetHandle.changed) {
@@ -3926,12 +3931,12 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 		}
 		ui.row([0.5,0.5]);
 		var text = this.selectedSceneData.physicsWorld != null ? "-" : "+";
-		if(ui.panel(zui_Handle.global.nest(77,null),"Physics World: ")) {
+		if(ui.panel(zui_Handle.global.nest(78,null),"Physics World: ")) {
 			if(ui.button(text)) {
 				this.addPhysWorld(text,this.selectedSceneData);
 			}
 			if(this.selectedSceneData.physicsWorld != null) {
-				var widthHandle = zui_Handle.global.nest(78,null);
+				var widthHandle = zui_Handle.global.nest(79,null);
 				widthHandle.value = this.selectedSceneData.physicsWorld.width;
 				var width = zui_Ext.floatInput(ui,widthHandle,"Width:",2);
 				if(widthHandle.changed) {
@@ -3943,7 +3948,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					}
 					this.changed = true;
 				}
-				var heightHandle = zui_Handle.global.nest(79,null);
+				var heightHandle = zui_Handle.global.nest(80,null);
 				heightHandle.value = this.selectedSceneData.physicsWorld.height;
 				var height = zui_Ext.floatInput(ui,heightHandle,"Height:",2);
 				if(heightHandle.changed) {
@@ -3955,7 +3960,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					}
 					this.changed = true;
 				}
-				var gravityXHandle = zui_Handle.global.nest(80,null);
+				var gravityXHandle = zui_Handle.global.nest(81,null);
 				gravityXHandle.value = this.selectedSceneData.physicsWorld.gravity_x != null ? this.selectedSceneData.physicsWorld.gravity_x : 0;
 				var gravityX = zui_Ext.floatInput(ui,gravityXHandle,"Gravity X:",2);
 				if(gravityXHandle.changed) {
@@ -3963,7 +3968,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					found_State.active.physics_world.gravity.x = gravityX;
 					this.changed = true;
 				}
-				var gravityYHandle = zui_Handle.global.nest(81,null);
+				var gravityYHandle = zui_Handle.global.nest(82,null);
 				gravityYHandle.value = this.selectedSceneData.physicsWorld.gravity_y;
 				var gravityY = zui_Ext.floatInput(ui,gravityYHandle,"Gravity Y:",2);
 				if(gravityYHandle.changed) {
@@ -3971,7 +3976,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					found_State.active.physics_world.gravity.y = gravityY;
 					this.changed = true;
 				}
-				var iterationsHandle = zui_Handle.global.nest(82,null);
+				var iterationsHandle = zui_Handle.global.nest(83,null);
 				iterationsHandle.value = this.selectedSceneData.physicsWorld.iterations;
 				var iterations = ui.slider(iterationsHandle,"No. of iterations",1,20,false,1) | 0;
 				if(iterationsHandle.changed) {
@@ -3979,7 +3984,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					found_State.active.physics_world.iterations = iterations;
 					this.changed = true;
 				}
-				var historyHandle = zui_Handle.global.nest(83,null);
+				var historyHandle = zui_Handle.global.nest(84,null);
 				historyHandle.value = this.selectedSceneData.physicsWorld.history != null ? this.selectedSceneData.physicsWorld.history : 500;
 				var history = ui.slider(historyHandle,"History",1,1000,false,0.01) | 0;
 				if(historyHandle.changed) {
@@ -4723,7 +4728,7 @@ EditorMenuBar.prototype = {
 			this.visible = true;
 			this.current = kha_Scheduler.time();
 		}
-		if(main.currentView > 0) {
+		if(main.currentView > 0 || !utilities_Config.raw.autoHideMenuBar) {
 			this.visible = this.animateIn = this.animateOut = true;
 		}
 		if(!this.visible && !this.animateIn && !this.animateOut) {
@@ -4794,7 +4799,7 @@ EditorMenuBar.prototype = {
 			}
 			ui._y = 0.0;
 			ui._w = ui._w + ui.t.ELEMENT_W * ui.ops.scaleFactor | 0;
-			main.set_currentView(zui_Ext.inlineRadio(ui,zui_Handle.global.nest(116,null),["Scene","Code","Draw"]));
+			main.set_currentView(zui_Ext.inlineRadio(ui,zui_Handle.global.nest(117,null),["Scene","Code","Draw"]));
 			zui_Ext.endMenu(ui);
 			ui._x = ui._w - ui.t.ELEMENT_W * ui.ops.scaleFactor * 2;
 		}
@@ -6063,9 +6068,9 @@ GridSizeDialog.open = function(p_map) {
 GridSizeDialog.gridSizePopupDraw = function(ui) {
 	zui_Popup.boxTitle = utilities_Translator.tr("Grid Size");
 	var border = 2 * zui_Popup.borderW + zui_Popup.borderOffset;
-	var gridSizeH = zui_Handle.global.nest(42,{ value : found_Found.GRID});
+	var gridSizeH = zui_Handle.global.nest(43,{ value : found_Found.GRID});
 	zui_Ext.floatInput(ui,gridSizeH,utilities_Translator.tr("Grid Size"));
-	var changeGrid = zui_Handle.global.nest(43,null);
+	var changeGrid = zui_Handle.global.nest(44,null);
 	ui.check(changeGrid,utilities_Translator.tr("Affect main Grid"));
 	ui._y = ui._h - ui.t.BUTTON_H - border;
 	ui.row([0.5,0.5]);
@@ -6188,8 +6193,8 @@ Main.main = function() {
 	found_Found.setup({ app : Project, title : "Foundry2d"});
 };
 var ManagerView = function(data,ui) {
-	this.listHandle = zui_Handle.global.nest(90,null);
-	this.tabsHandle = zui_Handle.global.nest(89,null);
+	this.listHandle = zui_Handle.global.nest(91,null);
+	this.tabsHandle = zui_Handle.global.nest(90,null);
 	this.titleElem = null;
 	this.selectedItem = null;
 	this.projects = [];
@@ -6232,7 +6237,7 @@ ManagerView.prototype = $extend(found_trait_internal_CanvasScript.prototype,{
 		this.translate();
 		var elem = element;
 		this.ui.begin(g);
-		if(this.ui.window(zui_Handle.global.nest(88,null),Math.floor(elem.x),Math.floor(elem.y),elem.width,elem.height)) {
+		if(this.ui.window(zui_Handle.global.nest(89,null),Math.floor(elem.x),Math.floor(elem.y),elem.width,elem.height)) {
 			if(this.ui.tab(this.tabsHandle,utilities_Translator.tr("Projects"))) {
 				var selected = zui_Ext.list(this.ui,this.listHandle,this.projects,{ itemDrawCb : $bind(this,this.drawItems), getNameCb : $bind(this,this.projName), removeCb : $bind(this,this.deleteProject), showAdd : false, showRadio : true, editable : false});
 				this.selectedItem = this.projects[selected];
@@ -64242,7 +64247,7 @@ found_tool_NodeEditor.prototype = {
 		var numTabs = 3;
 		if(ui.window(this.nodeMenuWindowHandle,found_tool_NodeEditor.x,found_tool_NodeEditor.y,ui.t.ELEMENT_W * ui.ops.scaleFactor * 0.5 * numTabs | 0,found_tool_NodeEditor.height * 0.75 | 0,true)) {
 			if(ui.tab(this.nodeMenuTabHandle,"Std")) {
-				if(ui.panel(zui_Handle.global.nest(94,null),"Logic")) {
+				if(ui.panel(zui_Handle.global.nest(95,null),"Logic")) {
 					if(ui.button("Gate")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_LogicNode.gate);
 					}
@@ -64259,7 +64264,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_LogicNode.whileN);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(95,null),"Variable")) {
+				if(ui.panel(zui_Handle.global.nest(96,null),"Variable")) {
 					if(ui.button("String")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_VariableNode.string);
 					}
@@ -64282,7 +64287,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(def);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(96,null),"Std")) {
+				if(ui.panel(zui_Handle.global.nest(97,null),"Std")) {
 					if(ui.button("Print")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_StdNode.print);
 					}
@@ -64296,7 +64301,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_StdNode.floatToInt);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(97,null),"Math")) {
+				if(ui.panel(zui_Handle.global.nest(98,null),"Math")) {
 					if(ui.button("Maths")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_MathNode.maths);
 					}
@@ -64315,7 +64320,7 @@ found_tool_NodeEditor.prototype = {
 				}
 			}
 			if(ui.tab(this.nodeMenuTabHandle,"Foundry2d")) {
-				if(ui.panel(zui_Handle.global.nest(98,null),"Event")) {
+				if(ui.panel(zui_Handle.global.nest(99,null),"Event")) {
 					if(ui.button("On Add")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.onAddNode);
 					}
@@ -64335,7 +64340,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.sendEventNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(99,null),"Input")) {
+				if(ui.panel(zui_Handle.global.nest(100,null),"Input")) {
 					if(ui.button("On Mouse")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.onMouseNode);
 					}
@@ -64352,7 +64357,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.onGamepadButtonInputNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(100,null),"Math")) {
+				if(ui.panel(zui_Handle.global.nest(101,null),"Math")) {
 					if(ui.button("Split Vec2")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.splitVec2Node);
 					}
@@ -64369,7 +64374,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.multiplyVec2sNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(101,null),"Time")) {
+				if(ui.panel(zui_Handle.global.nest(102,null),"Time")) {
 					if(ui.button("Every X Seconds")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.everyXNode);
 					}
@@ -64377,7 +64382,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.cooldownNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(102,null),"Transform")) {
+				if(ui.panel(zui_Handle.global.nest(103,null),"Transform")) {
 					if(ui.button("Get Position")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.getPositionNode);
 					}
@@ -64403,7 +64408,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.rotateTowardPositionNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(103,null),"Object")) {
+				if(ui.panel(zui_Handle.global.nest(104,null),"Object")) {
 					if(ui.button("Get Object")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.getObjectNode);
 					}
@@ -64423,12 +64428,12 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.getRandomObjectNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(104,null),"Sprite")) {
+				if(ui.panel(zui_Handle.global.nest(105,null),"Sprite")) {
 					if(ui.button("Flip Sprite")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.flipSpriteNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(105,null),"Physics")) {
+				if(ui.panel(zui_Handle.global.nest(106,null),"Physics")) {
 					if(ui.button("On Collision Event")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.onCollisionNode);
 					}
@@ -64439,7 +64444,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.applyImpulseToRigidbodyNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(106,null),"Controllers")) {
+				if(ui.panel(zui_Handle.global.nest(107,null),"Controllers")) {
 					if(ui.button("Top-down Controller")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.topDownControllerNode);
 					}
@@ -64447,12 +64452,12 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.platformer2DControllerNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(107,null),"Movement")) {
+				if(ui.panel(zui_Handle.global.nest(108,null),"Movement")) {
 					if(ui.button("Bullet Movement")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.bulletMovementNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(108,null),"Camera")) {
+				if(ui.panel(zui_Handle.global.nest(109,null),"Camera")) {
 					if(ui.button("Set Camera Position")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.setCameraTargetPositionNode);
 					}
@@ -64460,12 +64465,12 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.setCameraFollowTargetNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(109,null),"Animation")) {
+				if(ui.panel(zui_Handle.global.nest(110,null),"Animation")) {
 					if(ui.button("Play Animation")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.playAnimationNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(110,null),"Audio")) {
+				if(ui.panel(zui_Handle.global.nest(111,null),"Audio")) {
 					if(ui.button("Play Music")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.playMusicNode);
 					}
@@ -64478,7 +64483,7 @@ found_tool_NodeEditor.prototype = {
 				var sec = haxe_ds_StringMap.keysIterator(found_tool_NodeEditor.gameplayNodes.h);
 				while(sec.hasNext()) {
 					var sec1 = sec.next();
-					if(ui.panel(zui_Handle.global.nest(111,null),sec1)) {
+					if(ui.panel(zui_Handle.global.nest(112,null),sec1)) {
 						var nodes = found_tool_NodeEditor.gameplayNodes.h[sec1];
 						var _g = 0;
 						while(_g < nodes.length) {
@@ -64557,16 +64562,16 @@ var found_tool_TileEditor = function(visible) {
 	}
 	this.endHeight = 0.0;
 	this.limit = 10048;
-	this.editorStateHandle = zui_Handle.global.nest(44,null);
-	this.mapHeightHandle = zui_Handle.global.nest(41,null);
-	this.mapWidthHandle = zui_Handle.global.nest(40,null);
-	this.tilsheetListHandle = zui_Handle.global.nest(39,null);
+	this.editorStateHandle = zui_Handle.global.nest(45,null);
+	this.mapHeightHandle = zui_Handle.global.nest(42,null);
+	this.mapWidthHandle = zui_Handle.global.nest(41,null);
+	this.tilsheetListHandle = zui_Handle.global.nest(40,null);
 	this.tilesheets = [];
-	this.editorWindowHandle = zui_Handle.global.nest(37,null);
+	this.editorWindowHandle = zui_Handle.global.nest(38,null);
 	this.state = found_tool_TileEditorState.Draw;
 	this.canDrawTile = false;
 	this.unusedIds = [];
-	this.tileHandle = zui_Handle.global.nest(45,{ value : 0});
+	this.tileHandle = zui_Handle.global.nest(46,{ value : 0});
 	this.tileSelected = null;
 	this.map = null;
 	this.y = 256;
@@ -64627,7 +64632,7 @@ found_tool_TileEditor.prototype = {
 		var vec = new kha_math_Vector2();
 		if(found_tool_TileEditor.ui.window(this.editorWindowHandle,this.x,this.y,this.width,this.height,true)) {
 			this.endHeight = found_tool_TileEditor.ui._y;
-			if(found_tool_TileEditor.ui.panel(zui_Handle.global.nest(38,{ selected : true}),"Tilemap editor")) {
+			if(found_tool_TileEditor.ui.panel(zui_Handle.global.nest(39,{ selected : true}),"Tilemap editor")) {
 				var changed = false;
 				found_tool_TileEditor.ui.indent();
 				found_tool_TileEditor.ui.text("Tilesheets: ");
@@ -64876,7 +64881,7 @@ found_tool_TileEditor.prototype = {
 			return;
 		}
 		var data = this.tilesheets[index];
-		var imagePathHandle = zui_Handle.global.nest(54,null);
+		var imagePathHandle = zui_Handle.global.nest(55,null);
 		imagePathHandle.text = data.imagePath;
 		found_tool_TileEditor.ui.indent();
 		found_tool_TileEditor.ui.row([0.8,0.2]);
@@ -102461,6 +102466,7 @@ utilities_Config.init = function() {
 		utilities_Config.raw.keymap = "default.json";
 		utilities_Config.raw.theme = "dark.json";
 		utilities_Config.raw.defaultPlayMode = false;
+		utilities_Config.raw.autoHideMenuBar = false;
 		utilities_Config.raw.undo_steps = 4;
 		utilities_Config.raw.pressure_radius = true;
 		utilities_Config.raw.pressure_hardness = true;
@@ -102485,7 +102491,7 @@ utilities_Config.loadKeymap = function() {
 	try {
 		found_data_Data.getBlob("./data/keymap_presets/" + utilities_Config.raw.keymap,done);
 	} catch( _g ) {
-		kha_Assets.loadBlobFromPath("./data/keymap_presets/" + utilities_Config.raw.keymap,done,null,{ fileName : "utilities/Config.hx", lineNumber : 93, className : "utilities.Config", methodName : "loadKeymap"});
+		kha_Assets.loadBlobFromPath("./data/keymap_presets/" + utilities_Config.raw.keymap,done,null,{ fileName : "utilities/Config.hx", lineNumber : 94, className : "utilities.Config", methodName : "loadKeymap"});
 	}
 };
 utilities_Config.saveKeymap = function() {
@@ -107346,14 +107352,15 @@ if(ArrayBuffer.prototype.slice == null) {
 AnimationEditor.timeline = null;
 AnimationEditor.dot = null;
 zui_Handle.global = new zui_Handle();
-CollisionEditorDialog.textInputHandle = zui_Handle.global.nest(55,null);
-CollisionEditorDialog.comboBoxHandle = zui_Handle.global.nest(46,null);
+CollisionEditorDialog.textInputHandle = zui_Handle.global.nest(56,null);
+CollisionEditorDialog.comboBoxHandle = zui_Handle.global.nest(47,null);
 CollisionEditorDialog.collisionTypes = ["Rect","Circle","Polygon"];
 CollisionEditorDialog.shouldTileInit = false;
 ConfigSettingsDialog.localeHandle = zui_Handle.global.nest(28,null);
 ConfigSettingsDialog.languages = [];
 ConfigSettingsDialog.playModeHandle = zui_Handle.global.nest(29,null);
-ConfigSettingsDialog.uiScaleHandle = zui_Handle.global.nest(30,null);
+ConfigSettingsDialog.hideMenuHandle = zui_Handle.global.nest(30,null);
+ConfigSettingsDialog.uiScaleHandle = zui_Handle.global.nest(31,null);
 ConfigSettingsDialog.changedScale = false;
 CustomExt.lastFiles = [];
 CustomExt.lastFolders = [];
@@ -107368,12 +107375,12 @@ EditorMenu.menuCommands = null;
 EditorMenu.changeStarted = false;
 EditorMenu.showMenuFirst = true;
 EditorMenu.hideMenu = false;
-EditorMenu.drawGridHandle = zui_Handle.global.nest(31,{ selected : true});
-EditorMenu.physicsDebugHandle = zui_Handle.global.nest(32,{ selected : false});
-EditorMenu.camControlLeftHandle = zui_Handle.global.nest(33,null);
-EditorMenu.camControlRightHandle = zui_Handle.global.nest(34,null);
-EditorMenu.camControlUpHandle = zui_Handle.global.nest(35,null);
-EditorMenu.camControlDownHandle = zui_Handle.global.nest(36,null);
+EditorMenu.drawGridHandle = zui_Handle.global.nest(32,{ selected : true});
+EditorMenu.physicsDebugHandle = zui_Handle.global.nest(33,{ selected : false});
+EditorMenu.camControlLeftHandle = zui_Handle.global.nest(34,null);
+EditorMenu.camControlRightHandle = zui_Handle.global.nest(35,null);
+EditorMenu.camControlUpHandle = zui_Handle.global.nest(36,null);
+EditorMenu.camControlDownHandle = zui_Handle.global.nest(37,null);
 EditorMenu.menuItemsCount = [6,2,4,5,3];
 EditorMenuBar.defaultMenubarW = 330;
 EditorTools.redrawArrows = true;
@@ -107398,9 +107405,9 @@ found_App.traitRenders = [];
 found_App.traitRenders2D = [];
 found_App.editorui = null;
 found_App.frameCounter = new found__$App_FPS();
-ProjectCreator.pathInputHandle = zui_Handle.global.nest(93,null);
-ProjectCreator.nameInputHandle = zui_Handle.global.nest(91,null);
-ProjectCreator.typeHandle = zui_Handle.global.nest(92,null);
+ProjectCreator.pathInputHandle = zui_Handle.global.nest(94,null);
+ProjectCreator.nameInputHandle = zui_Handle.global.nest(92,null);
+ProjectCreator.typeHandle = zui_Handle.global.nest(93,null);
 ProjectInit.path = "";
 ProjectInit.project = "";
 ProjectInit.hasHaxeui = true;
@@ -107450,7 +107457,7 @@ found_Found.fullscreen = false;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
 found_Found.sha = HxOverrides.substr("'5deaa01'",1,7);
-found_Found.date = "2020-12-16 14:32:43".split(" ")[0];
+found_Found.date = "2020-12-16 14:57:53".split(" ")[0];
 found_Found.collisionsDraw = false;
 found_Found.drawGrid = true;
 found_Found.sceneX = 0.0;
