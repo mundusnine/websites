@@ -5323,7 +5323,8 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 		bottom.addTab(this.console);
 		center.addTab(this.gameView);
 		var codePanel = new EditorPanel();
-		codePanel.addTab(new EditorCodeView());
+		this.codeView = new EditorCodeView();
+		codePanel.addTab(this.codeView);
 		codeEditor.addToElementDraw("Code",codePanel);
 		codeEditor.addToElementDraw("Explorer",bottom);
 		codeEditor.addToElementDraw("Game",center);
@@ -5400,7 +5401,7 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 			}
 			if(this.keyboard.down("control") && this.mouse.wheelDelta != 0) {
 				var mult = this.mouse.wheelDelta * -1;
-				haxe_Log.trace(found_State.active.cam.zoom,{ fileName : "EditorUi.hx", lineNumber : 270, className : "EditorUi", methodName : "update"});
+				haxe_Log.trace(found_State.active.cam.zoom,{ fileName : "EditorUi.hx", lineNumber : 271, className : "EditorUi", methodName : "update"});
 				if(found_State.active.cam.zoom > 0) {
 					found_State.active.cam.zoom += 0.1 * mult;
 					if(found_State.active.cam.zoom < 0.01) {
@@ -5645,7 +5646,7 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 					_gthis.hierarchy.onSceneSelected();
 				});
 			} else {
-				found_tool_Log.error("file with name " + name + " is not a valid scene name or the path \"" + path + "\" was invalid ",{ fileName : "EditorUi.hx", lineNumber : 488, className : "EditorUi", methodName : "openScene"});
+				found_tool_Log.error("file with name " + name + " is not a valid scene name or the path \"" + path + "\" was invalid ",{ fileName : "EditorUi.hx", lineNumber : 489, className : "EditorUi", methodName : "openScene"});
 			}
 		};
 		FileBrowserDialog.open(done);
@@ -6012,6 +6013,10 @@ FileBrowserDialog.doneCallback = function(path) {
 };
 FileBrowserDialog.fileBrowserPopupDraw = function(ui) {
 	zui_Popup.boxTitle = utilities_Translator.tr("File Browser");
+	if(ui.button(utilities_Translator.tr("Import Assets"))) {
+		khafs_Fs.curDir = EditorUi.projectPath + khafs_Fs.sep + "Assets";
+		khafs_Fs.input.click();
+	}
 	var selectedFile = CustomExt.fileBrowser(ui,FileBrowserDialog.fbHandle);
 	if(FileBrowserDialog.fbHandle.changed) {
 		FileBrowserDialog.textInputHandle.text = selectedFile;
@@ -65198,8 +65203,11 @@ found_trait_internal_Arrows.prototype = $extend(found_Trait.prototype,{
 		}
 		var hpos_x = x;
 		var hpos_y = y;
-		if(this.mouse.down("left") && mpos.x > hpos_x && mpos.x < hpos_x + this.width && mpos.y > hpos_y && mpos.y < hpos_y + this.rectSize) {
-			EditorUi.arrow = 0;
+		var isDown = this.mouse.down("left");
+		if(isDown && mpos.x > hpos_x && mpos.x < hpos_x + this.width && mpos.y > hpos_y && mpos.y < hpos_y + this.rectSize) {
+			if(EditorUi.arrow == -1) {
+				EditorUi.arrow = 0;
+			}
 		}
 		var vec = this.vPos;
 		var x = pos_x + vec.x;
@@ -65212,8 +65220,10 @@ found_trait_internal_Arrows.prototype = $extend(found_Trait.prototype,{
 		}
 		var vpos_x = x;
 		var vpos_y = y;
-		if(this.mouse.down("left") && mpos.x > vpos_x && mpos.x < vpos_x + this.rectSize && mpos.y > vpos_y && mpos.y < vpos_y + this.width) {
-			EditorUi.arrow = 1;
+		if(isDown && mpos.x > vpos_x && mpos.x < vpos_x + this.rectSize && mpos.y > vpos_y && mpos.y < vpos_y + this.width) {
+			if(EditorUi.arrow == -1) {
+				EditorUi.arrow = 1;
+			}
 		}
 		var vec = this.rectPos;
 		var x = pos_x + vec.x;
@@ -65226,8 +65236,10 @@ found_trait_internal_Arrows.prototype = $extend(found_Trait.prototype,{
 		}
 		var rpos_x = x;
 		var rpos_y = y;
-		if(this.mouse.down("left") && mpos.x > rpos_x && mpos.x < rpos_x + this.rectSize && mpos.y > rpos_y && mpos.y < rpos_y + this.rectSize) {
-			EditorUi.arrow = 2;
+		if(isDown && mpos.x > rpos_x && mpos.x < rpos_x + this.rectSize && mpos.y > rpos_y && mpos.y < rpos_y + this.rectSize) {
+			if(EditorUi.arrow == -1) {
+				EditorUi.arrow = 2;
+			}
 		}
 	}
 	,render: function(g) {
@@ -107438,7 +107450,7 @@ found_Found.fullscreen = false;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
 found_Found.sha = HxOverrides.substr("'5deaa01'",1,7);
-found_Found.date = "2020-12-09 21:47:22".split(" ")[0];
+found_Found.date = "2020-12-16 14:32:43".split(" ")[0];
 found_Found.collisionsDraw = false;
 found_Found.drawGrid = true;
 found_Found.sceneX = 0.0;
