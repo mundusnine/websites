@@ -1801,7 +1801,7 @@ EditorHierarchy.prototype = $extend(Tab.prototype,{
 		if(this.scene == null) {
 			return;
 		}
-		if(ui.panel(zui_Handle.global.nest(87,null),this.name)) {
+		if(ui.panel(zui_Handle.global.nest(87,{ selected : true}),this.name)) {
 			this.sceneNameHandle.text = this.scene.name;
 			if(kha_Scheduler.time() - this.sceneNameDoubleClickTime > 1.0) {
 				this.sceneNameHandle.position = 0;
@@ -1896,8 +1896,11 @@ EditorHierarchy.prototype = $extend(Tab.prototype,{
 		}
 	}
 	,addData2Scn: function(data) {
+		var _gthis = this;
 		found_State.active.raw._entities.push(data);
-		found_State.active.addEntity(data,true);
+		found_State.active.addEntity(data,function(ent) {
+			_gthis.onObjectSelected(ent.uid,ent.get_raw());
+		},true);
 		this.makeDirty();
 	}
 	,closeObjectCreationPopup: function() {
@@ -57483,7 +57486,7 @@ found_Scene.createTraits = function(traits,object) {
 			}
 			var traitInst = found_Scene.createTraitClassInstance(t[0].classname,args);
 			if(traitInst == null) {
-				found_tool_Log.error("Trait '" + t[0].classname + "' referenced in object '" + object.get_name() + "' not found",{ fileName : "found/Scene.hx", lineNumber : 447, className : "found.Scene", methodName : "createTraits"});
+				found_tool_Log.error("Trait '" + t[0].classname + "' referenced in object '" + object.get_name() + "' not found",{ fileName : "found/Scene.hx", lineNumber : 456, className : "found.Scene", methodName : "createTraits"});
 				continue;
 			}
 			if(t[0].props != null) {
@@ -57654,7 +57657,7 @@ found_Scene.prototype = {
 			this.onReady();
 		}
 	}
-	,addEntity: function(e,isEditor) {
+	,addEntity: function(e,onDone,isEditor) {
 		if(isEditor == null) {
 			isEditor = false;
 		}
@@ -57671,28 +57674,40 @@ found_Scene.prototype = {
 			}
 			out.set_raw(data);
 			this.addToStateArray(out);
+			if(onDone != null) {
+				onDone(out);
+			}
 			break;
 		case "emitter_object":
 			break;
 		case "object":
-			this.addToStateArray(new found_object_Object(e));
+			var obj = new found_object_Object(e);
+			this.addToStateArray(obj);
+			if(onDone != null) {
+				onDone(obj);
+			}
 			break;
 		case "sprite_object":
 			var data = found_data_SceneFormat.getData(e);
 			new found_anim_Sprite(data,function(s) {
 				_gthis.addToStateArray(s);
+				if(onDone != null) {
+					onDone(s);
+				}
 			});
 			break;
 		case "tilemap_object":
 			var data = found_data_SceneFormat.getData(e);
 			new found_anim_Tilemap(data,function(tilemap) {
 				_gthis.addToStateArray(tilemap);
+				if(onDone != null) {
+					onDone(tilemap);
+				}
 			});
 			break;
 		default:
-			found_tool_Log.warn("Data with name" + e.name + "was not added because it's type is not implemented",{ fileName : "found/Scene.hx", lineNumber : 160, className : "found.Scene", methodName : "addEntity"});
+			found_tool_Log.warn("Data with name" + e.name + "was not added because it's type is not implemented",{ fileName : "found/Scene.hx", lineNumber : 169, className : "found.Scene", methodName : "addEntity"});
 		}
-		return this._entities[this._entities.length - 1];
 	}
 	,addPhysicsWorld: function(opts) {
 		this.physics_world = echo_Echo.start(opts);
@@ -58153,10 +58168,11 @@ found_Scene.prototype = {
 	,clear: function() {
 		this._entities = [];
 	}
-	,spawn: function(objectData) {
-		var spawnedObject = this.addEntity(objectData,true);
-		spawnedObject.spawned = true;
-		return spawnedObject;
+	,spawn: function(objectData,onDone) {
+		this.addEntity(objectData,function(obj) {
+			onDone(obj);
+			obj.spawned = true;
+		},true);
 	}
 	,add: function(entity) {
 		entity.set_active(true);
@@ -63374,17 +63390,19 @@ found_node_SpawnObjectNode.prototype = $extend(found_node_LogicNode.prototype,{
 	,spawnRotation: null
 	,spawnedObjects: null
 	,run: function(from) {
+		var _gthis = this;
 		this.spawnPosition = this.inputs[2].get();
 		this.spawnRotation = this.inputs[3].get();
 		if(this.inputs[1].node != null) {
 			this.selectedObjectToSpawn = this.inputs[1].get();
-			var spawnedObject = found_State.active.spawn(this.selectedObjectToSpawn.get_raw());
-			this.spawnedObjects.push(spawnedObject);
-			spawnedObject.activate();
-			spawnedObject.translate($bind(this,this.moveObjectToSpawnPoint));
-			spawnedObject.rotate($bind(this,this.rotateObjectToSpawnRotation));
+			found_State.active.spawn(this.selectedObjectToSpawn.get_raw(),function(spawnedObject) {
+				_gthis.spawnedObjects.push(spawnedObject);
+				spawnedObject.activate();
+				spawnedObject.translate($bind(_gthis,_gthis.moveObjectToSpawnPoint));
+				spawnedObject.rotate($bind(_gthis,_gthis.rotateObjectToSpawnRotation));
+			});
 		} else {
-			found_tool_Log.error("Spawn Object node needs an object to spawn",{ fileName : "found/node/SpawnObjectNode.hx", lineNumber : 36, className : "found.node.SpawnObjectNode", methodName : "run"});
+			found_tool_Log.error("Spawn Object node needs an object to spawn",{ fileName : "found/node/SpawnObjectNode.hx", lineNumber : 37, className : "found.node.SpawnObjectNode", methodName : "run"});
 		}
 		this.runOutput(0);
 	}
@@ -73528,6 +73546,8 @@ var kha_Display = function() {
 $hxClasses["kha.Display"] = kha_Display;
 kha_Display.__name__ = true;
 kha_Display.__properties__ = {get_all:"get_all",get_primary:"get_primary"};
+kha_Display.init = function() {
+};
 kha_Display.get_primary = function() {
 	return kha_Display.instance;
 };
@@ -107457,7 +107477,7 @@ found_Found.fullscreen = false;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
 found_Found.sha = HxOverrides.substr("'5deaa01'",1,7);
-found_Found.date = "2020-12-16 14:57:53".split(" ")[0];
+found_Found.date = "2020-12-18 20:14:48".split(" ")[0];
 found_Found.collisionsDraw = false;
 found_Found.drawGrid = true;
 found_Found.sceneX = 0.0;
