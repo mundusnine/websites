@@ -1247,6 +1247,9 @@ Tab.prototype = {
 		}
 	}
 	,redraw: function() {
+		if(this.parent != null) {
+			this.parent.windowHandle.redraws = 2;
+		}
 	}
 	,render: function(ui) {
 	}
@@ -1547,7 +1550,8 @@ EditorConsole.prototype = $extend(Tab.prototype,{
 		this.outputTypes = [utilities_Translator.tr("All"),utilities_Translator.tr("Information"),utilities_Translator.tr("Warnings"),utilities_Translator.tr("Errors")];
 	}
 	,redraw: function() {
-		this.parent.windowHandle.redraws = this.parent.htab.redraws = this.handle.redraws = 2;
+		Tab.prototype.redraw.call(this);
+		this.parent.htab.redraws = this.handle.redraws = 2;
 	}
 	,ui: null
 	,drawItem: function(h,id) {
@@ -1622,16 +1626,16 @@ EditorConsole.prototype = $extend(Tab.prototype,{
 	,__class__: EditorConsole
 });
 var EditorGameView = function() {
-	this.drawHeight = 0.0;
-	this.drawWidth = 0.0;
 	this.drawTrait = new found_Trait();
 	Tab.call(this,utilities_Translator.tr("Game"));
+	this.scenebuffer = kha_Image.createRenderTarget(found_Found.backbuffer.get_width(),found_Found.backbuffer.get_height());
 };
 $hxClasses["EditorGameView"] = EditorGameView;
 EditorGameView.__name__ = true;
 EditorGameView.__super__ = Tab;
 EditorGameView.prototype = $extend(Tab.prototype,{
 	drawTrait: null
+	,scenebuffer: null
 	,x: null
 	,get_x: function() {
 		return this.parent.get_x();
@@ -1648,57 +1652,20 @@ EditorGameView.prototype = $extend(Tab.prototype,{
 	,get_height: function() {
 		return this.parent.get_h();
 	}
-	,drawWidth: null
-	,drawHeight: null
 	,render: function(ui) {
-		if(found_Found.scenebuffer == null) {
-			found_Found.scenebuffer = kha_Image.createRenderTarget(found_Found.backbuffer.get_width(),found_Found.backbuffer.get_height());
-		}
 		if(ui.tab(this.parent.htab,this.name)) {
-			var h = null;
-			var iw = found_Found.scenebuffer.get_width() * ui.ops.scaleFactor;
-			var ih = found_Found.scenebuffer.get_height() * ui.ops.scaleFactor;
-			var w = Math.min(iw,ui._w);
-			var x = ui._x;
-			var scroll = ui.currentWindow != null && ui.currentWindow.scrollEnabled;
-			var r;
-			if(ui.curRatio == -1) {
-				r = 1.0;
-			} else {
-				var ratio = ui.ratios[ui.curRatio];
-				r = ratio < 0 ? -ratio : ratio;
-			}
-			if(ui.imageScrollAlign) {
-				w = Math.min(iw,ui._w - ui.buttonOffsetY * 2);
-				x += ui.buttonOffsetY;
-				if(!scroll) {
-					w -= (ui.t.SCROLL_W * ui.ops.scaleFactor | 0) * r;
-					x += (ui.t.SCROLL_W * ui.ops.scaleFactor | 0) * r / 2;
-				}
-			} else if(scroll) {
-				w += (ui.t.SCROLL_W * ui.ops.scaleFactor | 0) * r;
-			}
-			var ratio = h == null ? w / iw : h / ih;
-			if(h == null) {
-				h = ih * ratio;
-			} else {
-				w = iw * ratio;
-			}
-			this.drawWidth = w;
-			this.drawHeight = h;
-			ui.image(found_Found.scenebuffer);
+			ui.image(this.scenebuffer);
 			ui.g.end();
 			this.parent.windowHandle.redraws = 1;
-			var image = found_Found.scenebuffer;
-			image.get_g2().begin();
+			this.scenebuffer.get_g2().begin();
 			if(found_State.active != null) {
-				found_State.active.render(image);
+				found_State.active.render(this.scenebuffer);
 			}
-			image.get_g2().end();
-			found_App.frameCounter.render(image);
+			this.scenebuffer.get_g2().end();
+			found_App.frameCounter.render(this.scenebuffer);
 			ui.g.begin(false);
 		}
-		this.parent.windowHandle.redraws = 2;
+		this.parent.htab.redraws = 2;
 	}
 	,__class__: EditorGameView
 	,__properties__: $extend(Tab.prototype.__properties__,{get_height:"get_height",get_width:"get_width",get_y:"get_y",get_x:"get_x"})
@@ -1793,9 +1760,7 @@ EditorHierarchy.prototype = $extend(Tab.prototype,{
 		this.redraw();
 	}
 	,redraw: function() {
-		if(this.parent != null) {
-			this.parent.windowHandle.redraws = 2;
-		}
+		Tab.prototype.redraw.call(this);
 		this.sceneNameHandle.redraws = 2;
 	}
 	,render: function(ui) {
@@ -2064,9 +2029,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 		return this.layersName;
 	}
 	,redraw: function() {
-		if(this.parent != null) {
-			this.parent.windowHandle.redraws = 2;
-		}
+		Tab.prototype.redraw.call(this);
 		this.objectHandle.redraws = 2;
 		this.sceneHandle.redraws = 2;
 		this.layersHandle.redraws = 2;
@@ -4140,7 +4103,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				return;
 			}
 			handle.changed = false;
-			found_tool_Log.warn("Prop: " + propName + " was not set because " + handle.text + " was entered",{ fileName : "EditorInspector.hx", lineNumber : 787, className : "EditorInspector", methodName : "multiDraw"});
+			found_tool_Log.warn("Prop: " + propName + " was not set because " + handle.text + " was entered",{ fileName : "EditorInspector.hx", lineNumber : 786, className : "EditorInspector", methodName : "multiDraw"});
 			return;
 		}
 	}
@@ -4428,10 +4391,10 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					error = false;
 					break;
 				default:
-					haxe_Log.trace("Error: file has filetype " + type + " which is not a valid filetype for images ",{ fileName : "EditorInspector.hx", lineNumber : 1051, className : "EditorInspector", methodName : "browseImage"});
+					haxe_Log.trace("Error: file has filetype " + type + " which is not a valid filetype for images ",{ fileName : "EditorInspector.hx", lineNumber : 1050, className : "EditorInspector", methodName : "browseImage"});
 				}
 				if(error) {
-					haxe_Log.trace("Error: file with name " + name + " is not a valid image name or the path \"" + path + "\" was invalid ",{ fileName : "EditorInspector.hx", lineNumber : 1054, className : "EditorInspector", methodName : "browseImage"});
+					haxe_Log.trace("Error: file with name " + name + " is not a valid image name or the path \"" + path + "\" was invalid ",{ fileName : "EditorInspector.hx", lineNumber : 1053, className : "EditorInspector", methodName : "browseImage"});
 				}
 			}
 		};
@@ -4673,6 +4636,7 @@ var EditorMenuBar = function() {
 	this.animateIn = false;
 	this.visible = false;
 	this.y = 0.0;
+	this.rect = new kha_math_Vector4();
 	this.menubarw = 330;
 	this.menuHandle = new zui_Handle({ layout : 1});
 	this.workspaceHandle = new zui_Handle({ layout : 1});
@@ -4685,6 +4649,7 @@ EditorMenuBar.prototype = {
 	,workspaceHandle: null
 	,menuHandle: null
 	,menubarw: null
+	,rect: null
 	,y: null
 	,visible: null
 	,playImage: null
@@ -4763,6 +4728,10 @@ EditorMenuBar.prototype = {
 		ui.inputEnabled = true;
 		var WINDOW_BG_COL = ui.t.WINDOW_BG_COL;
 		ui.t.WINDOW_BG_COL = ui.t.SEPARATOR_COL;
+		this.rect.x = element.x;
+		this.rect.y = this.y;
+		this.rect.z = element.width;
+		this.rect.w = element.height;
 		if(ui.window(this.menuHandle,element.x | 0,this.y | 0,element.width | 0,element.height | 0)) {
 			var w = ui.t.BUTTON_H * ui.ops.scaleFactor > element.height ? element.height : ui.t.BUTTON_H * ui.ops.scaleFactor;
 			if(this.shouldRedraw(this.playImage,w,w)) {
@@ -5138,7 +5107,7 @@ var EditorUi = function() {
 					}
 					khafs_Fs.getContent(key2[0],(function(key) {
 						return function(data) {
-							haxe_Log.trace("Fetched data from " + key[0],{ fileName : "EditorUi.hx", lineNumber : 110, className : "EditorUi", methodName : "new"});
+							haxe_Log.trace("Fetched data from " + key[0],{ fileName : "EditorUi.hx", lineNumber : 111, className : "EditorUi", methodName : "new"});
 						};
 					})(key2));
 				}
@@ -5405,17 +5374,15 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 		if(tmp) {
 			EditorMenu.show = false;
 		}
-		if(isInMainView) {
-			if(this.keyboard.down("1") && this.keyboard.down("control")) {
-				EditorUi.arrowMode = 0;
-				EditorTools.redrawArrows = true;
-			} else if(this.keyboard.down("2") && this.keyboard.down("control")) {
-				EditorUi.arrowMode = 1;
-				EditorTools.redrawArrows = true;
+		if(isInMainView || this.isHidden()) {
+			if(this.mouse.down("middle") && this.mouse.moved) {
+				if(found_State.active != null) {
+					found_State.active.cam.get_position().x += this.mouse.distX;
+					found_State.active.cam.get_position().y += this.mouse.distY;
+				}
 			}
 			if(this.keyboard.down("control") && this.mouse.wheelDelta != 0) {
 				var mult = this.mouse.wheelDelta * -1;
-				haxe_Log.trace(found_State.active.cam.zoom,{ fileName : "EditorUi.hx", lineNumber : 271, className : "EditorUi", methodName : "update"});
 				if(found_State.active.cam.zoom > 0) {
 					found_State.active.cam.zoom += 0.1 * mult;
 					if(found_State.active.cam.zoom < 0.01) {
@@ -5423,11 +5390,14 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 					}
 				}
 			}
-			if(this.mouse.down("middle") && this.mouse.moved) {
-				if(found_State.active != null) {
-					found_State.active.cam.get_position().x += this.mouse.distX;
-					found_State.active.cam.get_position().y += this.mouse.distY;
-				}
+		}
+		if(isInMainView) {
+			if(this.keyboard.down("1") && this.keyboard.down("control")) {
+				EditorUi.arrowMode = 0;
+				EditorTools.redrawArrows = true;
+			} else if(this.keyboard.down("2") && this.keyboard.down("control")) {
+				EditorUi.arrowMode = 1;
+				EditorTools.redrawArrows = true;
 			}
 			if(this.mouse.down("left") && (this.mouse.moved || this.keyboard.down("control"))) {
 				this.updateMouse(this.mouse.x,this.mouse.y,this.mouse.distX,this.mouse.distY);
@@ -5462,6 +5432,12 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 			}
 		}
 	}
+	,isHidden: function() {
+		if(this.currentView < 0) {
+			return true;
+		}
+		return !this.listViews[this.currentView].visible;
+	}
 	,isInUi: function() {
 		var x = this.mouse.x;
 		var y = this.mouse.y;
@@ -5489,8 +5465,18 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 			var h = this.hierarchy.lastH;
 			inHiearchy = pos_x > x && pos_x < x + w && pos_y > y && pos_y < y + h;
 		}
-		if(!(inInspector || inHiearchy)) {
-			return !found_Found.tileeditor.isInEditor();
+		var inMenu = false;
+		if(this.menu.visible) {
+			var x = this.menu.rect.x;
+			var y = this.menu.rect.y;
+			var w = this.menu.rect.z;
+			var h = this.menu.rect.w;
+			inMenu = pos_x > x && pos_x < x + w && pos_y > y && pos_y < y + h;
+		}
+		if(this.isHidden()) {
+			return false;
+		} else if(!(inInspector || inHiearchy || inMenu || !found_Found.tileeditor.notInEditor())) {
+			return zui_Popup.show;
 		} else {
 			return true;
 		}
@@ -5627,18 +5613,24 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 				y = value;
 			}
 		}
+		var pos = found_State.active._entities[this.inspector.index].get_position();
 		switch(EditorUi.arrow) {
 		case 0:
-			found_State.active._entities[this.inspector.index].get_position().x = x;
+			found_State.active._entities[this.inspector.index].translate(function(data) {
+				return data;
+			},{ _positions : new kha_math_Vector2(x)},true);
 			Reflect.setProperty(found_State.active.raw._entities[this.inspector.index].position,"x",x);
 			break;
 		case 1:
-			found_State.active._entities[this.inspector.index].get_position().y = y;
+			found_State.active._entities[this.inspector.index].translate(function(data) {
+				return data;
+			},{ _positions : new kha_math_Vector2(pos.x,y)},true);
 			Reflect.setProperty(found_State.active.raw._entities[this.inspector.index].position,"y",y);
 			break;
 		case 2:
-			found_State.active._entities[this.inspector.index].get_position().x = x;
-			found_State.active._entities[this.inspector.index].get_position().y = y;
+			found_State.active._entities[this.inspector.index].translate(function(data) {
+				return data;
+			},{ _positions : new kha_math_Vector2(x,y)},true);
 			Reflect.setProperty(found_State.active.raw._entities[this.inspector.index].position,"x",x);
 			Reflect.setProperty(found_State.active.raw._entities[this.inspector.index].position,"y",y);
 			break;
@@ -5693,7 +5685,7 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 					_gthis.hierarchy.onSceneSelected();
 				});
 			} else {
-				found_tool_Log.error("file with name " + name + " is not a valid scene name or the path \"" + path + "\" was invalid ",{ fileName : "EditorUi.hx", lineNumber : 511, className : "EditorUi", methodName : "openScene"});
+				found_tool_Log.error("file with name " + name + " is not a valid scene name or the path \"" + path + "\" was invalid ",{ fileName : "EditorUi.hx", lineNumber : 530, className : "EditorUi", methodName : "openScene"});
 			}
 		};
 		FileBrowserDialog.open(done);
@@ -6696,40 +6688,46 @@ found_App.prototype = {
 		canvas.get_g2().set_color(found_Found.backgroundcolor);
 		canvas.get_g2().fillRect(0,0,found_Found.backbuffer.get_width(),found_Found.backbuffer.get_height());
 		if(found_State.active != null) {
-			var _this = found_Found.backbuffer.get_g2();
-			var trans__00 = 1;
-			var trans__10 = 0;
-			var trans__20 = -found_State.active.cam.get_position().x;
-			var trans__01 = 0;
-			var trans__11 = 1;
-			var trans__21 = -found_State.active.cam.get_position().y;
-			var trans__02 = 0;
-			var trans__12 = 0;
-			var trans__22 = 1;
-			_this.transformationIndex++;
-			if(_this.transformationIndex == _this.transformations.length) {
-				_this.transformations.push(new kha_math_FastMatrix3(1,0,0,0,1,0,0,0,1));
+			if(found_App.editorui.currentView == 0 && !found_App.editorui.isHidden()) {
+				var _this = found_Found.backbuffer.get_g2();
+				var trans__00 = 1;
+				var trans__10 = 0;
+				var trans__20 = -found_State.active.cam.get_position().x;
+				var trans__01 = 0;
+				var trans__11 = 1;
+				var trans__21 = -found_State.active.cam.get_position().y;
+				var trans__02 = 0;
+				var trans__12 = 0;
+				var trans__22 = 1;
+				_this.transformationIndex++;
+				if(_this.transformationIndex == _this.transformations.length) {
+					_this.transformations.push(new kha_math_FastMatrix3(1,0,0,0,1,0,0,0,1));
+				}
+				var _this1 = _this.transformations[_this.transformationIndex];
+				_this1._00 = trans__00;
+				_this1._10 = trans__10;
+				_this1._20 = trans__20;
+				_this1._01 = trans__01;
+				_this1._11 = trans__11;
+				_this1._21 = trans__21;
+				_this1._02 = trans__02;
+				_this1._12 = trans__12;
+				_this1._22 = trans__22;
+				_this.setTransformation(_this.transformations[_this.transformationIndex]);
+				EditorTools.drawGrid(found_Found.backbuffer.get_g2());
+				found_Found.backbuffer.get_g2().popTransformation();
+				found_State.active.render(found_Found.backbuffer);
+			} else {
+				found_State.active.render(found_Found.backbuffer);
 			}
-			var _this1 = _this.transformations[_this.transformationIndex];
-			_this1._00 = trans__00;
-			_this1._10 = trans__10;
-			_this1._20 = trans__20;
-			_this1._01 = trans__01;
-			_this1._11 = trans__11;
-			_this1._21 = trans__21;
-			_this1._02 = trans__02;
-			_this1._12 = trans__12;
-			_this1._22 = trans__22;
-			_this.setTransformation(_this.transformations[_this.transformationIndex]);
-			EditorTools.drawGrid(found_Found.backbuffer.get_g2());
-			found_Found.backbuffer.get_g2().popTransformation();
-			found_State.active.render(found_Found.backbuffer);
 		}
 		found_Found.backbuffer.get_g2().end();
 		found_App.frameCounter.render(found_Found.backbuffer);
 		found_App.frameCounter.frames++;
 		found_App.editorui.render(found_Found.backbuffer);
-		found_Found.tileeditor.render(found_Found.backbuffer);
+		if(found_App.editorui.currentView == 0 || found_App.editorui.isHidden()) {
+			found_Found.tileeditor.render(found_Found.backbuffer);
+		}
 		if(zui_Popup.show) {
 			zui_Popup.render(found_Found.backbuffer.get_g2());
 		}
@@ -56381,8 +56379,6 @@ found_Found._app = null;
 found_Found.WIDTH = null;
 found_Found.HEIGHT = null;
 found_Found.backbuffer = null;
-found_Found.scenebuffer = null;
-found_Found.renderfunc = null;
 found_Found.tileeditor = null;
 found_Found.popupZuiInstance = null;
 found_Found.backgroundcolor = null;
@@ -56449,7 +56445,7 @@ found_Found.setup = function(config) {
 			if(tBlob != null) {
 				zui_Canvas.themes = JSON.parse(tBlob.toString());
 			} else {
-				found_tool_Log.warn("\"_themes.json\" is empty! Using default theme instead.",{ fileName : "found/Found.hx", lineNumber : 156, className : "found.Found", methodName : "setup"});
+				found_tool_Log.warn("\"_themes.json\" is empty! Using default theme instead.",{ fileName : "found/Found.hx", lineNumber : 152, className : "found.Found", methodName : "setup"});
 			}
 			if(zui_Canvas.themes.length == 0) {
 				zui_Canvas.themes.push(zui_Themes.dark);
@@ -57523,7 +57519,7 @@ found_Scene.createTraits = function(traits,object) {
 			}
 			var traitInst = found_Scene.createTraitClassInstance(t[0].classname,args);
 			if(traitInst == null) {
-				found_tool_Log.error("Trait '" + t[0].classname + "' referenced in object '" + object.get_name() + "' not found",{ fileName : "found/Scene.hx", lineNumber : 456, className : "found.Scene", methodName : "createTraits"});
+				found_tool_Log.error("Trait '" + t[0].classname + "' referenced in object '" + object.get_name() + "' not found",{ fileName : "found/Scene.hx", lineNumber : 462, className : "found.Scene", methodName : "createTraits"});
 				continue;
 			}
 			if(t[0].props != null) {
@@ -57756,6 +57752,13 @@ found_Scene.prototype = {
 	}
 	,update: function(dt) {
 		if(!found_Scene.ready || !found_App.editorui.isPlayMode) {
+			var _g = 0;
+			var _g1 = found_object_Executor.executors;
+			while(_g < _g1.length) {
+				var exe = _g1[_g];
+				++_g;
+				exe.execute();
+			}
 			return;
 		}
 		if(found_App.traitAwakes.length > 0) {
@@ -59365,6 +59368,7 @@ found_anim_Sprite.prototype = $extend(found_object_Object.prototype,{
 	,__properties__: $extend(found_object_Object.prototype.__properties__,{get__h:"get__h",get__w:"get__w"})
 });
 var found_anim_Tile = function(tilemap,sprite,index,isPivot,done) {
+	this.bodyCount = -1;
 	this.bodies = [];
 	this.animIndex = 0;
 	this.offsety = 0;
@@ -59432,8 +59436,15 @@ found_anim_Tile.prototype = {
 	,flip: null
 	,raw: null
 	,bodies: null
+	,bodyCount: null
 	,setAnimation: function(animation) {
 		this.get_data().set_curAnim(animation);
+	}
+	,updateBody: function(position) {
+		this.bodyCount++;
+		if(this.bodyCount < this.bodies.length) {
+			this.bodies[this.bodyCount].set_position(position.x,position.y);
+		}
 	}
 	,render: function(canvas,position,color,scale,shouldZoom) {
 		if(shouldZoom == null) {
@@ -59694,6 +59705,8 @@ found_anim_Tilemap.prototype = $extend(found_object_Object.prototype,{
 					if(tile != null) {
 						var pos1 = new kha_math_Vector2(x,y);
 						tile.render(canvas,pos1);
+						var vec = this.get_position();
+						tile.updateBody(new kha_math_Vector2(pos1.x + vec.x,pos1.y + vec.y));
 					}
 				}
 			}
@@ -59703,13 +59716,19 @@ found_anim_Tilemap.prototype = $extend(found_object_Object.prototype,{
 				x = 0;
 			}
 		}
+		var tile = this.tiles.iterator();
+		while(tile.hasNext()) {
+			var tile1 = tile.next();
+			tile1.bodyCount = -1;
+		}
 		if(found_tool_TileEditor.selectedTilemapIdIndex != -1 && found_tool_TileEditor.tilemapIds[found_tool_TileEditor.selectedTilemapIdIndex] == this.uid) {
 			this.drawCountour(canvas);
 		}
 	}
 	,drawCountour: function(canvas) {
 		var g = canvas.get_g2();
-		g.drawRect(0,0,this.w,this.h,3.0);
+		var stren = found_State.active.cam.zoom < 1.0 ? 9.0 * (1.0 - found_State.active.cam.zoom) : 0.0;
+		g.drawRect(0,0,this.w,this.h,3.0 + stren);
 	}
 	,makeBodies: function(scene,p_tileid) {
 		var _gthis = this;
@@ -64663,10 +64682,16 @@ found_tool_TileEditor.prototype = {
 		this.editorWindowHandle.redraws = 2;
 	}
 	,update: function(dt) {
+		if(!this.visible || found_tool_TileEditor.selectedTilemapIdIndex < 0 || this.mouse == null) {
+			if(found_Input.getMouse().hidden) {
+				found_Input.getMouse().show();
+			}
+			return;
+		}
 		if(this.mouse.down("left") && this.mouse.moved) {
 			this.addTile();
 		}
-		if(this.mouse.started("right")) {
+		if(this.mouse.started("right") && this.visible) {
 			if(this.brushState == found_tool_TileEditorState.Draw) {
 				this.brushState = found_tool_TileEditorState.Erase;
 			} else {
@@ -64991,7 +65016,7 @@ found_tool_TileEditor.prototype = {
 				tilesheet.tileHeight = _gthis.map.th;
 				tilesheet.imagePath = path;
 				_gthis.tilesheets.push(tilesheet);
-				haxe_Log.trace(tilesheet,{ fileName : "found/tool/TileEditor.hx", lineNumber : 380, className : "found.tool.TileEditor", methodName : "addTilesheet"});
+				haxe_Log.trace(tilesheet,{ fileName : "found/tool/TileEditor.hx", lineNumber : 385, className : "found.tool.TileEditor", methodName : "addTilesheet"});
 				_gthis.tileSelected = null;
 				var tile = found_anim_Tile.createTile(_gthis.map,tilesheet,originId,true);
 				if(_gthis.curTile == null) {
@@ -65100,7 +65125,9 @@ found_tool_TileEditor.prototype = {
 					if(indicies[indicies.length - 1] == index) {
 						return;
 					}
-					indicies.push(index);
+					if(indicies.indexOf(index) == -1) {
+						indicies.push(index);
+					}
 				} else {
 					rawData.map.h[this.curTile.tileId] = [index];
 				}
@@ -65136,11 +65163,29 @@ found_tool_TileEditor.prototype = {
 					var i = _g++;
 					if(arr[i] == index) {
 						arr.splice(i,1);
-						body = bodies.splice(i,1)[0];
+						var pos_x = 0;
+						var pos_y = 0;
+						pos_x = index % this.map.w * this.map.tw + this.map.get_position().x;
+						pos_y = (index / this.map.w | 0) * this.map.th + this.map.get_position().y;
+						var _g2 = 0;
+						while(_g2 < bodies.length) {
+							var bod = bodies[_g2];
+							++_g2;
+							if(bod.frame.get_offset().x == pos_x && bod.frame.get_offset().y == pos_y) {
+								HxOverrides.remove(bodies,bod);
+								body = bod;
+								break;
+							}
+						}
 					}
 				}
-				if(found_State.active.physics_world != null && body != null) {
-					found_State.active.physics_world.remove(body);
+				if(body != null) {
+					if(body.world != null) {
+						body.world.remove(body);
+					}
+					if(body.quadtree_data != null && body.quadtree_data.bounds != null) {
+						body.quadtree_data.bounds.put();
+					}
 					body.dispose();
 				}
 				changed = true;
@@ -65177,10 +65222,10 @@ found_tool_TileEditor.prototype = {
 		var y = this.map.get_position().y;
 		var w = this.map.get_width();
 		var h = this.map.get_height();
-		var out = pos.x > x && pos.x < x + w && pos.y > y && pos.y < y + h && this.isInEditor();
+		var out = pos.x > x && pos.x < x + w && pos.y > y && pos.y < y + h && this.notInEditor() && !found_App.editorui.isInUi();
 		return out;
 	}
-	,isInEditor: function() {
+	,notInEditor: function() {
 		if(!(this.mouse.y < found_tool_TileEditor.ui._windowY || this.mouse.y > found_tool_TileEditor.ui._windowY + this.endHeight || this.mouse.x < found_tool_TileEditor.ui._windowX)) {
 			return this.mouse.x > found_tool_TileEditor.ui._windowX + this.width;
 		} else {
@@ -102785,29 +102830,6 @@ utilities_Config.saveKeymap = function() {
 	var bytes = haxe_io_Bytes.ofString(JSON.stringify(utilities_Config.keymap));
 	khafs_Fs.saveBytes(path,bytes);
 };
-var utilities_Conversion = function() { };
-$hxClasses["utilities.Conversion"] = utilities_Conversion;
-utilities_Conversion.__name__ = true;
-utilities_Conversion.WorldToScreen = function(position) {
-	var x = found_App.editorui.gameView.get_x();
-	var y = found_App.editorui.gameView.get_y();
-	var width = found_App.editorui.gameView.get_width();
-	var height = found_App.editorui.gameView.drawHeight;
-	position.x *= 1.0 / found_Found.WIDTH;
-	position.y *= 1.0 / found_Found.HEIGHT;
-	position.x = width * position.x;
-	position.y = height * position.y;
-	return position;
-};
-utilities_Conversion.ScreenToWorld = function(position) {
-	var world = new kha_math_FastVector2();
-	var gv = found_App.editorui.gameView;
-	position.x = (position.x - gv.get_x()) / gv.get_width();
-	position.y = (position.y - gv.get_y()) / gv.drawHeight;
-	world.x = found_Found.WIDTH * position.x;
-	world.y = found_Found.HEIGHT * position.y;
-	return world;
-};
 var utilities_Translator = function() { };
 $hxClasses["utilities.Translator"] = utilities_Translator;
 utilities_Translator.__name__ = true;
@@ -107740,11 +107762,10 @@ echo_util_SAT.closest = (function($this) {
 }(this));
 found_Event.events = new haxe_ds_StringMap();
 found_Found.GRID = 64;
-found_Found.fullscreen = false;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
 found_Found.sha = HxOverrides.substr("'5deaa01'",1,7);
-found_Found.date = "2021-01-13 20:19:15".split(" ")[0];
+found_Found.date = "2021-01-16 19:42:17".split(" ")[0];
 found_Found.collisionsDraw = false;
 found_Found.drawGrid = true;
 found_Found.sceneX = 0.0;
