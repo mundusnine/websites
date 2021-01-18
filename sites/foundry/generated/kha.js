@@ -162,7 +162,7 @@ AnimationEditor.prototype = {
 				} else {
 					var last = ui.t.ACCENT_COL;
 					ui.t.ACCENT_COL = kha_Color.fromFloats(1.0,0.0,0.0,0.7);
-					var txtHandle = zui_Handle.global.nest(113,null);
+					var txtHandle = zui_Handle.global.nest(112,null);
 					if(this.animIndex < 0) {
 						haxe_Log.trace("animIndex is bad at number: " + this.animIndex,{ fileName : "AnimationEditor.hx", lineNumber : 154, className : "AnimationEditor", methodName : "render"});
 					}
@@ -245,9 +245,9 @@ AnimationEditor.prototype = {
 			}
 			var div = ui.t.ELEMENT_W * ui.ops.scaleFactor / this.parent.get_w() * 2;
 			ui.row([1.0 - div,div]);
-			ui.panel(zui_Handle.global.nest(114,{ selected : true}),"",false,false,false);
+			ui.panel(zui_Handle.global.nest(113,{ selected : true}),"",false,false,false);
 			var oldY = ui._y;
-			zui_Ext.panelList(ui,zui_Handle.global.nest(115,{ selected : true, layout : 0}),this.curFrames,$bind(this,this.addItem),$bind(this,this.removeItem),$bind(this,this.getName),$bind(this,this.setName),$bind(this,this.drawItem),false);
+			zui_Ext.panelList(ui,zui_Handle.global.nest(114,{ selected : true, layout : 0}),this.curFrames,$bind(this,this.addItem),$bind(this,this.removeItem),$bind(this,this.getName),$bind(this,this.setName),$bind(this,this.drawItem),false);
 			this.animationPreview(this.delta,AnimationEditor.width,this.viewHeight,oldY);
 		}
 	}
@@ -1454,7 +1454,7 @@ EditorCodeView.prototype = $extend(Tab.prototype,{
 });
 var EditorConsole = function() {
 	this.lineHeight = 0.0;
-	this.comboH = zui_Handle.global.nest(116,null);
+	this.comboH = zui_Handle.global.nest(115,null);
 	this.checkH = zui_Handle.global.nest(2,null);
 	this.handle = zui_Handle.global.nest(22,null);
 	this.typeImages = [];
@@ -4129,15 +4129,17 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					trait.props.push(def);
 				}
 				this.updateAllRelativeProps(trait.classname,def,true);
+				found_Trait.props.h[trait.classname + this.index] = trait.props;
 				changed = true;
 			}
 			if(trait.props != null) {
 				var mainH = zui_Handle.global.nest(28,null);
+				var props = found_App.editorui.isPlayMode ? found_Trait.getProps(trait.classname + this.index) : trait.props;
 				var _g = 0;
-				var _g1 = trait.props.length;
+				var _g1 = props.length;
 				while(_g < _g1) {
 					var i = _g++;
-					var prop = trait.props[i].split("~");
+					var prop = props[i].split("~");
 					var value = Std.parseInt(prop[1]);
 					if(value >= 4) {
 						this.ui.row([0.25,0.08,0.12,0.08,0.12,0.25,0.1]);
@@ -4222,12 +4224,14 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					}
 					if(this.ui.button("-")) {
 						this.updateAllRelativeProps(trait.classname,trait.props.splice(i,1)[0]);
+						found_Trait.props.h[trait.classname + this.index] = trait.props;
 						this.get_currentObject().dataChanged = true;
 						EditorHierarchy.getInstance().makeDirty();
 						break;
 					}
-					trait.props[i] = prop.join("~");
 					if(changed) {
+						trait.props[i] = prop.join("~");
+						found_Trait.props.h[trait.classname + this.index] = trait.props;
 						this.get_currentObject().dataChanged = changed;
 						EditorHierarchy.getInstance().makeDirty();
 					}
@@ -4261,13 +4265,13 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 		}
 		var out = [];
 		var _g = 0;
-		var _g1 = found_Trait.getProps(classname);
+		var _g1 = found_Trait.getProps(classname + this.index);
 		while(_g < _g1.length) {
 			var prop = _g1[_g];
 			++_g;
 			out.push(StringTools.replace(prop,from,to));
 		}
-		found_Trait.props.h[classname] = out;
+		found_Trait.props.h[classname + this.index] = out;
 	}
 	,updateAllRelativeProps: function(classname,addOrRmData,isAdd) {
 		if(isAdd == null) {
@@ -4310,9 +4314,9 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 			}
 		}
 		if(isAdd) {
-			found_Trait.addProps(classname,[addOrRmData]);
+			found_Trait.addProps(classname + this.index,[addOrRmData]);
 		} else {
-			found_Trait.removeProps(classname,[addOrRmData]);
+			found_Trait.removeProps(classname + this.index,[addOrRmData]);
 		}
 	}
 	,addTrait: function(name) {
@@ -4391,10 +4395,10 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					error = false;
 					break;
 				default:
-					haxe_Log.trace("Error: file has filetype " + type + " which is not a valid filetype for images ",{ fileName : "EditorInspector.hx", lineNumber : 1050, className : "EditorInspector", methodName : "browseImage"});
+					haxe_Log.trace("Error: file has filetype " + type + " which is not a valid filetype for images ",{ fileName : "EditorInspector.hx", lineNumber : 1055, className : "EditorInspector", methodName : "browseImage"});
 				}
 				if(error) {
-					haxe_Log.trace("Error: file with name " + name + " is not a valid image name or the path \"" + path + "\" was invalid ",{ fileName : "EditorInspector.hx", lineNumber : 1053, className : "EditorInspector", methodName : "browseImage"});
+					haxe_Log.trace("Error: file with name " + name + " is not a valid image name or the path \"" + path + "\" was invalid ",{ fileName : "EditorInspector.hx", lineNumber : 1058, className : "EditorInspector", methodName : "browseImage"});
 				}
 			}
 		};
@@ -4777,7 +4781,7 @@ EditorMenuBar.prototype = {
 			}
 			ui._y = 0.0;
 			ui._w = ui._w + ui.t.ELEMENT_W * ui.ops.scaleFactor | 0;
-			main.set_currentView(zui_Ext.inlineRadio(ui,zui_Handle.global.nest(117,null),["Scene","Code","Draw"]));
+			main.set_currentView(zui_Ext.inlineRadio(ui,zui_Handle.global.nest(116,null),["Scene","Code","Draw"]));
 			zui_Ext.endMenu(ui);
 			ui._x = ui._w - ui.t.ELEMENT_W * ui.ops.scaleFactor * 2;
 		}
@@ -4967,8 +4971,14 @@ found_Trait.addProps = function(classname,props) {
 		this1.h[classname] = value;
 	} else {
 		var this1 = found_Trait.props;
-		var value = Reflect.copy(props);
-		this1.h[classname] = value;
+		var _g = [];
+		var _g1 = 0;
+		var _g2 = props.length;
+		while(_g1 < _g2) {
+			var i = _g1++;
+			_g.push(props[i]);
+		}
+		this1.h[classname] = _g;
 	}
 };
 found_Trait.removeProps = function(classname,props) {
@@ -57487,8 +57497,8 @@ found_Scene.createTraits = function(traits,object) {
 	while(_g < traits.length) {
 		var t = [traits[_g]];
 		++_g;
-		if(!found_Trait.hasTrait(t[0].classname) && t[0].props != null) {
-			found_Trait.addProps(t[0].classname,t[0].props);
+		if(!found_Trait.hasTrait(t[0].classname + object.uid) && t[0].props != null) {
+			found_Trait.addProps(t[0].classname + object.uid,t[0].props);
 		}
 		if(t[0].type == "VisualScript") {
 			found_data_Data.getBlob(t[0].classname,(function(t) {
@@ -57519,7 +57529,7 @@ found_Scene.createTraits = function(traits,object) {
 			}
 			var traitInst = found_Scene.createTraitClassInstance(t[0].classname,args);
 			if(traitInst == null) {
-				found_tool_Log.error("Trait '" + t[0].classname + "' referenced in object '" + object.get_name() + "' not found",{ fileName : "found/Scene.hx", lineNumber : 462, className : "found.Scene", methodName : "createTraits"});
+				found_tool_Log.error("Trait '" + t[0].classname + "' referenced in object '" + object.get_name() + "' not found",{ fileName : "found/Scene.hx", lineNumber : 463, className : "found.Scene", methodName : "createTraits"});
 				continue;
 			}
 			if(t[0].props != null) {
@@ -58578,8 +58588,8 @@ found_object_Object.prototype = {
 		}
 		var obj = found_State.active.getObjects(data.objectName);
 		if(obj.length > 0) {
-			if(data.tileId != null && ((obj) instanceof found_anim_Tilemap)) {
-				var tile = (js_Boot.__cast(obj , found_anim_Tilemap)).tiles.h[data.tileId];
+			if(data.tileId != null && ((obj[0]) instanceof found_anim_Tilemap)) {
+				var tile = (js_Boot.__cast(obj[0] , found_anim_Tilemap)).tiles.h[data.tileId];
 				if(tile != null) {
 					var _g = 0;
 					var _g1 = tile.bodies;
@@ -59765,7 +59775,9 @@ found_anim_Tilemap.prototype = $extend(found_object_Object.prototype,{
 						}
 					}
 					if(addBody) {
-						tile.bodies.push(scene.physics_world.add(new echo_Body(body)));
+						var bod1 = new echo_Body(body);
+						bod1.object = this;
+						tile.bodies.push(scene.physics_world.add(bod1));
 					}
 				}
 			}
@@ -62281,10 +62293,10 @@ found_node_GetPropNode.prototype = $extend(found_node_LogicNode.prototype,{
 			var t = _g1[_g];
 			++_g;
 			if(t.classname == this.classname && t.props != null) {
+				var props = found_Trait.getProps(this.classname + this.tree.object.uid);
 				var _g2 = 0;
-				var _g3 = t.props;
-				while(_g2 < _g3.length) {
-					var p = _g3[_g2];
+				while(_g2 < props.length) {
+					var p = props[_g2];
 					++_g2;
 					if(p.indexOf(this.propertyName) != -1) {
 						var prop = p.split("~");
@@ -62937,10 +62949,11 @@ found_node_OnCollisionNode.prototype = $extend(found_node_LogicNode.prototype,{
 	,run: function(from) {
 		if(this.inputs[1].node != null) {
 			var selectedCollidingObject = this.inputs[1].get();
-			var collisionDef = { objectName : selectedCollidingObject.get_raw().name, onEnter : $bind(this,this.onCollisionEnterEvent), onStay : $bind(this,this.onCollisionStayEvent), onExit : $bind(this,this.onCollisionExitEvent)};
+			var tileid = this.inputs[2].get();
+			var collisionDef = { objectName : selectedCollidingObject.get_raw().name, onEnter : $bind(this,this.onCollisionEnterEvent), onStay : $bind(this,this.onCollisionStayEvent), onExit : $bind(this,this.onCollisionExitEvent), tileId : tileid};
 			this.collisionListeners = this.collisionListeners.concat(this.tree.object.onCollision(collisionDef));
 		} else {
-			found_tool_Log.error("On Collision node needs an object to check collisions with",{ fileName : "found/node/OnCollisionNode.hx", lineNumber : 33, className : "found.node.OnCollisionNode", methodName : "run"});
+			found_tool_Log.error("On Collision node needs an object to check collisions with",{ fileName : "found/node/OnCollisionNode.hx", lineNumber : 35, className : "found.node.OnCollisionNode", methodName : "run"});
 		}
 	}
 	,lastBody: null
@@ -63424,6 +63437,48 @@ found_node_SetObjectLocationNode.prototype = $extend(found_node_LogicNode.protot
 		return data;
 	}
 	,__class__: found_node_SetObjectLocationNode
+});
+var found_node_SetPropNode = function(tree) {
+	found_node_LogicNode.call(this,tree);
+	tree.notifyOnRemove($bind(this,this.reset));
+};
+$hxClasses["found.node.SetPropNode"] = found_node_SetPropNode;
+found_node_SetPropNode.__name__ = true;
+found_node_SetPropNode.__super__ = found_node_LogicNode;
+found_node_SetPropNode.prototype = $extend(found_node_LogicNode.prototype,{
+	classname: null
+	,propertyName: null
+	,reset: function() {
+		var _g = 0;
+		var _g1 = this.tree.object.get_raw().traits;
+		while(_g < _g1.length) {
+			var t = _g1[_g];
+			++_g;
+			if(t.classname == this.classname && t.props != null) {
+				found_Trait.props.h[this.classname + this.tree.object.uid] = t.props;
+			}
+		}
+	}
+	,run: function(from) {
+		var props = found_Trait.getProps(this.classname + this.tree.object.uid);
+		var i = 0;
+		var _g = 0;
+		while(_g < props.length) {
+			var p = props[_g];
+			++_g;
+			if(p.indexOf(this.propertyName) != -1) {
+				var prop = p.split("~");
+				prop.pop();
+				var newValue = this.inputs[1].get();
+				prop.push("" + newValue);
+				props[i] = prop.join("~");
+				found_Trait.props.h[this.classname + this.tree.object.uid] = props;
+				break;
+			}
+			++i;
+		}
+	}
+	,__class__: found_node_SetPropNode
 });
 var found_node_SpawnObjectNode = function(tree) {
 	this.spawnedObjects = [];
@@ -64281,7 +64336,7 @@ found_tool_NodeEditor.prototype = {
 					node.buttons[0].data = updatedObjectList;
 				} else if(node.type == "FlipSpriteNode") {
 					node.buttons[0].data = updatedSpriteList;
-				} else if(node.type == "GetPropNode") {
+				} else if(node.type == "GetPropNode" || node.type == "SetPropNode") {
 					var props = found_Trait.getProps(node.buttons[0].data[0]);
 					var out = [];
 					var _g2 = 0;
@@ -64354,6 +64409,12 @@ found_tool_NodeEditor.prototype = {
 					}
 					if(ui.button("GetProp")) {
 						var def = Reflect.copy(found_node_data_VariableNode.getProp);
+						var ext = "_vhx";
+						def.buttons[0].data = [found_tool_NodeEditor.selectedNode.name + ext];
+						found_tool_NodeEditor.pushNodeToSelectedGroup(def);
+					}
+					if(ui.button("SetProp")) {
+						var def = Reflect.copy(found_node_data_VariableNode.setProp);
 						var ext = "_vhx";
 						def.buttons[0].data = [found_tool_NodeEditor.selectedNode.name + ext];
 						found_tool_NodeEditor.pushNodeToSelectedGroup(def);
@@ -64542,20 +64603,12 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.playAnimationNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(111,null),"Audio")) {
-					if(ui.button("Play Music")) {
-						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.playMusicNode);
-					}
-					if(ui.button("Play Sfx")) {
-						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.playSfxNode);
-					}
-				}
 			}
 			if(ui.tab(this.nodeMenuTabHandle,"Custom")) {
 				var sec = haxe_ds_StringMap.keysIterator(found_tool_NodeEditor.gameplayNodes.h);
 				while(sec.hasNext()) {
 					var sec1 = sec.next();
-					if(ui.panel(zui_Handle.global.nest(112,null),sec1)) {
+					if(ui.panel(zui_Handle.global.nest(111,null),sec1)) {
 						var nodes = found_tool_NodeEditor.gameplayNodes.h[sec1];
 						var _g = 0;
 						while(_g < nodes.length) {
@@ -107765,7 +107818,7 @@ found_Found.GRID = 64;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
 found_Found.sha = HxOverrides.substr("'5deaa01'",1,7);
-found_Found.date = "2021-01-16 19:42:17".split(" ")[0];
+found_Found.date = "2021-01-18 21:53:07".split(" ")[0];
 found_Found.collisionsDraw = false;
 found_Found.drawGrid = true;
 found_Found.sceneX = 0.0;
@@ -107898,10 +107951,10 @@ found_node_data_FoundryNode.bulletMovementNode = { id : 0, name : "Bullet Moveme
 found_node_data_FoundryNode.setCameraTargetPositionNode = { id : 0, name : "Set Camera Target Position", type : "SetCameraTargetPositionNode", x : 200, y : 200, inputs : [{ id : 0, node_id : 0, name : "In", type : "ACTION", color : -5618620, default_value : ""},{ id : 1, node_id : 0, name : "Target Position Vec2", type : "VECTOR2", color : -7929601, default_value : new kha_math_FastVector2(0.0,0.0)}], outputs : [{ id : 0, node_id : 0, name : "Out", type : "ACTION", color : -5618620, default_value : ""}], buttons : [], color : -4962746};
 found_node_data_FoundryNode.setCameraFollowTargetNode = { id : 0, name : "Set Camera Follow Target", type : "SetCameraFollowTargetNode", x : 200, y : 200, inputs : [{ id : 0, node_id : 0, name : "In", type : "ACTION", color : -5618620, default_value : ""},{ id : 0, node_id : 0, name : "Object", type : "OBJECT", color : -4934476, default_value : null}], outputs : [{ id : 0, node_id : 0, name : "Out", type : "ACTION", color : -5618620, default_value : ""}], buttons : [], color : -4962746};
 found_node_data_FoundryNode.playAnimationNode = { id : 0, name : "Play Animation", type : "PlayAnimationNode", x : 200, y : 200, inputs : [{ id : 0, node_id : 0, name : "In", type : "ACTION", color : -5618620, default_value : ""},{ id : 0, node_id : 0, name : "Animation Name", type : "STRING", color : -4934476, default_value : ""},{ id : 0, node_id : 0, name : "Object", type : "OBJECT", color : -16067936, default_value : null}], outputs : [{ id : 0, node_id : 0, name : "Out", type : "ACTION", color : -5618620, default_value : ""}], buttons : [], color : -4962746};
-found_node_data_FoundryNode.onCollisionNode = { id : 0, name : "On Collision", type : "OnCollisionNode", x : 200, y : 200, inputs : [{ id : 0, node_id : 0, name : "In", type : "ACTION", color : -5618620, default_value : ""},{ id : 0, node_id : 0, name : "Selected Object", type : "OBJECT", color : -4934476, default_value : null}], outputs : [{ id : 0, node_id : 0, name : "On Enter", type : "ACTION", color : -5618620, default_value : ""},{ id : 0, node_id : 0, name : "On Stay", type : "ACTION", color : -5618620, default_value : ""},{ id : 0, node_id : 0, name : "On Exit", type : "ACTION", color : -5618620, default_value : ""},{ id : 0, node_id : 0, name : "Object collided", type : "OBJECT", color : -4934476, default_value : null}], buttons : [], color : -4962746};
+found_node_data_FoundryNode.onCollisionNode = { id : 0, name : "On Collision", type : "OnCollisionNode", x : 200, y : 200, inputs : [{ id : 0, node_id : 0, name : "In", type : "ACTION", color : -5618620, default_value : ""},{ id : 0, node_id : 0, name : "Selected Object", type : "OBJECT", color : -4934476, default_value : null},{ id : 0, node_id : 0, name : "Tile id", type : "VALUE", color : -10183681, default_value : null}], outputs : [{ id : 0, node_id : 0, name : "On Enter", type : "ACTION", color : -5618620, default_value : ""},{ id : 0, node_id : 0, name : "On Stay", type : "ACTION", color : -5618620, default_value : ""},{ id : 0, node_id : 0, name : "On Exit", type : "ACTION", color : -5618620, default_value : ""},{ id : 0, node_id : 0, name : "Object collided", type : "OBJECT", color : -4934476, default_value : null}], buttons : [], color : -4962746};
 found_node_data_FoundryNode.playMusicNode = { id : 0, name : "Play Music", type : "PlayMusicNode", x : 200, y : 200, inputs : [{ id : 0, node_id : 0, name : "In", type : "ACTION", color : -5618620, default_value : ""},{ id : 1, node_id : 1, name : "Music alias", type : "STRING", color : -4934476, default_value : ""}], outputs : [{ id : 0, node_id : 0, name : "OnFinished", type : "ACTION", color : -5618620, default_value : ""}], buttons : [{ name : "loop", type : "BOOL", output : 0, default_value : false},{ name : "volume", type : "VALUE", min : 0.0, max : 1.0, output : 0, default_value : 1.0}], color : -4962746};
 found_node_data_FoundryNode.playSfxNode = { id : 0, name : "Play Sound", type : "PlaySfxNode", x : 200, y : 200, inputs : [{ id : 0, node_id : 0, name : "In", type : "ACTION", color : -5618620, default_value : ""},{ id : 1, node_id : 1, name : "Sound alias", type : "STRING", color : -4934476, default_value : ""}], outputs : [{ id : 0, node_id : 0, name : "OnFinished", type : "ACTION", color : -5618620, default_value : ""}], buttons : [{ name : "volume", type : "VALUE", min : 0.0, max : 1.0, output : 0, default_value : 1.0}], color : -4962746};
-found_node_data_LogicNode.gate = { id : 0, name : "Gate", type : "GateNode", x : 200, y : 200, color : -4962746, inputs : [{ id : 1, node_id : 0, name : "Bool", type : "BOOLEAN", color : -10822566, default_value : 0.0},{ id : 2, node_id : 0, name : "Bool", type : "BOOLEAN", color : -10822566, default_value : 0.0}], outputs : [{ id : 0, node_id : 0, name : "Bool", type : "BOOLEAN", color : -10822566, default_value : 0.0}], buttons : [{ name : "operations", type : "ENUM", data : found_node_GateNode.getOperationsNames(), default_value : 0}]};
+found_node_data_LogicNode.gate = { id : 0, name : "Gate", type : "GateNode", x : 200, y : 200, color : -4962746, inputs : [{ id : 1, node_id : 0, name : "Dynamic", type : "BOOLEAN", color : -6684709, default_value : null},{ id : 2, node_id : 0, name : "Dynamic", type : "BOOLEAN", color : -6684709, default_value : null}], outputs : [{ id : 0, node_id : 0, name : "Bool", type : "BOOLEAN", color : -10822566, default_value : 0.0}], buttons : [{ name : "operations", type : "ENUM", data : found_node_GateNode.getOperationsNames(), default_value : 0}]};
 found_node_data_LogicNode.branch = { id : 0, name : "Branch", type : "BranchNode", x : 200, y : 200, color : -4962746, inputs : [{ id : 0, node_id : 0, name : "In", type : "ACTION", color : -5618620, default_value : 0.0},{ id : 1, node_id : 0, name : "Bool", type : "BOOLEAN", color : -10822566, default_value : 0.0}], outputs : [{ id : 0, node_id : 0, name : "True", type : "BOOL", color : -10822566, default_value : 0.0},{ id : 1, node_id : 0, name : "False", type : "BOOL", color : -10822566, default_value : 0.0}], buttons : []};
 found_node_data_LogicNode.isFalse = { id : 0, name : "Is False", type : "IsFalseNode", x : 200, y : 200, color : -4962746, inputs : [{ id : 0, node_id : 0, name : "In", type : "ACTION", color : -5618620, default_value : 0.0},{ id : 1, node_id : 0, name : "Bool", type : "BOOLEAN", color : -10822566, default_value : 0.0}], outputs : [{ id : 0, node_id : 0, name : "Out", type : "ACTION", color : -5618620, default_value : 0.0}], buttons : []};
 found_node_data_LogicNode.isTrue = { id : 0, name : "Is True", type : "IsTrueNode", x : 200, y : 200, color : -4962746, inputs : [{ id : 0, node_id : 0, name : "In", type : "ACTION", color : -5618620, default_value : 0.0},{ id : 1, node_id : 0, name : "Bool", type : "BOOLEAN", color : -10822566, default_value : 0.0}], outputs : [{ id : 0, node_id : 0, name : "Out", type : "ACTION", color : -5618620, default_value : 0.0}], buttons : []};
@@ -107921,6 +107974,7 @@ found_node_data_VariableNode.int = { id : 0, name : "Int", type : "IntegerNode",
 found_node_data_VariableNode.boolean = { id : 0, name : "Boolean", type : "BoolNode", x : 200, y : 200, color : -16067936, inputs : [{ id : 0, node_id : 0, name : "Bool", type : "BOOLEAN", color : -10822566, default_value : ""}], outputs : [{ id : 0, node_id : 0, name : "Bool", type : "BOOLEAN", color : -10822566, default_value : ""}], buttons : []};
 found_node_data_VariableNode.vector2 = { id : 0, name : "Vector2", type : "Vector2Node", x : 200, y : 200, color : -16067936, inputs : [{ id : 0, node_id : 0, name : "X", type : "VALUE", color : -10183681, default_value : 0.0, max : 100.0},{ id : 1, node_id : 0, name : "Y", type : "VALUE", color : -10183681, default_value : 0.0, max : 100.0}], outputs : [{ id : 0, node_id : 0, name : "Vec2", type : "VECTOR2", color : -7929601, default_value : [0.0,0.0]},{ id : 1, node_id : 0, name : "Normalised Vec2", type : "VECTOR2", color : -7929601, default_value : [0.0,0.0]}], buttons : []};
 found_node_data_VariableNode.getProp = { id : 0, name : "Get Property", type : "GetPropNode", x : 200, y : 200, color : -16067936, inputs : [], outputs : [{ id : 0, node_id : 0, name : "Prop", type : "VALUE", color : -10183681, default_value : null}], buttons : [{ name : "classname", type : "ENUM", data : [], output : 0, default_value : 0},{ name : "propertyName", type : "ENUM", data : [], output : 0, default_value : 0}]};
+found_node_data_VariableNode.setProp = { id : 0, name : "Set Property", type : "SetPropNode", x : 200, y : 200, color : -16067936, inputs : [{ id : 0, node_id : 0, name : "In", type : "ACTION", color : -5618620, default_value : ""},{ id : 0, node_id : 0, name : "Value", type : "VALUE", color : -10183681, default_value : null}], outputs : [], buttons : [{ name : "classname", type : "ENUM", data : [], output : 0, default_value : 0},{ name : "propertyName", type : "ENUM", data : [], output : 0, default_value : 0}]};
 found_object_Executor.executors = [];
 found_tool_Log.customLogs = [];
 found_tool_NodeEditor.nodesArray = [];
