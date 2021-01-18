@@ -72260,7 +72260,7 @@ js_lib__$ArrayBuffer_ArrayBufferCompat.sliceImpl = function(begin,end) {
 	return resultArray.buffer;
 };
 var kha__$Assets_ImageList = function() {
-	this.names = ["audio_file","audio_file_grey","backgroundEmpty","basic","blank","camera_image","camera_object","file","file_grey","file_grey_bigger","folder","folder2","foundry_icon","information","layers","layers_grey","light_object","loading","mesh_image","mesh_object","pause","picture","picture_grey","platformerPack_character","play","play_button","play_button_grey","script","sprite_object","tilesheet","warning"];
+	this.names = ["audio_file","audio_file_grey","basic","blank","camera_image","camera_object","file","file_grey","file_grey_bigger","folder","folder2","foundry_icon","information","layers","layers_grey","light_object","loading","mesh_image","mesh_object","pause","picture","picture_grey","platformerPack_character","play","play_button","play_button_grey","script","sprite_object","tilesheet","warning"];
 	this.warningDescription = { name : "warning", original_height : 16, file_sizes : [363], original_width : 16, files : ["warning.png"], type : "image"};
 	this.warningName = "warning";
 	this.warning = null;
@@ -72345,9 +72345,6 @@ var kha__$Assets_ImageList = function() {
 	this.basicDescription = { name : "basic", original_height : 250, file_sizes : [3551], original_width : 250, files : ["basic.png"], type : "image"};
 	this.basicName = "basic";
 	this.basic = null;
-	this.backgroundEmptyDescription = { name : "backgroundEmpty", original_height : 1024, file_sizes : [20027], original_width : 1024, files : ["backgroundEmpty.png"], type : "image"};
-	this.backgroundEmptyName = "backgroundEmpty";
-	this.backgroundEmpty = null;
 	this.audio_file_greyDescription = { name : "audio_file_grey", original_height : 16, file_sizes : [288], original_width : 16, files : ["audio-file_grey.png"], type : "image"};
 	this.audio_file_greyName = "audio_file_grey";
 	this.audio_file_grey = null;
@@ -72384,18 +72381,6 @@ kha__$Assets_ImageList.prototype = {
 	,audio_file_greyUnload: function() {
 		this.audio_file_grey.unload();
 		this.audio_file_grey = null;
-	}
-	,backgroundEmpty: null
-	,backgroundEmptyName: null
-	,backgroundEmptyDescription: null
-	,backgroundEmptyLoad: function(done,failure) {
-		kha_Assets.loadImage("backgroundEmpty",function(image) {
-			done();
-		},failure,{ fileName : "kha/internal/AssetsBuilder.hx", lineNumber : 126, className : "kha._Assets.ImageList", methodName : "backgroundEmptyLoad"});
-	}
-	,backgroundEmptyUnload: function() {
-		this.backgroundEmpty.unload();
-		this.backgroundEmpty = null;
 	}
 	,basic: null
 	,basicName: null
@@ -107818,7 +107803,7 @@ found_Found.GRID = 64;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
 found_Found.sha = HxOverrides.substr("'5deaa01'",1,7);
-found_Found.date = "2021-01-18 21:53:07".split(" ")[0];
+found_Found.date = "2021-01-18 22:17:30".split(" ")[0];
 found_Found.collisionsDraw = false;
 found_Found.drawGrid = true;
 found_Found.sceneX = 0.0;
