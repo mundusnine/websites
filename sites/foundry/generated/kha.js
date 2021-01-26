@@ -154,17 +154,20 @@ AnimationEditor.prototype = {
 		}
 		this.viewHeight = AnimationEditor.height - AnimationEditor.timeline.get_height();
 		if(ui.tab(this.parent.htab,this.ownerTab.name)) {
-			ui.row([0.52,0.16,0.16,0.16]);
+			ui.row([0.40,0.15,0.15,0.15,0.15]);
 			this.animHandle.position = this.animIndex;
 			if(this.animations.length > 0) {
 				if(!this.renameState) {
 					this.animIndex = ui.combo(this.animHandle,this.animations);
+					if(this.animHandle.changed) {
+						this.timelineHandle.redraws = 2;
+					}
 				} else {
 					var last = ui.t.ACCENT_COL;
 					ui.t.ACCENT_COL = kha_Color.fromFloats(1.0,0.0,0.0,0.7);
 					var txtHandle = zui_Handle.global.nest(112,null);
 					if(this.animIndex < 0) {
-						haxe_Log.trace("animIndex is bad at number: " + this.animIndex,{ fileName : "AnimationEditor.hx", lineNumber : 154, className : "AnimationEditor", methodName : "render"});
+						haxe_Log.trace("animIndex is bad at number: " + this.animIndex,{ fileName : "AnimationEditor.hx", lineNumber : 158, className : "AnimationEditor", methodName : "render"});
 					}
 					txtHandle.text = this.animations[this.animIndex];
 					ui.textInput(txtHandle);
@@ -210,11 +213,16 @@ AnimationEditor.prototype = {
 				this.curSprite.data.get_animation().name = this.animations[this.animIndex];
 				this.timelineHandle.redraws = 2;
 			}
-			if(ui.button("Save Animations") && this.curSprite != null) {
-				this.saveAnimations();
-				EditorHierarchy.getInstance().makeDirty();
+			if(ui.button(utilities_Translator.tr("Delete Animation")) && this.animations.length > 0) {
+				this.animations.splice(this.animIndex,1);
+				this.curSprite.data.anims.splice(this.animIndex,1);
 			}
-			if(this.animIndex > -1) {
+			if(ui.button("Save Animations") && this.curSprite != null) {
+				this.saveAnimations(true);
+				EditorHierarchy.getInstance().makeDirty();
+				found_App.editorui.saveSceneData();
+			}
+			if(this.animIndex > -1 && this.animations.length > 0) {
 				var editable = true;
 				this.fpsHandle.text = "" + this.curSprite.data.get_animation()._speeddiv;
 				ui.textInput(this.fpsHandle,"Fps",0,editable);
@@ -247,7 +255,11 @@ AnimationEditor.prototype = {
 			ui.row([1.0 - div,div]);
 			ui.panel(zui_Handle.global.nest(113,{ selected : true}),"",false,false,false);
 			var oldY = ui._y;
-			zui_Ext.panelList(ui,zui_Handle.global.nest(114,{ selected : true, layout : 0}),this.curFrames,$bind(this,this.addItem),$bind(this,this.removeItem),$bind(this,this.getName),$bind(this,this.setName),$bind(this,this.drawItem),false);
+			if(this.animations.length == 0) {
+				ui.text("");
+			} else {
+				zui_Ext.panelList(ui,zui_Handle.global.nest(114,{ selected : true, layout : 0}),this.curFrames,$bind(this,this.addItem),$bind(this,this.removeItem),$bind(this,this.getName),$bind(this,this.setName),$bind(this,this.drawItem),false);
+			}
 			this.animationPreview(this.delta,AnimationEditor.width,this.viewHeight,oldY);
 		}
 	}
@@ -262,7 +274,9 @@ AnimationEditor.prototype = {
 			ui.imageScrollAlign = false;
 			var state = ui.image(AnimationEditor.timeline);
 			if(state == 2) {
-				this.delta = Math.abs(ui._windowX - ui.inputX) / 11 / ui.ops.scaleFactor | 0;
+				var fid = Math.floor(Math.abs(ui._windowX - ui.inputX) / 11 / ui.ops.scaleFactor);
+				this.curSprite.data.get_animation().setIndex(fid);
+				this.delta = fid;
 			}
 			ui.g.set_color(-14656100);
 			ui.g.fillRect(this.delta * 11 * sc,timelineLabelsHeight,10 * sc,timelineFramesHeight);
@@ -331,7 +345,7 @@ AnimationEditor.prototype = {
 				return;
 			}
 		}
-		var frame = { id : 0, start : this.delta, tw : 0, th : 0};
+		var frame = { id : 0, start : this.delta, tw : this.curSprite.data.raw.width | 0, th : this.curSprite.data.raw.height | 0};
 		var id = this.curFrames.push(frame) - 1;
 		var handles = [];
 		handles.push(new zui_Handle({ value : 0}));
@@ -422,10 +436,9 @@ AnimationEditor.prototype = {
 			this.curSprite.get_rotation().z = 0.0;
 			this.curSprite.get_scale().x = scale;
 			this.curSprite.get_scale().y = scale;
-			this.canvas.get_g2().pushTranslation(-this.curSprite.get_position().x + rx + size * 0.25,-this.curSprite.get_position().y + oldY + size * 0.25);
+			this.canvas.get_g2().pushTranslation(rx + size * 0.25,oldY + size * 0.25);
 			if(!this.doUpdate) {
 				this.curSprite.data.get_animation()._count = 0;
-				this.curSprite.data.get_animation()._index = 0;
 			}
 			this.curSprite.render(this.canvas);
 			if(this.doUpdate && this.curSprite.data.get_animation()._index == 0) {
@@ -483,7 +496,10 @@ AnimationEditor.prototype = {
 		g.end();
 		this.ui.g.begin(false);
 	}
-	,saveAnimations: function() {
+	,saveAnimations: function(saveScene) {
+		if(saveScene == null) {
+			saveScene = false;
+		}
 		if(this.curSprite == null) {
 			return;
 		}
@@ -510,6 +526,9 @@ AnimationEditor.prototype = {
 			}
 		}
 		this.curSprite.data.raw.anims = animations;
+		if(saveScene) {
+			found_App.editorui.saveSceneData();
+		}
 	}
 	,__class__: AnimationEditor
 	,__properties__: {set_curFrames:"set_curFrames",set_selectedUID:"set_selectedUID"}
@@ -707,11 +726,12 @@ CollisionEditorDialog.collisionEditorPopupDraw = function(ui) {
 		ratio = ui._windowH / CollisionEditorDialog.image.get_height();
 	}
 	var r = ui.curRatio == -1 ? 1.0 : ui.ratios[ui.curRatio];
-	var px = ui._x + ui.buttonOffsetY + (ui.t.SCROLL_W * ui.ops.scaleFactor | 0) * r * 0.5;
+	var px = ui._x;
 	var py = ui._y;
 	var tempX = ui._x;
 	ui._x -= ui.buttonOffsetY + (ui.t.SCROLL_W * ui.ops.scaleFactor | 0) * r / 2;
 	var tempH = CollisionEditorDialog.tile != null ? CollisionEditorDialog.image.get_height() : CollisionEditorDialog.image.get_height() * CollisionEditorDialog.sprite.get_scale().y;
+	var initialX = ui._x + ui.buttonOffsetY;
 	var state = ui.image(CollisionEditorDialog.image,-1,tempH,0,0,CollisionEditorDialog.image.get_width(),CollisionEditorDialog.image.get_height());
 	ui._x = tempX;
 	ui._y += ui.t.ELEMENT_OFFSET * ui.ops.scaleFactor * 2;
@@ -744,7 +764,10 @@ CollisionEditorDialog.collisionEditorPopupDraw = function(ui) {
 				shape.height = h;
 			}
 			ui.g.set_color(color);
-			ui.g.fillRect(ui._x + shape.offset_x - _w * 0.5,initY + shape.offset_y - _h * 0.5,shape.width,shape.height);
+			ui.g.fillRect(initialX + shape.offset_x,initY + shape.offset_y,shape.width * 0.5,shape.height * 0.5);
+			ui.g.fillRect(initialX + shape.offset_x,initY + shape.offset_y,-shape.width * 0.5,shape.height * 0.5);
+			ui.g.fillRect(initialX + shape.offset_x,initY + shape.offset_y,shape.width * 0.5,-shape.height * 0.5);
+			ui.g.fillRect(initialX + shape.offset_x,initY + shape.offset_y,-shape.width * 0.5,-shape.height * 0.5);
 			ui.g.set_color(-1);
 			break;
 		case 1:
@@ -768,15 +791,26 @@ CollisionEditorDialog.collisionEditorPopupDraw = function(ui) {
 				shape.radius = radius;
 			}
 			ui.g.set_color(color);
-			kha_graphics2_GraphicsExtension.fillCircle(ui.g,ui._x + shape.offset_x,initY + shape.offset_y,shape.radius);
+			kha_graphics2_GraphicsExtension.fillCircle(ui.g,initialX + shape.offset_x,initY + shape.offset_y,shape.radius);
 			ui.g.set_color(-1);
 			break;
 		case 2:
-			ui.text("Number of vertices: " + shape.vertices.length);
+			ui.row([0.5,0.5]);
+			ui.text(utilities_Translator.tr("Number of vertices: ") + shape.vertices.length);
+			if(shape.vertices.length < 13) {
+				if(ui.button(utilities_Translator.tr("Add vertex point"))) {
+					var shape1 = shape.vertices;
+					var this1 = new hxmath_math_Vector2Default(0,0);
+					shape1.push(this1);
+				}
+			} else {
+				ui.text("");
+			}
 			ui.g.set_color(color);
-			kha_graphics2_GraphicsExtension.fillPolygon(ui.g,ui._x + shape.offset_x,initY + shape.offset_y,shape.vertices);
+			kha_graphics2_GraphicsExtension.fillPolygon(ui.g,initialX + shape.offset_x,initY + shape.offset_y,shape.vertices);
 			var col = kha_Color.fromBytes(0,0,255,128);
 			var selectedCol = kha_Color.fromBytes(0,0,255,255);
+			var i = 0;
 			var _g = 0;
 			var _g1 = shape.vertices;
 			while(_g < _g1.length) {
@@ -784,21 +818,25 @@ CollisionEditorDialog.collisionEditorPopupDraw = function(ui) {
 				++_g;
 				ui.g.set_color(col);
 				var w = 10;
-				var addX = ui._x + (vert.x > 0 ? -w : 0.0);
+				var addX = initialX + (vert.x > 0 ? -w : 0.0);
 				var addY = initY + (vert.y > 0 ? -w : 0.0);
-				if(state == 2) {
-					var x = Math.abs(ui._windowX - ui.inputX) - px;
+				if(state == 2 && (CollisionEditorDialog.lastVert == -1 || i == CollisionEditorDialog.lastVert)) {
+					var x = Math.abs(ui._windowX - ui.inputX) - initialX;
 					var y = Math.abs(ui._windowY - ui.inputY) - py;
 					var tempX = addX - ui._x;
 					var tempY = addY - initY;
 					if(x >= vert.x + tempX - w * 2 && x <= vert.x + tempX + w * 2 && y >= vert.y + tempY - w * 2 && y <= vert.y + tempY + w * 2) {
+						CollisionEditorDialog.lastVert = i;
 						ui.g.set_color(selectedCol);
 						var tx = Math.min(x,_w);
 						var ty = Math.min(y,_h);
 						vert.x = Math.max(0,tx);
 						vert.y = Math.max(0,ty);
 					}
+				} else if(state == 3) {
+					CollisionEditorDialog.lastVert = -1;
 				}
+				++i;
 				ui.g.fillRect(vert.x + addX,vert.y + addY,w,w);
 			}
 			ui.g.set_color(-1);
@@ -1305,10 +1343,10 @@ EditorAnimationView.prototype = $extend(Tab.prototype,{
 		return false;
 	}
 	,render: function(ui) {
-		if(this.animationEditor == null && this.parent != null) {
-			this.animationEditor = new AnimationEditor(this.parent,this);
-		} else if(this.animationEditor == null) {
-			return;
+		if(this.animationEditor == null) {
+			if(!this.initAnimationEditor()) {
+				return;
+			}
 		}
 		this.animationEditor.setAll(this.parent.get_x(),this.parent.get_y(),this.parent.get_w(),this.parent.get_h());
 		this.animationEditor.render(ui);
@@ -1316,6 +1354,11 @@ EditorAnimationView.prototype = $extend(Tab.prototype,{
 	,update: function(dt) {
 		if(!this.get_active()) {
 			return;
+		}
+		if(this.animationEditor == null) {
+			if(!this.initAnimationEditor()) {
+				return;
+			}
 		}
 		this.animationEditor.update(dt);
 	}
@@ -5117,7 +5160,7 @@ var EditorUi = function() {
 					}
 					khafs_Fs.getContent(key2[0],(function(key) {
 						return function(data) {
-							haxe_Log.trace("Fetched data from " + key[0],{ fileName : "EditorUi.hx", lineNumber : 111, className : "EditorUi", methodName : "new"});
+							haxe_Log.trace("Fetched data from " + key[0],{ fileName : "EditorUi.hx", lineNumber : 104, className : "EditorUi", methodName : "new"});
 						};
 					})(key2));
 				}
@@ -5322,7 +5365,8 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 		codeEditor.addToElementDraw("Explorer",bottom);
 		codeEditor.addToElementDraw("Game",center);
 		var drawPanel = new EditorPanel();
-		drawPanel.addTab(new EditorAnimationView());
+		this.animationView = new EditorAnimationView();
+		drawPanel.addTab(this.animationView);
 		drawEditor.addToElementDraw("Draw",drawPanel);
 		var right = new EditorPanel(false);
 		var left = new EditorPanel();
@@ -5348,6 +5392,7 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 		}
 		this.ui.enabled = !zui_Popup.show;
 		var isInMainView = this.currentView == 0;
+		found_trait_internal_Arrows.get_instance().update();
 		if(this.keysDown(utilities_Config.keymap.file_save)) {
 			this.saveSceneData();
 		}
@@ -5414,12 +5459,14 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 			} else if(!this.mouse.down("left")) {
 				EditorUi.arrow = -1;
 			}
-			if(this.mouse.started("left") && !this.isInUi()) {
+			if(EditorUi.arrow == -1 && this.mouse.started("left") && !this.isInUi()) {
 				var mpos = found_State.active.cam.screenToWorld(new kha_math_Vector2(this.mouse.x,this.mouse.y));
+				var ordered = found_State.active._entities.slice();
+				found_State.active.depth(ordered);
+				ordered.reverse();
 				var _g = 0;
-				var _g1 = found_State.active._entities;
-				while(_g < _g1.length) {
-					var entity = _g1[_g];
+				while(_g < ordered.length) {
+					var entity = ordered[_g];
 					++_g;
 					if(found_State.active.cam == entity) {
 						continue;
@@ -5437,6 +5484,7 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 					var dif_y = y;
 					if(Math.abs(dif_x) < entity.get_width() && Math.abs(dif_y) < entity.get_height() && mpos.x > entity.get_position().x && mpos.y > entity.get_position().y) {
 						this.hierarchy.onObjectSelected(entity.uid,entity.get_raw());
+						break;
 					}
 				}
 			}
@@ -5628,7 +5676,7 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 		case 0:
 			found_State.active._entities[this.inspector.index].translate(function(data) {
 				return data;
-			},{ _positions : new kha_math_Vector2(x)},true);
+			},{ _positions : new kha_math_Vector2(x,pos.y)},true);
 			Reflect.setProperty(found_State.active.raw._entities[this.inspector.index].position,"x",x);
 			break;
 		case 1:
@@ -5648,6 +5696,10 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 		this.inspector.redraw();
 	}
 	,saveSceneData: function() {
+		if(this.currentView == 2) {
+			this.animationView.animationEditor.saveAnimations();
+			EditorHierarchy.getInstance().makeDirty();
+		}
 		if(EditorHierarchy.getInstance().isDirty()) {
 			var i = 0;
 			var _g = 0;
@@ -5695,7 +5747,7 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 					_gthis.hierarchy.onSceneSelected();
 				});
 			} else {
-				found_tool_Log.error("file with name " + name + " is not a valid scene name or the path \"" + path + "\" was invalid ",{ fileName : "EditorUi.hx", lineNumber : 530, className : "EditorUi", methodName : "openScene"});
+				found_tool_Log.error("file with name " + name + " is not a valid scene name or the path \"" + path + "\" was invalid ",{ fileName : "EditorUi.hx", lineNumber : 534, className : "EditorUi", methodName : "openScene"});
 			}
 		};
 		FileBrowserDialog.open(done);
@@ -57843,7 +57895,6 @@ found_Scene.prototype = {
 		}
 	}
 	,render: function(canvas) {
-		var _gthis = this;
 		if(!found_Scene.ready) {
 			return;
 		}
@@ -58046,13 +58097,11 @@ found_Scene.prototype = {
 							break;
 						case 1:
 							var radius = (bds.max_y - bds.min_y) * 0.5;
-							kha_graphics2_GraphicsExtension.fillCircle(canvas.get_g2(),bds.min_x - _gthis.cam.get_position().x + radius,bds.min_y - _gthis.cam.get_position().y + radius,radius);
+							kha_graphics2_GraphicsExtension.fillCircle(canvas.get_g2(),bds.min_x + radius,bds.min_y + radius,radius);
 							break;
 						case 2:
 							var poly = js_Boot.__cast(shape , echo_shape_Polygon);
 							var tmp = canvas.get_g2();
-							var tmp1 = -_gthis.cam.get_position().x;
-							var tmp2 = -_gthis.cam.get_position().y;
 							if(poly.dirty_vertices) {
 								poly.dirty_vertices = false;
 								var self = poly.local_frame.get_offset();
@@ -58151,7 +58200,7 @@ found_Scene.prototype = {
 									}
 								}
 							}
-							kha_graphics2_GraphicsExtension.fillPolygon(tmp,tmp1,tmp2,poly._vertices);
+							kha_graphics2_GraphicsExtension.fillPolygon(tmp,0,0,poly._vertices);
 							break;
 						}
 					}
@@ -65357,6 +65406,9 @@ found_trait_internal_Arrows.prototype = $extend(found_Trait.prototype,{
 	,hPos: null
 	,vPos: null
 	,update: function() {
+		if(!this.visible || this.object == found_State.active.cam || found_App.editorui.currentView != 0) {
+			return;
+		}
 		var x = this.object.get_position().x;
 		var y = this.object.get_position().y;
 		if(y == null) {
@@ -65432,7 +65484,6 @@ found_trait_internal_Arrows.prototype = $extend(found_Trait.prototype,{
 		this.hPos.y = -this.rectSize;
 		this.vPos.x = 0;
 		this.vPos.y = -this.rectSize - this.width;
-		this.update();
 		var size = this.rectSize * 0.33;
 		g.set_color(-256);
 		g.fillRect(this.rectPos.x,this.rectPos.y,this.rectSize,this.rectSize);
@@ -107701,8 +107752,9 @@ AnimationEditor.dot = null;
 zui_Handle.global = new zui_Handle();
 CollisionEditorDialog.textInputHandle = zui_Handle.global.nest(56,null);
 CollisionEditorDialog.comboBoxHandle = zui_Handle.global.nest(47,null);
-CollisionEditorDialog.collisionTypes = ["Rect","Circle","Polygon"];
+CollisionEditorDialog.collisionTypes = ["Rect","Circle"];
 CollisionEditorDialog.shouldTileInit = false;
+CollisionEditorDialog.lastVert = -1;
 ConfigSettingsDialog.localeHandle = zui_Handle.global.nest(29,null);
 ConfigSettingsDialog.languages = [];
 ConfigSettingsDialog.playModeHandle = zui_Handle.global.nest(30,null);
@@ -107803,9 +107855,9 @@ found_Found.GRID = 64;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
 found_Found.sha = HxOverrides.substr("'5deaa01'",1,7);
-found_Found.date = "2021-01-18 22:17:30".split(" ")[0];
+found_Found.date = "2021-01-26 20:15:55".split(" ")[0];
 found_Found.collisionsDraw = false;
-found_Found.drawGrid = true;
+found_Found.drawGrid = false;
 found_Found.sceneX = 0.0;
 found_Found.sceneY = 0.0;
 found_Input.occupied = false;
