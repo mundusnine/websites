@@ -165,9 +165,9 @@ AnimationEditor.prototype = {
 				} else {
 					var last = ui.t.ACCENT_COL;
 					ui.t.ACCENT_COL = kha_Color.fromFloats(1.0,0.0,0.0,0.7);
-					var txtHandle = zui_Handle.global.nest(112,null);
+					var txtHandle = zui_Handle.global.nest(113,null);
 					if(this.animIndex < 0) {
-						haxe_Log.trace("animIndex is bad at number: " + this.animIndex,{ fileName : "AnimationEditor.hx", lineNumber : 158, className : "AnimationEditor", methodName : "render"});
+						found_tool_Log.error("animIndex is bad at number: " + this.animIndex,{ fileName : "AnimationEditor.hx", lineNumber : 158, className : "AnimationEditor", methodName : "render"});
 					}
 					txtHandle.text = this.animations[this.animIndex];
 					ui.textInput(txtHandle);
@@ -253,12 +253,12 @@ AnimationEditor.prototype = {
 			}
 			var div = ui.t.ELEMENT_W * ui.ops.scaleFactor / this.parent.get_w() * 2;
 			ui.row([1.0 - div,div]);
-			ui.panel(zui_Handle.global.nest(113,{ selected : true}),"",false,false,false);
+			ui.panel(zui_Handle.global.nest(114,{ selected : true}),"",false,false,false);
 			var oldY = ui._y;
 			if(this.animations.length == 0) {
 				ui.text("");
 			} else {
-				zui_Ext.panelList(ui,zui_Handle.global.nest(114,{ selected : true, layout : 0}),this.curFrames,$bind(this,this.addItem),$bind(this,this.removeItem),$bind(this,this.getName),$bind(this,this.setName),$bind(this,this.drawItem),false);
+				zui_Ext.panelList(ui,zui_Handle.global.nest(115,{ selected : true, layout : 0}),this.curFrames,$bind(this,this.addItem),$bind(this,this.removeItem),$bind(this,this.getName),$bind(this,this.setName),$bind(this,this.drawItem),false);
 			}
 			this.animationPreview(this.delta,AnimationEditor.width,this.viewHeight,oldY);
 		}
@@ -474,7 +474,7 @@ AnimationEditor.prototype = {
 		AnimationEditor.timeline = kha_Image.createRenderTarget(AnimationEditor.width,timelineHeight);
 		var g = AnimationEditor.timeline.get_g2();
 		this.ui.g.end();
-		g.begin(true,-14540254);
+		g.begin(true,this.ui.t.ACCENT_COL - 2236962);
 		g.set_font(kha_Assets.fonts.font_default);
 		g.set_fontSize(16 * sc | 0);
 		var frames = AnimationEditor.timeline.get_width() / (11 * sc) | 0;
@@ -490,7 +490,7 @@ AnimationEditor.prototype = {
 		var _g1 = frames;
 		while(_g < _g1) {
 			var i = _g++;
-			g.set_color(i % 5 == 0 ? -12303292 : -13421773);
+			g.set_color(i % 5 == 0 ? this.ui.t.ACCENT_COL : this.ui.t.ACCENT_COL - 1118481);
 			g.fillRect(i * 11 * sc,timelineHeight - timelineFramesHeight,10 * sc,timelineFramesHeight);
 		}
 		g.end();
@@ -739,25 +739,25 @@ CollisionEditorDialog.collisionEditorPopupDraw = function(ui) {
 		var color = kha_Color.fromBytes(255,0,0,128);
 		switch(shape.type) {
 		case 0:
-			var xHandle = zui_Handle.global.nest(48,null);
+			var xHandle = zui_Handle.global.nest(49,null);
 			xHandle.value = shape.offset_x - _w * 0.5;
 			var x = ui.slider(xHandle,"X",0,CollisionEditorDialog.image.get_width());
 			if(xHandle.changed) {
 				shape.offset_x = x + _w * 0.5;
 			}
-			var yHandle = zui_Handle.global.nest(49,null);
+			var yHandle = zui_Handle.global.nest(50,null);
 			yHandle.value = shape.offset_y - _h * 0.5;
 			var y = ui.slider(yHandle,"Y",0,CollisionEditorDialog.image.get_height());
 			if(yHandle.changed) {
 				shape.offset_y = y + _h * 0.5;
 			}
-			var widthHandle = zui_Handle.global.nest(50,null);
+			var widthHandle = zui_Handle.global.nest(51,null);
 			widthHandle.value = shape.width;
 			var w = ui.slider(widthHandle,"Width",0.1,_w);
 			if(widthHandle.changed) {
 				shape.width = w;
 			}
-			var heightHandle = zui_Handle.global.nest(51,null);
+			var heightHandle = zui_Handle.global.nest(52,null);
 			heightHandle.value = shape.height;
 			var h = ui.slider(heightHandle,"Height",0.1,_h);
 			if(heightHandle.changed) {
@@ -771,19 +771,19 @@ CollisionEditorDialog.collisionEditorPopupDraw = function(ui) {
 			ui.g.set_color(-1);
 			break;
 		case 1:
-			var xHandle = zui_Handle.global.nest(52,null);
+			var xHandle = zui_Handle.global.nest(53,null);
 			xHandle.value = shape.offset_x - _w * 0.5;
 			var x = ui.slider(xHandle,"X",0,_w);
 			if(xHandle.changed) {
 				shape.offset_x = x + _w * 0.5;
 			}
-			var yHandle = zui_Handle.global.nest(53,null);
+			var yHandle = zui_Handle.global.nest(54,null);
 			yHandle.value = shape.offset_y - _h * 0.5;
 			var y = ui.slider(yHandle,"Y",0,_h);
 			if(yHandle.changed) {
 				shape.offset_y = y + _h * 0.5;
 			}
-			var radiusHandle = zui_Handle.global.nest(54,null);
+			var radiusHandle = zui_Handle.global.nest(55,null);
 			radiusHandle.value = shape.radius;
 			var maxRadius = _w > _h ? _w : _h;
 			var radius = ui.slider(radiusHandle,"Radius",1,maxRadius);
@@ -1105,6 +1105,22 @@ ConfigSettingsDialog.configSettingsPopupDraw = function(ui) {
 	if(ConfigSettingsDialog.localeHandle.changed) {
 		utilities_Config.raw.locale = ConfigSettingsDialog.languages[selected];
 	}
+	var themeHandle = zui_Handle.global.nest(30,null);
+	var themes = [];
+	var _g = 0;
+	var _g1 = zui_Canvas.themes;
+	while(_g < _g1.length) {
+		var t = _g1[_g];
+		++_g;
+		themes.push(t.NAME);
+	}
+	var index = ui.combo(themeHandle,themes);
+	if(themeHandle.changed) {
+		found_tool_TileEditor.ui.t = found_Found.popupZuiInstance.t = found_App.editorui.ui.t = zui_Canvas.themes[index];
+		found_App.editorui.redraw();
+		AnimationEditor.timeline = null;
+		found_App.editorui.animationView.redraw();
+	}
 	ConfigSettingsDialog.playModeHandle.selected = utilities_Config.raw.defaultPlayMode;
 	var value = ui.check(ConfigSettingsDialog.playModeHandle,utilities_Translator.tr("Boot in Play Mode"));
 	if(ConfigSettingsDialog.playModeHandle.changed) {
@@ -1289,6 +1305,8 @@ Tab.prototype = {
 			this.parent.windowHandle.redraws = 2;
 		}
 	}
+	,update: function(dt) {
+	}
 	,render: function(ui) {
 	}
 	,__class__: Tab
@@ -1361,6 +1379,15 @@ EditorAnimationView.prototype = $extend(Tab.prototype,{
 			}
 		}
 		this.animationEditor.update(dt);
+	}
+	,redraw: function() {
+		Tab.prototype.redraw.call(this);
+		if(this.animationEditor == null) {
+			if(!this.initAnimationEditor()) {
+				return;
+			}
+		}
+		this.animationEditor.timelineHandle.redraws = 2;
 	}
 	,__class__: EditorAnimationView
 });
@@ -1445,7 +1472,7 @@ EditorCodeView.prototype = $extend(Tab.prototype,{
 						found_tool_NodeEditor.selectedNode = visualTraitData;
 					});
 				} else if(StringTools.startsWith(this.currentlyDisplayedTrait.classname,"found.trait.internal") || StringTools.startsWith(this.currentlyDisplayedTrait.classname,"gameplay")) {
-					haxe_Log.trace("need to load internal trait",{ fileName : "EditorCodeView.hx", lineNumber : 94, className : "EditorCodeView", methodName : "updateDisplayedTraitData"});
+					found_tool_Log.warn("need to load internal trait",{ fileName : "EditorCodeView.hx", lineNumber : 94, className : "EditorCodeView", methodName : "updateDisplayedTraitData"});
 				} else {
 					khafs_Fs.getContent(this.currentlyDisplayedTrait.classname,function(data) {
 						_gthis.codeScriptTextAreaHandle.text = data;
@@ -1497,7 +1524,7 @@ EditorCodeView.prototype = $extend(Tab.prototype,{
 });
 var EditorConsole = function() {
 	this.lineHeight = 0.0;
-	this.comboH = zui_Handle.global.nest(115,null);
+	this.comboH = zui_Handle.global.nest(116,null);
 	this.checkH = zui_Handle.global.nest(2,null);
 	this.handle = zui_Handle.global.nest(22,null);
 	this.typeImages = [];
@@ -1720,8 +1747,8 @@ var EditorHierarchy = function() {
 	this.objectNameDoubleClickTime = 0.0;
 	this.sceneNameDoubleClickTime = 0.0;
 	this.handles = [];
-	this.objectTypeHandle = zui_Handle.global.nest(86,null);
-	this.textInputHandle = zui_Handle.global.nest(85,null);
+	this.objectTypeHandle = zui_Handle.global.nest(87,null);
+	this.textInputHandle = zui_Handle.global.nest(86,null);
 	this.objectWithNameAlreadyExists = false;
 	this.sceneNameHandle = zui_Handle.global.nest(17,null);
 	this.sceneName = "";
@@ -1811,7 +1838,7 @@ EditorHierarchy.prototype = $extend(Tab.prototype,{
 		if(this.scene == null) {
 			return;
 		}
-		if(ui.panel(zui_Handle.global.nest(87,{ selected : true}),this.name)) {
+		if(ui.panel(zui_Handle.global.nest(88,{ selected : true}),this.name)) {
 			this.sceneNameHandle.text = this.scene.name;
 			if(kha_Scheduler.time() - this.sceneNameDoubleClickTime > 1.0) {
 				this.sceneNameHandle.position = 0;
@@ -1854,7 +1881,7 @@ EditorHierarchy.prototype = $extend(Tab.prototype,{
 	,objectCreationPopupDraw: function(ui) {
 		zui_Popup.boxTitle = utilities_Translator.tr("Add an Object");
 		var border = 2 * zui_Popup.borderW + zui_Popup.borderOffset;
-		if(ui.panel(zui_Handle.global.nest(88,{ selected : true}),utilities_Translator.tr("Object Types") + ":",true)) {
+		if(ui.panel(zui_Handle.global.nest(89,{ selected : true}),utilities_Translator.tr("Object Types") + ":",true)) {
 			var index = 0;
 			var _g = 0;
 			var _g1 = this.objectTypes;
@@ -2149,16 +2176,16 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 		var wHandle = this.objItemHandles[8];
 		var hHandle = this.objItemHandles[9];
 		var imagePathHandle = this.objItemHandles[10];
-		var kinematicHandle = zui_Handle.global.nest(57,null);
-		var massHandle = zui_Handle.global.nest(58,null);
-		var elasticityHandle = zui_Handle.global.nest(59,null);
-		var maxXvelHandle = zui_Handle.global.nest(60,null);
-		var maxYvelHandle = zui_Handle.global.nest(61,null);
-		var maxRotVelHandle = zui_Handle.global.nest(62,null);
-		var dragXHandle = zui_Handle.global.nest(63,null);
-		var dragYHandle = zui_Handle.global.nest(64,null);
-		var gravityScaleHandle = zui_Handle.global.nest(65,null);
-		var objectNameHandle = zui_Handle.global.nest(66,null);
+		var kinematicHandle = zui_Handle.global.nest(58,null);
+		var massHandle = zui_Handle.global.nest(59,null);
+		var elasticityHandle = zui_Handle.global.nest(60,null);
+		var maxXvelHandle = zui_Handle.global.nest(61,null);
+		var maxYvelHandle = zui_Handle.global.nest(62,null);
+		var maxRotVelHandle = zui_Handle.global.nest(63,null);
+		var dragXHandle = zui_Handle.global.nest(64,null);
+		var dragYHandle = zui_Handle.global.nest(65,null);
+		var gravityScaleHandle = zui_Handle.global.nest(66,null);
+		var objectNameHandle = zui_Handle.global.nest(67,null);
 		objectNameHandle.text = this.selectedObjectData.name;
 		ui.textInput(objectNameHandle,"");
 		if(objectNameHandle.changed && objectNameHandle.text != "") {
@@ -2255,7 +2282,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 			this.selectScene();
 			return;
 		}
-		ui.row([div,div]);
+		ui.row([div,1.0 - div]);
 		wHandle.value = this.selectedObjectData.width;
 		var width = zui_Ext.floatInput(ui,wHandle,"Width: ",2);
 		if(wHandle.changed) {
@@ -2285,7 +2312,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				this.browseImage();
 			}
 		}
-		if(ui.panel(zui_Handle.global.nest(67,null),"Traits: ")) {
+		if(ui.panel(zui_Handle.global.nest(68,null),"Traits: ")) {
 			ui.indent();
 			var traits = this.selectedObjectData.traits != null ? this.selectedObjectData.traits : [];
 			var lastSelectedTraitIndex = this.traitListHandle.nest(0).position;
@@ -3772,7 +3799,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				_gthis.get_currentObject().dataChanged = true;
 				_gthis.changed = true;
 			};
-			if(ui.panel(zui_Handle.global.nest(68,null),"Rigidbody: ")) {
+			if(ui.panel(zui_Handle.global.nest(69,null),"Rigidbody: ")) {
 				if(ui.button(text)) {
 					addRigidbody(text);
 				}
@@ -3824,7 +3851,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 						this.changed = true;
 					}
 					maxYvelHandle.value = this.selectedObjectData.rigidBody.max_velocity_x;
-					var maxVelY = zui_Ext.floatInput(ui,zui_Handle.global.nest(69,null),"Max Y Velocity:",2);
+					var maxVelY = zui_Ext.floatInput(ui,zui_Handle.global.nest(70,null),"Max Y Velocity:",2);
 					if(maxYvelHandle.changed) {
 						this.selectedObjectData.rigidBody.max_velocity_y = maxVelY;
 						this.get_currentObject().body.max_velocity.y = this.selectedObjectData.rigidBody.max_velocity_y;
@@ -3832,7 +3859,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 						this.changed = true;
 					}
 					maxRotVelHandle.value = this.selectedObjectData.rigidBody.max_rotational_velocity;
-					var maxRot = zui_Ext.floatInput(ui,zui_Handle.global.nest(70,null),"Max Rotation Velocity:",2);
+					var maxRot = zui_Ext.floatInput(ui,zui_Handle.global.nest(71,null),"Max Rotation Velocity:",2);
 					if(maxRotVelHandle.changed) {
 						this.selectedObjectData.rigidBody.max_rotational_velocity = maxRot;
 						this.get_currentObject().body.max_rotational_velocity = this.selectedObjectData.rigidBody.max_rotational_velocity;
@@ -3840,7 +3867,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 						this.changed = true;
 					}
 					dragXHandle.value = this.selectedObjectData.rigidBody.drag_x;
-					var dragX = zui_Ext.floatInput(ui,zui_Handle.global.nest(71,null),"Drag X:",2);
+					var dragX = zui_Ext.floatInput(ui,zui_Handle.global.nest(72,null),"Drag X:",2);
 					if(dragXHandle.changed) {
 						this.selectedObjectData.rigidBody.drag_x = dragX;
 						this.get_currentObject().body.drag.x = this.selectedObjectData.rigidBody.drag_x;
@@ -3848,7 +3875,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 						this.changed = true;
 					}
 					dragYHandle.value = this.selectedObjectData.rigidBody.drag_y;
-					var dragY = zui_Ext.floatInput(ui,zui_Handle.global.nest(72,null),"Drag Y:",2);
+					var dragY = zui_Ext.floatInput(ui,zui_Handle.global.nest(73,null),"Drag Y:",2);
 					if(dragYHandle.changed) {
 						this.selectedObjectData.rigidBody.drag_y = dragY;
 						this.get_currentObject().body.drag.y = this.selectedObjectData.rigidBody.drag_y;
@@ -3879,8 +3906,8 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				addRigidbody(text);
 			}
 		} else {
-			ui.row([0.25,0.75]);
-			ui.text("Rigidbody: ");
+			ui.row([0.3,0.7]);
+			ui.text("Rigidbody:");
 			if(ui.button("Create Physics World")) {
 				this.selectScene();
 			}
@@ -3891,14 +3918,14 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 		}
 	}
 	,drawSelectedSceneItems: function(ui) {
-		var sceneNameHandle = zui_Handle.global.nest(73,null);
+		var sceneNameHandle = zui_Handle.global.nest(74,null);
 		sceneNameHandle.text = this.selectedSceneData.name != null ? this.selectedSceneData.name : "Unavailable";
 		ui.textInput(sceneNameHandle,"");
 		if(sceneNameHandle.changed && sceneNameHandle.text != "" && sceneNameHandle.text != "Unavailable") {
 			this.selectedSceneData.name = sceneNameHandle.text;
 			this.changed = true;
 		}
-		var depthSortHandle = zui_Handle.global.nest(74,null);
+		var depthSortHandle = zui_Handle.global.nest(75,null);
 		depthSortHandle.selected = this.selectedSceneData._depth != null && this.selectedSceneData._depth;
 		if(ui.getHover()) {
 			ui.tooltip(this.depthSortText);
@@ -3910,7 +3937,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 			this.changed = true;
 		}
 		if(this.selectedSceneData._depth) {
-			var zsortHandle = zui_Handle.global.nest(75,null);
+			var zsortHandle = zui_Handle.global.nest(76,null);
 			zsortHandle.selected = this.selectedSceneData._Zsort != null ? this.selectedSceneData._Zsort : true;
 			if(ui.getHover()) {
 				ui.tooltip(this.zSortText);
@@ -3922,7 +3949,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				this.changed = true;
 			}
 		}
-		var cullHandle = zui_Handle.global.nest(76,null);
+		var cullHandle = zui_Handle.global.nest(77,null);
 		var cull = ui.check(cullHandle,"Cull");
 		if(cullHandle.changed && !cull) {
 			this.selectedSceneData.cullOffset = null;
@@ -3935,7 +3962,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				Reflect.setProperty(found_State.active,"cullOffset",this.selectedSceneData.cullOffset);
 				this.changed = true;
 			}
-			var cullOffsetHandle = zui_Handle.global.nest(77,null);
+			var cullOffsetHandle = zui_Handle.global.nest(78,null);
 			cullOffsetHandle.value = this.selectedSceneData.cullOffset;
 			var offset = ui.slider(cullOffsetHandle,"Cull offset",1,500);
 			if(cullOffsetHandle.changed) {
@@ -3946,12 +3973,12 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 		}
 		ui.row([0.5,0.5]);
 		var text = this.selectedSceneData.physicsWorld != null ? "-" : "+";
-		if(ui.panel(zui_Handle.global.nest(78,null),"Physics World: ")) {
+		if(ui.panel(zui_Handle.global.nest(79,null),"Physics World: ")) {
 			if(ui.button(text)) {
 				this.addPhysWorld(text,this.selectedSceneData);
 			}
 			if(this.selectedSceneData.physicsWorld != null) {
-				var widthHandle = zui_Handle.global.nest(79,null);
+				var widthHandle = zui_Handle.global.nest(80,null);
 				widthHandle.value = this.selectedSceneData.physicsWorld.width;
 				var width = zui_Ext.floatInput(ui,widthHandle,"Width:",2);
 				if(widthHandle.changed) {
@@ -3963,7 +3990,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					}
 					this.changed = true;
 				}
-				var heightHandle = zui_Handle.global.nest(80,null);
+				var heightHandle = zui_Handle.global.nest(81,null);
 				heightHandle.value = this.selectedSceneData.physicsWorld.height;
 				var height = zui_Ext.floatInput(ui,heightHandle,"Height:",2);
 				if(heightHandle.changed) {
@@ -3975,7 +4002,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					}
 					this.changed = true;
 				}
-				var gravityXHandle = zui_Handle.global.nest(81,null);
+				var gravityXHandle = zui_Handle.global.nest(82,null);
 				gravityXHandle.value = this.selectedSceneData.physicsWorld.gravity_x != null ? this.selectedSceneData.physicsWorld.gravity_x : 0;
 				var gravityX = zui_Ext.floatInput(ui,gravityXHandle,"Gravity X:",2);
 				if(gravityXHandle.changed) {
@@ -3983,7 +4010,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					found_State.active.physics_world.gravity.x = gravityX;
 					this.changed = true;
 				}
-				var gravityYHandle = zui_Handle.global.nest(82,null);
+				var gravityYHandle = zui_Handle.global.nest(83,null);
 				gravityYHandle.value = this.selectedSceneData.physicsWorld.gravity_y;
 				var gravityY = zui_Ext.floatInput(ui,gravityYHandle,"Gravity Y:",2);
 				if(gravityYHandle.changed) {
@@ -3991,7 +4018,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					found_State.active.physics_world.gravity.y = gravityY;
 					this.changed = true;
 				}
-				var iterationsHandle = zui_Handle.global.nest(83,null);
+				var iterationsHandle = zui_Handle.global.nest(84,null);
 				iterationsHandle.value = this.selectedSceneData.physicsWorld.iterations;
 				var iterations = ui.slider(iterationsHandle,"No. of iterations",1,20,false,1) | 0;
 				if(iterationsHandle.changed) {
@@ -3999,7 +4026,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					found_State.active.physics_world.iterations = iterations;
 					this.changed = true;
 				}
-				var historyHandle = zui_Handle.global.nest(84,null);
+				var historyHandle = zui_Handle.global.nest(85,null);
 				historyHandle.value = this.selectedSceneData.physicsWorld.history != null ? this.selectedSceneData.physicsWorld.history : 500;
 				var history = ui.slider(historyHandle,"History",1,1000,false,0.01) | 0;
 				if(historyHandle.changed) {
@@ -4146,7 +4173,7 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 				return;
 			}
 			handle.changed = false;
-			found_tool_Log.warn("Prop: " + propName + " was not set because " + handle.text + " was entered",{ fileName : "EditorInspector.hx", lineNumber : 786, className : "EditorInspector", methodName : "multiDraw"});
+			found_tool_Log.warn("Prop: " + propName + " was not set because " + handle.text + " was entered",{ fileName : "EditorInspector.hx", lineNumber : 787, className : "EditorInspector", methodName : "multiDraw"});
 			return;
 		}
 	}
@@ -4438,10 +4465,10 @@ EditorInspector.prototype = $extend(Tab.prototype,{
 					error = false;
 					break;
 				default:
-					haxe_Log.trace("Error: file has filetype " + type + " which is not a valid filetype for images ",{ fileName : "EditorInspector.hx", lineNumber : 1055, className : "EditorInspector", methodName : "browseImage"});
+					found_tool_Log.error("file has filetype " + type + " which is not a valid filetype for images ",{ fileName : "EditorInspector.hx", lineNumber : 1056, className : "EditorInspector", methodName : "browseImage"});
 				}
 				if(error) {
-					haxe_Log.trace("Error: file with name " + name + " is not a valid image name or the path \"" + path + "\" was invalid ",{ fileName : "EditorInspector.hx", lineNumber : 1058, className : "EditorInspector", methodName : "browseImage"});
+					found_tool_Log.error("file with name " + name + " is not a valid image name or the path \"" + path + "\" was invalid ",{ fileName : "EditorInspector.hx", lineNumber : 1059, className : "EditorInspector", methodName : "browseImage"});
 				}
 			}
 		};
@@ -4674,6 +4701,7 @@ View.__name__ = true;
 View.__isInterface__ = true;
 View.prototype = {
 	render: null
+	,update: null
 	,redraw: null
 	,__class__: View
 };
@@ -4729,6 +4757,8 @@ EditorMenuBar.prototype = {
 		this.pauseImage.get_g2().fillRect(size * 0.5,0,size * 0.15,size);
 		this.pauseImage.get_g2().end();
 		this.ui.g.begin(false);
+	}
+	,update: function(dt) {
 	}
 	,animateIn: null
 	,animateOut: null
@@ -4824,7 +4854,7 @@ EditorMenuBar.prototype = {
 			}
 			ui._y = 0.0;
 			ui._w = ui._w + ui.t.ELEMENT_W * ui.ops.scaleFactor | 0;
-			main.set_currentView(zui_Ext.inlineRadio(ui,zui_Handle.global.nest(116,null),["Scene","Code","Draw"]));
+			main.set_currentView(zui_Ext.inlineRadio(ui,zui_Handle.global.nest(117,null),["Scene","Code","Draw"]));
 			zui_Ext.endMenu(ui);
 			ui._x = ui._w - ui.t.ELEMENT_W * ui.ops.scaleFactor * 2;
 		}
@@ -4892,6 +4922,12 @@ EditorPanel.prototype = {
 			return 0;
 		}
 		return this.element.height | 0;
+	}
+	,update: function(dt) {
+		if(this.tabs.length == 0) {
+			return;
+		}
+		this.tabs[this.htab.position].update(dt);
 	}
 	,render: function(ui,element) {
 		if(this.element == null) {
@@ -5113,18 +5149,41 @@ found_Trait.prototype = {
 var EditorUi = function() {
 	this.lastChange = 0.0;
 	this.listViews = [];
-	this.currentView = 0;
+	this.currentView = 2;
 	this.fsFiletypeExceptions = [".vhx",".prj"];
 	this.isBlend = false;
 	this.visible = true;
 	var _gthis = this;
 	found_Trait.call(this);
 	kha_Window.get(0).notifyOnResize($bind(this,this.onResize));
-	this.ui = new zui_Zui({ font : kha_Assets.fonts.font_default, theme : zui_Canvas.themes[0]});
+	this.ui = new zui_Zui({ font : kha_Assets.fonts.font_default, theme : zui_Canvas.themes[0], color_wheel : kha_Assets.images.color_wheel});
 	khafs_Fs.init(function() {
 		utilities_Config.load(function() {
 			utilities_Config.init();
 			_gthis.set_isPlayMode(utilities_Config.raw.defaultPlayMode);
+			if(utilities_Config.raw.window_scale != null) {
+				_gthis.setUIScale(utilities_Config.raw.window_scale);
+				found_Found.loadScreen = null;
+			} else {
+				var w = found_Found.WIDTH;
+				var h = found_Found.HEIGHT;
+				found_Found.loadScreen = function(g) {
+					_gthis.ui.begin(g);
+					_gthis.ui.t.FILL_WINDOW_BG = true;
+					if(_gthis.ui.window(zui_Handle.global.nest(118,null),0,0,found_Found.WIDTH,found_Found.HEIGHT)) {
+						var col = _gthis.ui.t.TEXT_COL;
+						_gthis.ui.t.TEXT_COL = -23296;
+						_gthis.ui.text("Window size of " + w + " x " + h + " is unsupportedfor the editor.");
+						_gthis.ui.text("Boot up with a screen size of at minimum 800 x 600.");
+						_gthis.ui.t.TEXT_COL = col;
+						if(_gthis.ui.button("Exit")) {
+							kha_System.stop();
+						}
+					}
+					_gthis.ui.end();
+				};
+				return;
+			}
 			_gthis.gameView = new EditorGameView();
 			var done = function() {
 				if(_gthis.listViews.length > 0 && _gthis.listViews[_gthis.currentView].visible) {
@@ -5154,15 +5213,11 @@ var EditorUi = function() {
 				var key = haxe_ds_StringMap.keysIterator(khafs_Fs.dbKeys.h);
 				while(key.hasNext()) {
 					var key1 = key.next();
-					var key2 = [key1];
-					if(key2[0] == EditorUi.cwd + "/pjml.found") {
+					if(key1 == EditorUi.cwd + "/pjml.found") {
 						continue;
 					}
-					khafs_Fs.getContent(key2[0],(function(key) {
-						return function(data) {
-							haxe_Log.trace("Fetched data from " + key[0],{ fileName : "EditorUi.hx", lineNumber : 104, className : "EditorUi", methodName : "new"});
-						};
-					})(key2));
+					khafs_Fs.getContent(key1,function(data) {
+					});
 				}
 			}
 		});
@@ -5339,6 +5394,8 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 				f(canvas.get_g2());
 			}
 			canvas.get_g2().end();
+		} else if(found_Found.loadScreen != null) {
+			found_Found.loadScreen(canvas.get_g2());
 		}
 		if(EditorMenu.show) {
 			EditorMenu.render(canvas.get_g2());
@@ -5410,7 +5467,10 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 		}
 		if(this.keyboard.down("f9") && 0.1 < kha_Scheduler.time() - this.lastChange) {
 			this.lastChange = kha_Scheduler.time();
-			this.listViews[this.currentView].set_visible(!this.listViews[this.currentView].visible);
+			this.set_visible(!this.visible);
+		}
+		if(this.listViews[this.currentView].visible) {
+			this.listViews[this.currentView].updateEditorView(dt);
 		}
 		var tmp;
 		var tmp1;
@@ -5747,7 +5807,7 @@ EditorUi.prototype = $extend(found_Trait.prototype,{
 					_gthis.hierarchy.onSceneSelected();
 				});
 			} else {
-				found_tool_Log.error("file with name " + name + " is not a valid scene name or the path \"" + path + "\" was invalid ",{ fileName : "EditorUi.hx", lineNumber : 534, className : "EditorUi", methodName : "openScene"});
+				found_tool_Log.error("file with name " + name + " is not a valid scene name or the path \"" + path + "\" was invalid ",{ fileName : "EditorUi.hx", lineNumber : 563, className : "EditorUi", methodName : "openScene"});
 			}
 		};
 		FileBrowserDialog.open(done);
@@ -6080,6 +6140,13 @@ EditorView.prototype = $extend(found_trait_internal_CanvasScript.prototype,{
 	,addToElementDraw: function(name,view) {
 		this.toDraw.h[name] = view;
 	}
+	,updateEditorView: function(dt) {
+		var view = haxe_ds_StringMap.valueIterator(this.toDraw.h);
+		while(view.hasNext()) {
+			var view1 = view.next();
+			view1.update(dt);
+		}
+	}
 	,drawEditorView: function(g,element) {
 		if(element.name == this.firstElem) {
 			this.ui.begin(g);
@@ -6088,7 +6155,7 @@ EditorView.prototype = $extend(found_trait_internal_CanvasScript.prototype,{
 		if(drawable != null) {
 			drawable.render(this.ui,element);
 		} else {
-			haxe_Log.trace("No ui will be drawn for element named: " + element.name,{ fileName : "EditorView.hx", lineNumber : 35, className : "EditorView", methodName : "drawEditorView"});
+			found_tool_Log.warn("No ui will be drawn for element named: " + element.name,{ fileName : "EditorView.hx", lineNumber : 40, className : "EditorView", methodName : "drawEditorView"});
 		}
 		if(element.name == this.lastElem) {
 			this.ui.end();
@@ -6164,9 +6231,9 @@ GridSizeDialog.open = function(p_map) {
 GridSizeDialog.gridSizePopupDraw = function(ui) {
 	zui_Popup.boxTitle = utilities_Translator.tr("Grid Size");
 	var border = 2 * zui_Popup.borderW + zui_Popup.borderOffset;
-	var gridSizeH = zui_Handle.global.nest(43,{ value : found_Found.GRID});
+	var gridSizeH = zui_Handle.global.nest(44,{ value : found_Found.GRID});
 	zui_Ext.floatInput(ui,gridSizeH,utilities_Translator.tr("Grid Size"));
-	var changeGrid = zui_Handle.global.nest(44,null);
+	var changeGrid = zui_Handle.global.nest(45,null);
 	ui.check(changeGrid,utilities_Translator.tr("Affect main Grid"));
 	ui._y = ui._h - ui.t.BUTTON_H - border;
 	ui.row([0.5,0.5]);
@@ -6289,8 +6356,8 @@ Main.main = function() {
 	found_Found.setup({ app : Project, title : "Foundry2d"});
 };
 var ManagerView = function(data,ui) {
-	this.listHandle = zui_Handle.global.nest(91,null);
-	this.tabsHandle = zui_Handle.global.nest(90,null);
+	this.listHandle = zui_Handle.global.nest(92,null);
+	this.tabsHandle = zui_Handle.global.nest(91,null);
 	this.titleElem = null;
 	this.selectedItem = null;
 	this.projects = [];
@@ -6333,7 +6400,7 @@ ManagerView.prototype = $extend(found_trait_internal_CanvasScript.prototype,{
 		this.translate();
 		var elem = element;
 		this.ui.begin(g);
-		if(this.ui.window(zui_Handle.global.nest(89,null),Math.floor(elem.x),Math.floor(elem.y),elem.width,elem.height)) {
+		if(this.ui.window(zui_Handle.global.nest(90,null),Math.floor(elem.x),Math.floor(elem.y),elem.width,elem.height)) {
 			if(this.ui.tab(this.tabsHandle,utilities_Translator.tr("Projects"))) {
 				var selected = zui_Ext.list(this.ui,this.listHandle,this.projects,{ itemDrawCb : $bind(this,this.drawItems), getNameCb : $bind(this,this.projName), removeCb : $bind(this,this.deleteProject), showAdd : false, showRadio : true, editable : false});
 				this.selectedItem = this.projects[selected];
@@ -6456,7 +6523,7 @@ ManagerView.prototype = $extend(found_trait_internal_CanvasScript.prototype,{
 		khafs_Fs.curDir = EditorUi.cwd;
 		khafs_Fs.onInputDone = function(lastPath) {
 			if(!StringTools.endsWith(lastPath,".zip")) {
-				found_tool_Log.error("Is not a zip file: " + lastPath + " ",{ fileName : "ManagerView.hx", lineNumber : 196, className : "ManagerView", methodName : "importProject"});
+				found_tool_Log.error("Is not a zip file: " + lastPath + " ",{ fileName : "ManagerView.hx", lineNumber : 197, className : "ManagerView", methodName : "importProject"});
 				return;
 			}
 			var p = lastPath.split(khafs_Fs.sep);
@@ -6483,10 +6550,14 @@ ManagerView.prototype = $extend(found_trait_internal_CanvasScript.prototype,{
 						if(!khafs_Fs.isDirectory(dirPath)) {
 							khafs_Fs.createDirectory(dirPath);
 						}
-						khafs_Fs.saveContent(path + khafs_Fs.sep + entry.fileName,data.toString());
+						var out = data.toString();
+						if(StringTools.endsWith(entry.fileName,".png")) {
+							out = haxe_crypto_Base64.encode(data);
+						}
+						khafs_Fs.saveContent(path + khafs_Fs.sep + entry.fileName,out);
 					} else {
 						var fname = entry.fileName;
-						haxe_Log.trace("Item with name " + fname + " is null at path: " + lastPath,{ fileName : "ManagerView.hx", lineNumber : 221, className : "ManagerView", methodName : "importProject"});
+						found_tool_Log.error("Item with name " + fname + " is null at path: " + lastPath,{ fileName : "ManagerView.hx", lineNumber : 226, className : "ManagerView", methodName : "importProject"});
 					}
 				}
 				if(project != null) {
@@ -6500,7 +6571,7 @@ ManagerView.prototype = $extend(found_trait_internal_CanvasScript.prototype,{
 						});
 					});
 				} else {
-					haxe_Log.trace("Zip did not have a project file. Aborting project creation...\n Project files will still be added to File System",{ fileName : "ManagerView.hx", lineNumber : 237, className : "ManagerView", methodName : "importProject"});
+					found_tool_Log.error("Zip did not have a project file. Aborting project creation...\n Project files will still be added to File System",{ fileName : "ManagerView.hx", lineNumber : 242, className : "ManagerView", methodName : "importProject"});
 				}
 			});
 		};
@@ -6787,8 +6858,10 @@ found_App.prototype = {
 		found_App.frameCounter.render(found_Found.backbuffer);
 		found_App.frameCounter.frames++;
 		found_App.editorui.render(found_Found.backbuffer);
-		if(found_App.editorui.currentView == 0 || found_App.editorui.isHidden()) {
-			found_Found.tileeditor.render(found_Found.backbuffer);
+		if(found_App.editorui.currentView == 0 || !found_App.editorui.visible) {
+			if(found_App.editorui.currentView == 0 || found_App.editorui.isHidden()) {
+				found_Found.tileeditor.render(found_Found.backbuffer);
+			}
 		}
 		if(zui_Popup.show) {
 			zui_Popup.render(found_Found.backbuffer.get_g2());
@@ -56469,9 +56542,23 @@ found_Found.get_os = function() {
 	}
 	return plat;
 };
+found_Found.loadScreen = function(g) {
+	var elemH = zui_Themes.dark.ELEMENT_H;
+	g.begin();
+	var value = kha_Assets.progress * (found_Found.WIDTH * 0.5);
+	g.set_color(zui_Themes.dark.PANEL_BG_COL);
+	g.fillRect(found_Found.WIDTH * 0.25,found_Found.HEIGHT * 0.5,found_Found.WIDTH * 0.5,elemH);
+	g.set_color(-23296);
+	g.fillRect(found_Found.WIDTH * 0.25,found_Found.HEIGHT * 0.5,value,elemH);
+	g.end();
+};
 found_Found.setup = function(config) {
 	found_Found.WIDTH = kha_Display.get_primary().get_width();
 	found_Found.HEIGHT = kha_Display.get_primary().get_height();
+	var loadDraw = function(framebuffer) {
+		found_Found.loadScreen(framebuffer[0].get_g2());
+	};
+	kha_System.notifyOnFrames(loadDraw);
 	if(config.width == null) {
 		config.width = found_Found.WIDTH;
 	}
@@ -56507,13 +56594,14 @@ found_Found.setup = function(config) {
 			if(tBlob != null) {
 				zui_Canvas.themes = JSON.parse(tBlob.toString());
 			} else {
-				found_tool_Log.warn("\"_themes.json\" is empty! Using default theme instead.",{ fileName : "found/Found.hx", lineNumber : 152, className : "found.Found", methodName : "setup"});
+				found_tool_Log.warn("\"_themes.json\" is empty! Using default theme instead.",{ fileName : "found/Found.hx", lineNumber : 168, className : "found.Found", methodName : "setup"});
 			}
 			if(zui_Canvas.themes.length == 0) {
 				zui_Canvas.themes.push(zui_Themes.dark);
 			}
 			found_Found._app = Type.createInstance(config.app,[]);
 			kha_Window.get(0).notifyOnResize(found_Found.resize);
+			kha_System.removeFramesListener(loadDraw);
 			kha_System.notifyOnFrames(function(framebuffer) {
 				found_Found.render(framebuffer[0]);
 			});
@@ -57581,7 +57669,7 @@ found_Scene.createTraits = function(traits,object) {
 			}
 			var traitInst = found_Scene.createTraitClassInstance(t[0].classname,args);
 			if(traitInst == null) {
-				found_tool_Log.error("Trait '" + t[0].classname + "' referenced in object '" + object.get_name() + "' not found",{ fileName : "found/Scene.hx", lineNumber : 463, className : "found.Scene", methodName : "createTraits"});
+				found_tool_Log.error("Trait '" + t[0].classname + "' referenced in object '" + object.get_name() + "' not found",{ fileName : "found/Scene.hx", lineNumber : 455, className : "found.Scene", methodName : "createTraits"});
 				continue;
 			}
 			if(t[0].props != null) {
@@ -58056,25 +58144,6 @@ found_Scene.prototype = {
 			if(entity.get_rotation().z > 0) {
 				canvas.get_g2().popTransformation();
 			}
-			canvas.get_g2().popTransformation();
-		}
-		var m = found_Input.getMouse();
-		if(m.down()) {
-			var _this = this.cam.screenToWorld(new kha_math_Vector2(m.x,m.y));
-			var value = this.cam.zoom;
-			var x = _this.x * value;
-			var y = _this.y * value;
-			if(y == null) {
-				y = 0;
-			}
-			if(x == null) {
-				x = 0;
-			}
-			var pos_x = x;
-			var pos_y = y;
-			canvas.get_g2().pushTranslation(pos_x,pos_y);
-			canvas.get_g2().set_color(kha_Color.fromBytes(255,255,0,64));
-			canvas.get_g2().fillRect(0,0,100,100);
 			canvas.get_g2().popTransformation();
 		}
 		if(this.physics_world != null && found_Found.collisionsDraw) {
@@ -59440,7 +59509,6 @@ var found_anim_Tile = function(tilemap,sprite,index,isPivot,done) {
 	this.raw = sprite;
 	this.map.addData(sprite,function(dataId) {
 		_gthis.dataId = dataId;
-		haxe_Log.trace(index,{ fileName : "found/anim/Tile.hx", lineNumber : 44, className : "found.anim.Tile", methodName : "new"});
 		if(index == 0 || isPivot) {
 			_gthis["tileId"] = index;
 			_gthis.map.pivotTiles.push(_gthis);
@@ -59474,7 +59542,6 @@ found_anim_Tile.createTile = function(map,sprite,index,isPivot,done) {
 	return new found_anim_Tile(map,sprite,index,isPivot,function(tile) {
 		map.tiles.h[tile.tileId] = tile;
 		if(tile.raw.usedIds[tile.raw.usedIds.length - 1] == index && found_anim_Tile.onStaticDone != null) {
-			haxe_Log.trace("done was called " + index,{ fileName : "found/anim/Tile.hx", lineNumber : 75, className : "found.anim.Tile", methodName : "createTile"});
 			found_anim_Tile.onStaticDone(map);
 			found_anim_Tile.onStaticDone = null;
 		}
@@ -59801,7 +59868,7 @@ found_anim_Tilemap.prototype = $extend(found_object_Object.prototype,{
 			return null;
 		};
 		var tileId = p_tileid != null ? p_tileid : addAllIds();
-		if(tileId != null) {
+		if(tileId != null && data.map.h.hasOwnProperty(tileId)) {
 			var _g = 0;
 			var _g1 = data.map.h[tileId];
 			while(_g < _g1.length) {
@@ -60085,7 +60152,6 @@ khafs_Fs.next = function(index) {
 };
 khafs_Fs.onAddFiles = function() {
 	if(khafs_Fs.input != null) {
-		haxe_Log.trace("num in's: " + khafs_Fs.input.files.length,{ fileName : "khafs/Fs.hx", lineNumber : 89, className : "khafs.Fs", methodName : "onAddFiles"});
 		if(0 < khafs_Fs.input.files.length) {
 			khafs_Fs.next(0);
 		}
@@ -60207,7 +60273,7 @@ khafs_Fs.getEntries = function(dir,onDone,entries,inDir) {
 			})(path),(function(path) {
 				return function(onError) {
 					if(onError != null) {
-						haxe_Log.trace(Std.string(onError.error) + (" at path: " + path[0]),{ fileName : "khafs/Fs.hx", lineNumber : 224, className : "khafs.Fs", methodName : "getEntries"});
+						haxe_Log.trace(Std.string(onError.error) + (" at path: " + path[0]),{ fileName : "khafs/Fs.hx", lineNumber : 223, className : "khafs.Fs", methodName : "getEntries"});
 					}
 				};
 			})(path));
@@ -60230,29 +60296,29 @@ khafs_Fs.init = function(done,ftExceptions) {
 						khafs_Fs.tryPersistWithoutPromtingUser(function(result) {
 							switch(result) {
 							case "never":
-								haxe_Log.trace("Not possible to persist storage",{ fileName : "khafs/Fs.hx", lineNumber : 247, className : "khafs.Fs", methodName : "init"});
+								haxe_Log.trace("Not possible to persist storage",{ fileName : "khafs/Fs.hx", lineNumber : 246, className : "khafs.Fs", methodName : "init"});
 								break;
 							case "persisted":
-								haxe_Log.trace("Successfully persisted storage silently",{ fileName : "khafs/Fs.hx", lineNumber : 249, className : "khafs.Fs", methodName : "init"});
+								haxe_Log.trace("Successfully persisted storage silently",{ fileName : "khafs/Fs.hx", lineNumber : 248, className : "khafs.Fs", methodName : "init"});
 								break;
 							case "prompt":
-								haxe_Log.trace("Not persisted, but we may prompt user when we want to.",{ fileName : "khafs/Fs.hx", lineNumber : 251, className : "khafs.Fs", methodName : "init"});
+								haxe_Log.trace("Not persisted, but we may prompt user when we want to.",{ fileName : "khafs/Fs.hx", lineNumber : 250, className : "khafs.Fs", methodName : "init"});
 								break;
 							}
 							done();
 						});
 					} else {
-						haxe_Log.trace("IndexedDB been closed: " + Std.string(tdb.hasBeenClosed()),{ fileName : "khafs/Fs.hx", lineNumber : 256, className : "khafs.Fs", methodName : "init"});
-						haxe_Log.trace("IndexedDB has failed to open: " + Std.string(tdb.hasFailed()),{ fileName : "khafs/Fs.hx", lineNumber : 257, className : "khafs.Fs", methodName : "init"});
+						haxe_Log.trace("IndexedDB been closed: " + Std.string(tdb.hasBeenClosed()),{ fileName : "khafs/Fs.hx", lineNumber : 255, className : "khafs.Fs", methodName : "init"});
+						haxe_Log.trace("IndexedDB has failed to open: " + Std.string(tdb.hasFailed()),{ fileName : "khafs/Fs.hx", lineNumber : 256, className : "khafs.Fs", methodName : "init"});
 					}
 				};
 				tdb.open().then(out).catch(function(e) {
-					haxe_Log.trace(e.name,{ fileName : "khafs/Fs.hx", lineNumber : 261, className : "khafs.Fs", methodName : "init"});
+					haxe_Log.trace(e.name,{ fileName : "khafs/Fs.hx", lineNumber : 260, className : "khafs.Fs", methodName : "init"});
 				});
 			};
 			var open = function(p_db) {
 				khafs_Fs.db = p_db.backendDB();
-				haxe_Log.trace("Opened DB with name: " + khafs_Fs.db.name,{ fileName : "khafs/Fs.hx", lineNumber : 267, className : "khafs.Fs", methodName : "init"});
+				haxe_Log.trace("Opened DB with name: " + khafs_Fs.db.name,{ fileName : "khafs/Fs.hx", lineNumber : 266, className : "khafs.Fs", methodName : "init"});
 				var transaction = khafs_Fs.db.transaction(["projects"],"readwrite");
 				var store = transaction.objectStore("projects");
 				var req = store.getAllKeys();
@@ -60418,21 +60484,21 @@ khafs_Fs.deleteFile = function(path,done) {
 			}
 			var req = store.delete(path);
 			req.onsuccess = function(event) {
-				haxe_Log.trace("Successfully deleted file " + path + " from DB",{ fileName : "khafs/Fs.hx", lineNumber : 580, className : "khafs.Fs", methodName : "deleteFile"});
+				haxe_Log.trace("Successfully deleted file " + path + " from DB",{ fileName : "khafs/Fs.hx", lineNumber : 579, className : "khafs.Fs", methodName : "deleteFile"});
 				done();
 			};
 			req.onerror = function(event) {
-				throw haxe_Exception.thrown("Error file at " + path + " was not found");
+				haxe_Log.trace("Error file at " + path + " was not found",{ fileName : "khafs/Fs.hx", lineNumber : 583, className : "khafs.Fs", methodName : "deleteFile"});
+				done();
 			};
 		});
 	} else {
 		khafs_Fs.wasm.fs.unlinkSync(path);
 		var req = store.delete(path);
 		req.onsuccess = function(event) {
-			haxe_Log.trace("Successfully deleted file " + path,{ fileName : "khafs/Fs.hx", lineNumber : 592, className : "khafs.Fs", methodName : "deleteFile"});
 		};
 		req.onerror = function(event) {
-			haxe_Log.trace("Error file at " + path + " was not found",{ fileName : "khafs/Fs.hx", lineNumber : 595, className : "khafs.Fs", methodName : "deleteFile"});
+			haxe_Log.trace("Error file at " + path + " was not found",{ fileName : "khafs/Fs.hx", lineNumber : 596, className : "khafs.Fs", methodName : "deleteFile"});
 		};
 	}
 };
@@ -60489,7 +60555,7 @@ khafs_Fs.getBytes = function(path,onDone,onError) {
 				onDone(kha_internal_BytesBlob.fromBytes(bytes));
 			};
 			req.onerror = function(event) {
-				haxe_Log.trace("Error file at " + path + " was not found",{ fileName : "khafs/Fs.hx", lineNumber : 668, className : "khafs.Fs", methodName : "getBytes"});
+				haxe_Log.trace("Error file at " + path + " was not found",{ fileName : "khafs/Fs.hx", lineNumber : 669, className : "khafs.Fs", methodName : "getBytes"});
 			};
 		}
 	} else {
@@ -60527,7 +60593,7 @@ khafs_Fs.getContent = function(path,onDone) {
 				onDone(bytes.toString());
 			};
 			req.onerror = function(event) {
-				haxe_Log.trace("Error file at " + path + " was not found",{ fileName : "khafs/Fs.hx", lineNumber : 722, className : "khafs.Fs", methodName : "getContent"});
+				haxe_Log.trace("Error file at " + path + " was not found",{ fileName : "khafs/Fs.hx", lineNumber : 723, className : "khafs.Fs", methodName : "getContent"});
 			};
 		}
 	} else {
@@ -60555,13 +60621,12 @@ khafs_Fs.saveToFile = function(path,bytes,content,onDone) {
 			var transaction = khafs_Fs.db.transaction(["projects"],"readwrite");
 			var store = transaction.objectStore("projects");
 			var error = function(event) {
-				haxe_Log.trace("Was unable to create " + path + ", maybe not enough space is available",{ fileName : "khafs/Fs.hx", lineNumber : 777, className : "khafs.Fs", methodName : "saveToFile"});
+				haxe_Log.trace("Was unable to create " + path + ", maybe not enough space is available",{ fileName : "khafs/Fs.hx", lineNumber : 778, className : "khafs.Fs", methodName : "saveToFile"});
 				if(onDone != null) {
 					onDone();
 				}
 			};
 			var sucess = function(event) {
-				haxe_Log.trace("succeeded in writing " + path,{ fileName : "khafs/Fs.hx", lineNumber : 784, className : "khafs.Fs", methodName : "saveToFile"});
 				khafs_Fs.dbKeys.h[path] = true;
 				if(onDone != null) {
 					onDone();
@@ -61110,7 +61175,7 @@ found_data_Data.getSceneRaw = function(file,done) {
 			parsed = found_data_DataLoader.parse(b.toString());
 		} catch( _g ) {
 			var e = haxe_Exception.caught(_g).unwrap();
-			haxe_Log.trace(e,{ fileName : "found/data/Data.hx", lineNumber : 87, className : "found.data.Data", methodName : "getSceneRaw"});
+			found_tool_Log.error(e,{ fileName : "found/data/Data.hx", lineNumber : 88, className : "found.data.Data", methodName : "getSceneRaw"});
 		}
 		found_data_Data.returnSceneRaw(file,parsed);
 	});
@@ -61166,7 +61231,7 @@ found_data_Data.getBlob = function(file,done,reload) {
 		if(kha_Assets.progress >= 1.0) {
 			onDone(kha_Assets.blobs.get(file));
 		} else {
-			kha_Assets.loadBlob(file,onDone,null,{ fileName : "found/data/Data.hx", lineNumber : 125, className : "found.data.Data", methodName : "getBlob"});
+			kha_Assets.loadBlob(file,onDone,null,{ fileName : "found/data/Data.hx", lineNumber : 126, className : "found.data.Data", methodName : "getBlob"});
 		}
 	} else {
 		found_data_Data.getData(p,function(b) {
@@ -61186,7 +61251,7 @@ found_data_Data.getBlob = function(file,done,reload) {
 		},function(failed) {
 			var error = failed.error;
 			var path = failed.url;
-			haxe_Log.trace("Asset at path: " + path + " failed to load because of " + Std.string(error),{ fileName : "found/data/Data.hx", lineNumber : 137, className : "found.data.Data", methodName : "getBlob"});
+			found_tool_Log.error("Asset at path: " + path + " failed to load because of " + Std.string(error),{ fileName : "found/data/Data.hx", lineNumber : 138, className : "found.data.Data", methodName : "getBlob"});
 		});
 	}
 };
@@ -61209,7 +61274,7 @@ found_data_Data.getImageFromPath = function(path,readable,done,failed,pos) {
 		kha_Image.fromEncodedBytes(bytes,extension,done,function(err) {
 			if(failed != null) {
 				var error = { url : path, error : err};
-				haxe_Log.trace(err,{ fileName : "found/data/Data.hx", lineNumber : 158, className : "found.data.Data", methodName : "getImageFromPath"});
+				found_tool_Log.error(err,{ fileName : "found/data/Data.hx", lineNumber : 159, className : "found.data.Data", methodName : "getImageFromPath"});
 				failed(error);
 			}
 		},readable);
@@ -61249,7 +61314,7 @@ found_data_Data.getImage = function(file,done,readable,format) {
 				delete(_this.h[file]);
 			}
 			found_data_Data.assetsLoaded++;
-		},null,{ fileName : "found/data/Data.hx", lineNumber : 183, className : "found.data.Data", methodName : "getImage"});
+		},null,{ fileName : "found/data/Data.hx", lineNumber : 184, className : "found.data.Data", methodName : "getImage"});
 	} else {
 		found_data_Data.getImageFromPath(p,readable,function(b) {
 			found_data_Data.cachedImages.h[file] = b;
@@ -61269,8 +61334,8 @@ found_data_Data.getImage = function(file,done,readable,format) {
 			if(e.url == "") {
 				e.url = "Null";
 			}
-			haxe_Log.trace("Error occurred file " + e.url + " does not exist",{ fileName : "found/data/Data.hx", lineNumber : 198, className : "found.data.Data", methodName : "getImage"});
-		},{ fileName : "found/data/Data.hx", lineNumber : 191, className : "found.data.Data", methodName : "getImage"});
+			found_tool_Log.error("file " + e.url + " does not exist",{ fileName : "found/data/Data.hx", lineNumber : 199, className : "found.data.Data", methodName : "getImage"});
+		},{ fileName : "found/data/Data.hx", lineNumber : 192, className : "found.data.Data", methodName : "getImage"});
 	}
 };
 found_data_Data.deleteImage = function(handle) {
@@ -61321,8 +61386,8 @@ found_data_Data.getSound = function(file,done,alias) {
 		}
 		found_data_Data.assetsLoaded++;
 	},function(error) {
-		haxe_Log.trace("Couldn't load " + p + " because of " + Std.string(error),{ fileName : "found/data/Data.hx", lineNumber : 257, className : "found.data.Data", methodName : "getSound"});
-	},{ fileName : "found/data/Data.hx", lineNumber : 244, className : "found.data.Data", methodName : "getSound"});
+		found_tool_Log.error("Couldn't load " + p + " because of " + Std.string(error),{ fileName : "found/data/Data.hx", lineNumber : 258, className : "found.data.Data", methodName : "getSound"});
+	},{ fileName : "found/data/Data.hx", lineNumber : 245, className : "found.data.Data", methodName : "getSound"});
 };
 found_data_Data.deleteSound = function(handle) {
 	var sound = found_data_Data.cachedSounds.h[handle];
@@ -61362,7 +61427,7 @@ found_data_Data.getVideo = function(file,done) {
 			delete(_this.h[file]);
 		}
 		found_data_Data.assetsLoaded++;
-	},null,{ fileName : "found/data/Data.hx", lineNumber : 284, className : "found.data.Data", methodName : "getVideo"});
+	},null,{ fileName : "found/data/Data.hx", lineNumber : 285, className : "found.data.Data", methodName : "getVideo"});
 };
 found_data_Data.deleteVideo = function(handle) {
 	var video = found_data_Data.cachedVideos.h[handle];
@@ -61402,7 +61467,7 @@ found_data_Data.getFont = function(file,done) {
 			delete(_this.h[file]);
 		}
 		found_data_Data.assetsLoaded++;
-	},null,{ fileName : "found/data/Data.hx", lineNumber : 310, className : "found.data.Data", methodName : "getFont"});
+	},null,{ fileName : "found/data/Data.hx", lineNumber : 311, className : "found.data.Data", methodName : "getFont"});
 };
 found_data_Data.deleteFont = function(handle) {
 	var font = found_data_Data.cachedFonts.h[handle];
@@ -61655,7 +61720,7 @@ found_data_SpriteData.prototype = {
 	,curAnim: null
 	,set_curAnim: function(index) {
 		if(this.anims.length < index) {
-			haxe_Log.trace("Trying to set animation with index: " + index + " but the number of animations is:" + this.anims.length,{ fileName : "found/data/SpriteData.hx", lineNumber : 26, className : "found.data.SpriteData", methodName : "set_curAnim"});
+			found_tool_Log.warn("Trying to set animation with index: " + index + " but the number of animations is:" + this.anims.length,{ fileName : "found/data/SpriteData.hx", lineNumber : 26, className : "found.data.SpriteData", methodName : "set_curAnim"});
 		} else {
 			this.curAnim = index;
 		}
@@ -61678,7 +61743,7 @@ found_data_SpriteData.prototype = {
 				return;
 			}
 		}
-		haxe_Log.trace("Animation with name: " + animationName + " does not exist",{ fileName : "found/data/SpriteData.hx", lineNumber : 67, className : "found.data.SpriteData", methodName : "setCurrentAnimationByName"});
+		found_tool_Log.error("Animation with name: " + animationName + " does not exist",{ fileName : "found/data/SpriteData.hx", lineNumber : 67, className : "found.data.SpriteData", methodName : "setCurrentAnimationByName"});
 	}
 	,animLoad: function(anim) {
 		this.anims.push(found_anim_Animation.fromDefinition(anim));
@@ -63209,6 +63274,11 @@ found_node_ParseIntNode.prototype = $extend(found_node_LogicNode.prototype,{
 });
 var found_node_Platformer2DControllerNode = function(tree) {
 	found_node_LogicNode.call(this,tree);
+	tree.notifyOnInit(function() {
+		if(tree.object.body == null) {
+			found_tool_Log.warn("Platformer2DController needs a rigibody to work, on " + tree.object.get_name(),{ fileName : "found/node/Platformer2DControllerNode.hx", lineNumber : 18, className : "found.node.Platformer2DControllerNode", methodName : "new"});
+		}
+	});
 	tree.notifyOnUpdate($bind(this,this.update));
 };
 $hxClasses["found.node.Platformer2DControllerNode"] = found_node_Platformer2DControllerNode;
@@ -63224,8 +63294,16 @@ found_node_Platformer2DControllerNode.prototype = $extend(found_node_LogicNode.p
 		var speed = this.inputs[1].get();
 		var jumpForce = this.inputs[2].get();
 		if(this.tree.object.body != null) {
-			var movementInput_x = 0;
-			var movementInput_y = 0;
+			var x = 0;
+			var y = 0;
+			if(y == null) {
+				y = 0;
+			}
+			if(x == null) {
+				x = 0;
+			}
+			var movementInput_x = x;
+			var movementInput_y = y;
 			if(this.inputType == "Use default input") {
 				if(keyboard.down(found_Keyboard.keyCode(this.defaultLeftKeyCode))) {
 					movementInput_x += -1;
@@ -63234,7 +63312,10 @@ found_node_Platformer2DControllerNode.prototype = $extend(found_node_LogicNode.p
 					++movementInput_x;
 				}
 			} else {
-				movementInput_x = this.inputs[0].get().x;
+				var move = this.inputs[0].get();
+				if(move != null) {
+					movementInput_x = move.x;
+				}
 			}
 			this.tree.object.body.velocity.x = movementInput_x * speed;
 			if(keyboard.started(found_Keyboard.keyCode(this.defaultJumpKeyCode))) {
@@ -63736,20 +63817,24 @@ found_node_Vector2Node.__super__ = found_node_LogicNode;
 found_node_Vector2Node.prototype = $extend(found_node_LogicNode.prototype,{
 	value: null
 	,get: function(from) {
-		this.value.x = this.inputs[0].get();
-		this.value.y = this.inputs[1].get();
-		if(from == 0) {
-			return this.value;
+		if(this.inputs[0] != null && this.inputs[1] != null) {
+			this.value.x = this.inputs[0].get();
+			this.value.y = this.inputs[1].get();
+			if(from == 0) {
+				return this.value;
+			}
+			var _this = this.value;
+			var v = new kha_math_FastVector2(_this.x,_this.y);
+			var currentLength = Math.sqrt(v.x * v.x + v.y * v.y);
+			if(currentLength != 0) {
+				var mul = 1 / currentLength;
+				v.x *= mul;
+				v.y *= mul;
+			}
+			return v;
+		} else {
+			return null;
 		}
-		var _this = this.value;
-		var v = new kha_math_FastVector2(_this.x,_this.y);
-		var currentLength = Math.sqrt(v.x * v.x + v.y * v.y);
-		if(currentLength != 0) {
-			var mul = 1 / currentLength;
-			v.x *= mul;
-			v.y *= mul;
-		}
-		return v;
 	}
 	,set: function(value) {
 		this.inputs[0].set(value.x);
@@ -64423,7 +64508,7 @@ found_tool_NodeEditor.prototype = {
 		var numTabs = 3;
 		if(ui.window(this.nodeMenuWindowHandle,found_tool_NodeEditor.x,found_tool_NodeEditor.y,ui.t.ELEMENT_W * ui.ops.scaleFactor * 0.5 * numTabs | 0,found_tool_NodeEditor.height * 0.75 | 0,true)) {
 			if(ui.tab(this.nodeMenuTabHandle,"Std")) {
-				if(ui.panel(zui_Handle.global.nest(95,null),"Logic")) {
+				if(ui.panel(zui_Handle.global.nest(96,null),"Logic")) {
 					if(ui.button("Gate")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_LogicNode.gate);
 					}
@@ -64440,7 +64525,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_LogicNode.whileN);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(96,null),"Variable")) {
+				if(ui.panel(zui_Handle.global.nest(97,null),"Variable")) {
 					if(ui.button("String")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_VariableNode.string);
 					}
@@ -64469,7 +64554,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(def);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(97,null),"Std")) {
+				if(ui.panel(zui_Handle.global.nest(98,null),"Std")) {
 					if(ui.button("Print")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_StdNode.print);
 					}
@@ -64483,7 +64568,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_StdNode.floatToInt);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(98,null),"Math")) {
+				if(ui.panel(zui_Handle.global.nest(99,null),"Math")) {
 					if(ui.button("Maths")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_MathNode.maths);
 					}
@@ -64502,7 +64587,7 @@ found_tool_NodeEditor.prototype = {
 				}
 			}
 			if(ui.tab(this.nodeMenuTabHandle,"Foundry2d")) {
-				if(ui.panel(zui_Handle.global.nest(99,null),"Event")) {
+				if(ui.panel(zui_Handle.global.nest(100,null),"Event")) {
 					if(ui.button("On Add")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.onAddNode);
 					}
@@ -64522,7 +64607,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.sendEventNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(100,null),"Input")) {
+				if(ui.panel(zui_Handle.global.nest(101,null),"Input")) {
 					if(ui.button("On Mouse")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.onMouseNode);
 					}
@@ -64539,7 +64624,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.onGamepadButtonInputNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(101,null),"Math")) {
+				if(ui.panel(zui_Handle.global.nest(102,null),"Math")) {
 					if(ui.button("Split Vec2")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.splitVec2Node);
 					}
@@ -64556,7 +64641,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.multiplyVec2sNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(102,null),"Time")) {
+				if(ui.panel(zui_Handle.global.nest(103,null),"Time")) {
 					if(ui.button("Every X Seconds")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.everyXNode);
 					}
@@ -64564,7 +64649,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.cooldownNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(103,null),"Transform")) {
+				if(ui.panel(zui_Handle.global.nest(104,null),"Transform")) {
 					if(ui.button("Get Position")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.getPositionNode);
 					}
@@ -64590,7 +64675,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.rotateTowardPositionNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(104,null),"Object")) {
+				if(ui.panel(zui_Handle.global.nest(105,null),"Object")) {
 					if(ui.button("Get Object")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.getObjectNode);
 					}
@@ -64610,12 +64695,12 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.getRandomObjectNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(105,null),"Sprite")) {
+				if(ui.panel(zui_Handle.global.nest(106,null),"Sprite")) {
 					if(ui.button("Flip Sprite")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.flipSpriteNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(106,null),"Physics")) {
+				if(ui.panel(zui_Handle.global.nest(107,null),"Physics")) {
 					if(ui.button("On Collision Event")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.onCollisionNode);
 					}
@@ -64626,7 +64711,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.applyImpulseToRigidbodyNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(107,null),"Controllers")) {
+				if(ui.panel(zui_Handle.global.nest(108,null),"Controllers")) {
 					if(ui.button("Top-down Controller")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.topDownControllerNode);
 					}
@@ -64634,12 +64719,12 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.platformer2DControllerNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(108,null),"Movement")) {
+				if(ui.panel(zui_Handle.global.nest(109,null),"Movement")) {
 					if(ui.button("Bullet Movement")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.bulletMovementNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(109,null),"Camera")) {
+				if(ui.panel(zui_Handle.global.nest(110,null),"Camera")) {
 					if(ui.button("Set Camera Position")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.setCameraTargetPositionNode);
 					}
@@ -64647,7 +64732,7 @@ found_tool_NodeEditor.prototype = {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.setCameraFollowTargetNode);
 					}
 				}
-				if(ui.panel(zui_Handle.global.nest(110,null),"Animation")) {
+				if(ui.panel(zui_Handle.global.nest(111,null),"Animation")) {
 					if(ui.button("Play Animation")) {
 						found_tool_NodeEditor.pushNodeToSelectedGroup(found_node_data_FoundryNode.playAnimationNode);
 					}
@@ -64657,7 +64742,7 @@ found_tool_NodeEditor.prototype = {
 				var sec = haxe_ds_StringMap.keysIterator(found_tool_NodeEditor.gameplayNodes.h);
 				while(sec.hasNext()) {
 					var sec1 = sec.next();
-					if(ui.panel(zui_Handle.global.nest(111,null),sec1)) {
+					if(ui.panel(zui_Handle.global.nest(112,null),sec1)) {
 						var nodes = found_tool_NodeEditor.gameplayNodes.h[sec1];
 						var _g = 0;
 						while(_g < nodes.length) {
@@ -64736,16 +64821,16 @@ var found_tool_TileEditor = function(visible) {
 	}
 	this.endHeight = 0.0;
 	this.limit = 10048;
-	this.editorStateHandle = zui_Handle.global.nest(45,null);
-	this.mapHeightHandle = zui_Handle.global.nest(42,null);
-	this.mapWidthHandle = zui_Handle.global.nest(41,null);
-	this.tilsheetListHandle = zui_Handle.global.nest(40,null);
+	this.editorStateHandle = zui_Handle.global.nest(46,null);
+	this.mapHeightHandle = zui_Handle.global.nest(43,null);
+	this.mapWidthHandle = zui_Handle.global.nest(42,null);
+	this.tilsheetListHandle = zui_Handle.global.nest(41,null);
 	this.tilesheets = [];
 	this.editorWindowHandle = zui_Handle.global.nest(20,null);
 	this.brushState = found_tool_TileEditorState.Draw;
 	this.canDrawTile = false;
 	this.unusedIds = [];
-	this.tileHandle = zui_Handle.global.nest(46,{ value : 0});
+	this.tileHandle = zui_Handle.global.nest(47,{ value : 0});
 	this.tileSelected = null;
 	this.map = null;
 	this.y = 256;
@@ -64825,7 +64910,7 @@ found_tool_TileEditor.prototype = {
 		var vec = new kha_math_Vector2();
 		if(found_tool_TileEditor.ui.window(this.editorWindowHandle,this.x,this.y,this.width,this.height,true)) {
 			this.endHeight = found_tool_TileEditor.ui._y;
-			if(found_tool_TileEditor.ui.panel(zui_Handle.global.nest(39,{ selected : true}),"Tilemap editor")) {
+			if(found_tool_TileEditor.ui.panel(zui_Handle.global.nest(40,{ selected : true}),"Tilemap editor")) {
 				var changed = false;
 				found_tool_TileEditor.ui.indent();
 				found_tool_TileEditor.ui.text("Tilesheets: ");
@@ -65008,8 +65093,8 @@ found_tool_TileEditor.prototype = {
 		if(this.canDrawTile) {
 			found_Input.getMouse().hide();
 			canvas.get_g2().begin(false,0);
-			canvas.get_g2().set_color(-1);
-			canvas.get_g2().drawScaledImage(kha_Assets.images.basic,this.mouse.x,this.mouse.y,10,10);
+			canvas.get_g2().set_color(found_tool_TileEditor.ui.t.ACCENT_COL);
+			canvas.get_g2().drawScaledSubImage(kha_Assets.images.icons,0,0,64,64,this.mouse.x,this.mouse.y,10,10);
 			vec.x = this.mouse.x;
 			vec.y = this.mouse.y;
 			var cam = found_State.active.cam;
@@ -65070,11 +65155,12 @@ found_tool_TileEditor.prototype = {
 		return (curTile.get_data().image.get_width() / curTile.map.tw | 0) * (curTile.get_data().image.get_height() / curTile.map.th | 0);
 	}
 	,drawTilesheetItem: function(handle,index) {
+		var _gthis = this;
 		if(index == -1) {
 			return;
 		}
 		var data = this.tilesheets[index];
-		var imagePathHandle = zui_Handle.global.nest(55,null);
+		var imagePathHandle = zui_Handle.global.nest(56,null);
 		imagePathHandle.text = data.imagePath;
 		found_tool_TileEditor.ui.indent();
 		found_tool_TileEditor.ui.row([0.8,0.2]);
@@ -65084,6 +65170,8 @@ found_tool_TileEditor.prototype = {
 				if(path == "") {
 					return;
 				}
+				imagePathHandle.text = data.imagePath = path;
+				_gthis.setTilesheet(path,data.name,index);
 			});
 		}
 		if(imagePathHandle.changed) {
@@ -65106,27 +65194,38 @@ found_tool_TileEditor.prototype = {
 			if(path == "") {
 				return;
 			}
-			found_data_Data.getImage(path,function(image) {
-				var tilesheet = found_data_Creator.createType(title,"sprite_object");
-				var curPivot = _gthis.map.pivotTiles[_gthis.map.pivotTiles.length - 1];
-				var originId = curPivot != null ? _gthis.currentMaxTiles(curPivot) + curPivot.tileId : 0;
-				tilesheet.id = originId;
-				tilesheet.usedIds = [originId];
-				tilesheet.width = image.get_width();
-				tilesheet.height = image.get_height();
-				tilesheet.tileWidth = _gthis.map.tw;
-				tilesheet.tileHeight = _gthis.map.th;
-				tilesheet.imagePath = path;
+			_gthis.setTilesheet(path,title);
+		});
+	}
+	,setTilesheet: function(path,title,index) {
+		if(index == null) {
+			index = -1;
+		}
+		var _gthis = this;
+		found_data_Data.getImage(path,function(image) {
+			var tilesheet = found_data_Creator.createType(title,"sprite_object");
+			var curPivot = _gthis.map.pivotTiles[_gthis.map.pivotTiles.length - 1];
+			var originId = curPivot != null ? _gthis.currentMaxTiles(curPivot) + curPivot.tileId : 0;
+			if(index == -1) {
 				_gthis.tilesheets.push(tilesheet);
-				haxe_Log.trace(tilesheet,{ fileName : "found/tool/TileEditor.hx", lineNumber : 385, className : "found.tool.TileEditor", methodName : "addTilesheet"});
-				_gthis.tileSelected = null;
-				var tile = found_anim_Tile.createTile(_gthis.map,tilesheet,originId,true);
-				if(_gthis.curTile == null) {
-					_gthis.curTile = tile;
-					_gthis.tilsheetListHandle.nest(0).position = -1;
-				}
-				_gthis.map.dataChanged = true;
-			});
+			} else {
+				originId = _gthis.tilesheets[index].id;
+				_gthis.tilesheets[index] = tilesheet;
+			}
+			tilesheet.id = originId;
+			tilesheet.usedIds = [originId];
+			tilesheet.width = image.get_width();
+			tilesheet.height = image.get_height();
+			tilesheet.tileWidth = _gthis.map.tw;
+			tilesheet.tileHeight = _gthis.map.th;
+			tilesheet.imagePath = path;
+			_gthis.tileSelected = null;
+			var tile = found_anim_Tile.createTile(_gthis.map,tilesheet,originId,true);
+			if(_gthis.curTile == null) {
+				_gthis.curTile = tile;
+				_gthis.tilsheetListHandle.nest(0).position = -1;
+			}
+			_gthis.map.dataChanged = true;
 		});
 	}
 	,removeTilesheet: function(index) {
@@ -72311,7 +72410,7 @@ js_lib__$ArrayBuffer_ArrayBufferCompat.sliceImpl = function(begin,end) {
 	return resultArray.buffer;
 };
 var kha__$Assets_ImageList = function() {
-	this.names = ["audio_file","audio_file_grey","basic","blank","camera_image","camera_object","file","file_grey","file_grey_bigger","folder","folder2","foundry_icon","information","layers","layers_grey","light_object","loading","mesh_image","mesh_object","pause","picture","picture_grey","platformerPack_character","play","play_button","play_button_grey","script","sprite_object","tilesheet","warning"];
+	this.names = ["audio_file","audio_file_grey","blank","camera_image","camera_object","color_wheel","file","file_grey","file_grey_bigger","folder","folder2","foundry_icon","icons","information","layers","layers_grey","light_object","loading","mesh_image","mesh_object","pause","picture","picture_grey","platformerPack_character","play","play_button","play_button_grey","script","sprite_object","tilesheet","warning"];
 	this.warningDescription = { name : "warning", original_height : 16, file_sizes : [363], original_width : 16, files : ["warning.png"], type : "image"};
 	this.warningName = "warning";
 	this.warning = null;
@@ -72366,6 +72465,9 @@ var kha__$Assets_ImageList = function() {
 	this.informationDescription = { name : "information", original_height : 16, file_sizes : [321], original_width : 16, files : ["information.png"], type : "image"};
 	this.informationName = "information";
 	this.information = null;
+	this.iconsDescription = { name : "icons", original_height : 129, file_sizes : [14162], original_width : 256, files : ["icons.png"], type : "image"};
+	this.iconsName = "icons";
+	this.icons = null;
 	this.foundry_iconDescription = { name : "foundry_icon", original_height : 512, file_sizes : [58470], original_width : 493, files : ["foundry_icon.png"], type : "image"};
 	this.foundry_iconName = "foundry_icon";
 	this.foundry_icon = null;
@@ -72384,6 +72486,9 @@ var kha__$Assets_ImageList = function() {
 	this.fileDescription = { name : "file", original_height : 16, file_sizes : [224], original_width : 16, files : ["file.png"], type : "image"};
 	this.fileName = "file";
 	this.file = null;
+	this.color_wheelDescription = { name : "color_wheel", original_height : 270, file_sizes : [41416], original_width : 360, files : ["color_wheel.png"], type : "image"};
+	this.color_wheelName = "color_wheel";
+	this.color_wheel = null;
 	this.camera_objectDescription = { name : "camera_object", original_height : 16, file_sizes : [514], original_width : 16, files : ["camera_object.png"], type : "image"};
 	this.camera_objectName = "camera_object";
 	this.camera_object = null;
@@ -72393,9 +72498,6 @@ var kha__$Assets_ImageList = function() {
 	this.blankDescription = { name : "blank", original_height : 16, file_sizes : [98], original_width : 16, files : ["blank.png"], type : "image"};
 	this.blankName = "blank";
 	this.blank = null;
-	this.basicDescription = { name : "basic", original_height : 250, file_sizes : [3551], original_width : 250, files : ["basic.png"], type : "image"};
-	this.basicName = "basic";
-	this.basic = null;
 	this.audio_file_greyDescription = { name : "audio_file_grey", original_height : 16, file_sizes : [288], original_width : 16, files : ["audio-file_grey.png"], type : "image"};
 	this.audio_file_greyName = "audio_file_grey";
 	this.audio_file_grey = null;
@@ -72433,18 +72535,6 @@ kha__$Assets_ImageList.prototype = {
 		this.audio_file_grey.unload();
 		this.audio_file_grey = null;
 	}
-	,basic: null
-	,basicName: null
-	,basicDescription: null
-	,basicLoad: function(done,failure) {
-		kha_Assets.loadImage("basic",function(image) {
-			done();
-		},failure,{ fileName : "kha/internal/AssetsBuilder.hx", lineNumber : 126, className : "kha._Assets.ImageList", methodName : "basicLoad"});
-	}
-	,basicUnload: function() {
-		this.basic.unload();
-		this.basic = null;
-	}
 	,blank: null
 	,blankName: null
 	,blankDescription: null
@@ -72480,6 +72570,18 @@ kha__$Assets_ImageList.prototype = {
 	,camera_objectUnload: function() {
 		this.camera_object.unload();
 		this.camera_object = null;
+	}
+	,color_wheel: null
+	,color_wheelName: null
+	,color_wheelDescription: null
+	,color_wheelLoad: function(done,failure) {
+		kha_Assets.loadImage("color_wheel",function(image) {
+			done();
+		},failure,{ fileName : "kha/internal/AssetsBuilder.hx", lineNumber : 126, className : "kha._Assets.ImageList", methodName : "color_wheelLoad"});
+	}
+	,color_wheelUnload: function() {
+		this.color_wheel.unload();
+		this.color_wheel = null;
 	}
 	,file: null
 	,fileName: null
@@ -72552,6 +72654,18 @@ kha__$Assets_ImageList.prototype = {
 	,foundry_iconUnload: function() {
 		this.foundry_icon.unload();
 		this.foundry_icon = null;
+	}
+	,icons: null
+	,iconsName: null
+	,iconsDescription: null
+	,iconsLoad: function(done,failure) {
+		kha_Assets.loadImage("icons",function(image) {
+			done();
+		},failure,{ fileName : "kha/internal/AssetsBuilder.hx", lineNumber : 126, className : "kha._Assets.ImageList", methodName : "iconsLoad"});
+	}
+	,iconsUnload: function() {
+		this.icons.unload();
+		this.icons = null;
 	}
 	,information: null
 	,informationName: null
@@ -72807,7 +72921,7 @@ var kha__$Assets_BlobList = function() {
 	this.keepmeDescription = { name : "keepme", file_sizes : [0], files : ["keepme"], type : "blob"};
 	this.keepmeName = "keepme";
 	this.keepme = null;
-	this.index_htmlDescription = { name : "index_html", file_sizes : [449], files : ["index.html"], type : "blob"};
+	this.index_htmlDescription = { name : "index_html", file_sizes : [450], files : ["index.html"], type : "blob"};
 	this.index_htmlName = "index_html";
 	this.index_html = null;
 	this.drawView_jsonDescription = { name : "drawView_json", file_sizes : [588], files : ["drawView.json"], type : "blob"};
@@ -72822,7 +72936,7 @@ var kha__$Assets_BlobList = function() {
 	this.codeView_jsonDescription = { name : "codeView_json", file_sizes : [1063], files : ["codeView.json"], type : "blob"};
 	this.codeView_jsonName = "codeView_json";
 	this.codeView_json = null;
-	this._themes_jsonDescription = { name : "_themes_json", file_sizes : [678], files : ["_themes.json"], type : "blob"};
+	this._themes_jsonDescription = { name : "_themes_json", file_sizes : [1459], files : ["_themes.json"], type : "blob"};
 	this._themes_jsonName = "_themes_json";
 	this._themes_json = null;
 };
@@ -102852,7 +102966,7 @@ utilities_Config.load = function(done) {
 			done();
 		});
 	} catch( _g ) {
-		haxe_Log.trace("Failed to load, will load defaults",{ fileName : "utilities/Config.hx", lineNumber : 24, className : "utilities.Config", methodName : "load"});
+		found_tool_Log.warn("Failed to load, will load defaults",{ fileName : "utilities/Config.hx", lineNumber : 26, className : "utilities.Config", methodName : "load"});
 		done();
 	}
 };
@@ -102873,7 +102987,19 @@ utilities_Config.init = function() {
 		utilities_Config.raw.window_h = 900;
 		utilities_Config.raw.window_x = -1;
 		utilities_Config.raw.window_y = -1;
-		utilities_Config.raw.window_scale = 1.0;
+		var w = found_Found.WIDTH;
+		var h = found_Found.HEIGHT;
+		if(w > 1920 && h > 1080) {
+			utilities_Config.raw.window_scale = 1.2;
+		} else if(w == 1280 && h == 720) {
+			utilities_Config.raw.window_scale = 0.75;
+		} else if(w == 800 && h == 600) {
+			utilities_Config.raw.window_scale = 0.6;
+		} else if(w < 800 || h < 600) {
+			found_tool_Log.warn("Unsupported screen size of " + w + " x " + h + " for editor.",{ fileName : "utilities/Config.hx", lineNumber : 63, className : "utilities.Config", methodName : "init"});
+		} else {
+			utilities_Config.raw.window_scale = 1.0;
+		}
 		utilities_Config.raw.window_vsync = true;
 		var disp = kha_Display.get_primary();
 		if(disp != null && disp.get_width() >= 3000 && disp.get_height() >= 2000) {
@@ -102903,6 +103029,7 @@ utilities_Config.restore = function() {
 	utilities_Config.init();
 	utilities_Translator.loadTranslations(utilities_Config.raw.locale);
 	found_App.editorui.set_isPlayMode(utilities_Config.raw.defaultPlayMode);
+	found_App.editorui.setUIScale(utilities_Config.raw.window_scale);
 };
 utilities_Config.loadKeymap = function() {
 	var done = function(blob) {
@@ -102911,7 +103038,7 @@ utilities_Config.loadKeymap = function() {
 	try {
 		found_data_Data.getBlob("./data/keymap_presets/" + utilities_Config.raw.keymap,done);
 	} catch( _g ) {
-		kha_Assets.loadBlobFromPath("./data/keymap_presets/" + utilities_Config.raw.keymap,done,null,{ fileName : "utilities/Config.hx", lineNumber : 94, className : "utilities.Config", methodName : "loadKeymap"});
+		kha_Assets.loadBlobFromPath("./data/keymap_presets/" + utilities_Config.raw.keymap,done,null,{ fileName : "utilities/Config.hx", lineNumber : 116, className : "utilities.Config", methodName : "loadKeymap"});
 	}
 };
 utilities_Config.saveKeymap = function() {
@@ -103432,14 +103559,17 @@ zui_Canvas.getAnchorOffset = function(canvas,element) {
 var zui_Ext = function() { };
 $hxClasses["zui.Ext"] = zui_Ext;
 zui_Ext.__name__ = true;
-zui_Ext.floatInput = function(ui,handle,label,align) {
+zui_Ext.floatInput = function(ui,handle,label,align,precision) {
+	if(precision == null) {
+		precision = 1000.0;
+	}
 	if(align == null) {
 		align = 0;
 	}
 	if(label == null) {
 		label = "";
 	}
-	handle.text = handle.value == null ? "null" : "" + handle.value;
+	handle.text = Std.string(Math.round(handle.value * precision) / precision);
 	var text = ui.textInput(handle,label,align);
 	handle.value = parseFloat(text);
 	return handle.value;
@@ -104360,6 +104490,7 @@ var zui_Nodes = function() {
 	this.dragged = false;
 	this.ELEMENT_H = 25;
 	this.scaleFactor = 1.0;
+	this._inputStarted = false;
 	this.uih = 0;
 	this.uiw = 0;
 	this.zoom = 1.0;
@@ -104381,6 +104512,7 @@ zui_Nodes.prototype = {
 	,zoom: null
 	,uiw: null
 	,uih: null
+	,_inputStarted: null
 	,scaleFactor: null
 	,ELEMENT_H: null
 	,dragged: null
@@ -104419,12 +104551,8 @@ zui_Nodes.prototype = {
 				buttonsH += 235 * (this.scaleFactor * this.zoom);
 			} else if(but.type == "VECTOR") {
 				buttonsH += (this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0) * 4;
-			} else if(but.type == "RAMP") {
-				buttonsH += (this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0) * 4.5;
-			} else if(but.type == "CURVES") {
-				buttonsH += (this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0) * 8;
-			} else if(but.type == "ARRAY") {
-				buttonsH += ((but.default_value) instanceof Array) ? (this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0) * ((js_Boot.__cast(but.default_value , Array)).length + 1.5) : (this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0) * 1.5;
+			} else if(but.type == "CUSTOM") {
+				buttonsH += (this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0) * but.height;
 			} else {
 				buttonsH += this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0;
 			}
@@ -104539,12 +104667,13 @@ zui_Nodes.prototype = {
 		var wx = ui._windowX;
 		var wy = ui._windowY;
 		ui.inputEnabled = this.popupCommands == null;
-		if(ui.inputEnabled && (ui.inputDownR || ui.inputDown && ui.isCtrlDown)) {
-			this.panX += ui.inputDX / (this.scaleFactor * this.zoom);
-			this.panY += ui.inputDY / (this.scaleFactor * this.zoom);
+		var controls = zui_Nodes.onCanvasControl != null ? zui_Nodes.onCanvasControl() : { panX : ui.inputDownR ? ui.inputDX : 0.0, panY : ui.inputDownR ? ui.inputDY : 0.0, zoom : -ui.inputWheelDelta / 10.0};
+		if(ui.inputEnabled && (controls.panX != 0.0 || controls.panY != 0.0)) {
+			this.panX += controls.panX / (this.scaleFactor * this.zoom);
+			this.panY += controls.panY / (this.scaleFactor * this.zoom);
 		}
-		if(ui.inputEnabled && ui.inputWheelDelta != 0) {
-			this.zoom += -ui.inputWheelDelta / 10;
+		if(ui.inputEnabled && controls.zoom != 0.0) {
+			this.zoom += controls.zoom;
 			if(this.zoom < 0.1) {
 				this.zoom = 0.1;
 			} else if(this.zoom > 1.0) {
@@ -105055,7 +105184,7 @@ zui_Nodes.prototype = {
 		var ny = node.y * (this.scaleFactor * this.zoom) + (this.panY * (this.scaleFactor * this.zoom) + zoomPan);
 		var text = zui_Nodes.tr(node.name);
 		var lineh = this.ELEMENT_H * (this.scaleFactor * this.zoom) | 0;
-		var _inputStarted = ui.inputStarted;
+		this._inputStarted = ui.inputStarted;
 		if(ui.inputStarted) {
 			var _g = canvas.nodes.indexOf(node) + 1;
 			var _g1 = canvas.nodes.length;
@@ -105121,6 +105250,11 @@ zui_Nodes.prototype = {
 			ny += lineh;
 			var strw = ui.ops.font.width(ui.fontSize,zui_Nodes.tr(out.name));
 			g.drawString(zui_Nodes.tr(out.name),nx + w - strw - 12 * (this.scaleFactor * this.zoom),ny - 3 * (this.scaleFactor * this.zoom));
+			if(zui_Nodes.onSocketReleased != null && ui.inputEnabled && (ui.inputReleased || ui.inputReleasedR)) {
+				if(ui.inputX > wx + nx && ui.inputX < wx + nx + w && ui.inputY > wy + ny && ui.inputY < wy + ny + lineh) {
+					zui_Nodes.onSocketReleased(out);
+				}
+			}
 		}
 		var nhandle = this.handle.nest(node.id);
 		ny -= lineh / 3;
@@ -105236,91 +105370,16 @@ zui_Nodes.prototype = {
 				ui._y = ny;
 				ui._w = w;
 				but.default_value = ui.check(nhandle.nest(buti,{ selected : but.default_value}),zui_Nodes.tr(but.name));
-			} else if(but.type == "RAMP") {
+			} else if(but.type == "CUSTOM") {
 				ny += lineh;
 				ui._x = nx;
 				ui._y = ny;
 				ui._w = w;
-				var vals = but.default_value;
-				var sw = w / (this.scaleFactor * this.zoom);
-				var _g2 = 0;
-				while(_g2 < vals.length) {
-					var val1 = vals[_g2];
-					++_g2;
-					var pos = kha_arrays_Float32Array.get(val1,4);
-					var col = kha_Color.fromFloats(kha_arrays_Float32Array.get(val1,0),kha_arrays_Float32Array.get(val1,1),kha_arrays_Float32Array.get(val1,2));
-					ui.fill(pos * sw,0,(1.0 - pos) * sw,lineh - 2 * (this.scaleFactor * this.zoom),col);
-				}
-				ui._y += lineh;
-				var ihandle = nhandle.nest(buti).nest(2);
-				ui.row([0.25,0.25,0.5]);
-				if(ui.button("+")) {
-					var last = vals[vals.length - 1];
-					var f32 = kha_arrays_Float32Array._new(5);
-					kha_arrays_Float32Array.set(f32,0,kha_arrays_Float32Array.get(last,0));
-					kha_arrays_Float32Array.set(f32,1,kha_arrays_Float32Array.get(last,1));
-					kha_arrays_Float32Array.set(f32,2,kha_arrays_Float32Array.get(last,2));
-					kha_arrays_Float32Array.set(f32,3,kha_arrays_Float32Array.get(last,3));
-					kha_arrays_Float32Array.set(f32,4,1.0);
-					vals.push(f32);
-					ihandle.value += 1;
-				}
-				if(ui.button("-") && vals.length > 1) {
-					vals.pop();
-					ihandle.value -= 1;
-				}
-				but.data = ui.combo(nhandle.nest(buti).nest(1,{ position : but.data}),["Linear","Constant"],"Interpolate");
-				ui.row([0.5,0.5]);
-				var i1 = ui.slider(ihandle,"Index",0,vals.length - 1,false,1,true,0) | 0;
-				var val2 = vals[i1];
-				nhandle.nest(buti).nest(3).value = kha_arrays_Float32Array.get(val2,4);
-				kha_arrays_Float32Array.set(val2,4,ui.slider(nhandle.nest(buti).nest(3),"Pos",0,1,true,100,true,0));
-				var chandle = nhandle.nest(buti).nest(4);
-				chandle.color = kha_Color.fromFloats(kha_arrays_Float32Array.get(val2,0),kha_arrays_Float32Array.get(val2,1),kha_arrays_Float32Array.get(val2,2));
-				if(ui.text("",2,chandle.color) == 1) {
-					var rx = nx + w - 37 * (this.scaleFactor * this.zoom);
-					var ry = ny - 5 * (this.scaleFactor * this.zoom);
-					_inputStarted = ui.inputStarted = false;
-					this.rgbaPopup(ui,chandle,val2,rx | 0,ry + ui.t.ELEMENT_H * ui.ops.scaleFactor | 0);
-				}
-				kha_arrays_Float32Array.set(val2,0,((chandle.color & 16711680) >>> 16) * 0.00392156862745098);
-				kha_arrays_Float32Array.set(val2,1,((chandle.color & 65280) >>> 8) * 0.00392156862745098);
-				kha_arrays_Float32Array.set(val2,2,(chandle.color & 255) * 0.00392156862745098);
-				ny += lineh * 3.5;
-			} else if(but.type == "CURVES") {
-				ny += lineh;
-				ui._x = nx;
-				ui._y = ny;
-				ui._w = w;
-				ui.row([0.333333333333333315,0.333333333333333315,0.333333333333333315]);
-				ui.radio(nhandle.nest(buti).nest(1),0,"X");
-				ui.radio(nhandle.nest(buti).nest(1),1,"Y");
-				ui.radio(nhandle.nest(buti).nest(1),2,"Z");
-				var axis = nhandle.nest(buti).nest(1).position;
-				var val3 = but.default_value[axis];
-				var num = val3.length;
-				ui._y += lineh * 5;
-				ui.row([0.2,0.2,0.6]);
-				if(ui.button("+")) {
-					var f321 = kha_arrays_Float32Array._new(2);
-					kha_arrays_Float32Array.set(f321,0,0);
-					kha_arrays_Float32Array.set(f321,1,0);
-					val3.push(f321);
-				}
-				if(ui.button("-")) {
-					if(val3.length > 2) {
-						val3.pop();
-					}
-				}
-				var i2 = ui.slider(nhandle.nest(buti).nest(2).nest(axis,{ position : 0}),"Index",0,num - 1,false,1,true,0) | 0;
-				ui.row([0.5,0.5]);
-				var val4 = val3[i2];
-				nhandle.nest(buti).nest(3).value = kha_arrays_Float32Array.get(val4,0);
-				var val5 = val3[i2];
-				nhandle.nest(buti).nest(4).value = kha_arrays_Float32Array.get(val5,1);
-				kha_arrays_Float32Array.set(val3[i2],0,ui.slider(nhandle.nest(buti).nest(3,{ value : 0}),"X",-1,1,true,100,true,0));
-				kha_arrays_Float32Array.set(val3[i2],1,ui.slider(nhandle.nest(buti).nest(4,{ value : 0}),"Y",-1,1,true,100,true,0));
-				ny += lineh * 7;
+				var dot = but.name.lastIndexOf(".");
+				var name = HxOverrides.substr(but.name,0,dot);
+				var fn = Reflect.field($hxClasses[name],HxOverrides.substr(but.name,dot + 1,null));
+				fn(ui,this,node);
+				ny += lineh * (but.height - 1);
 			}
 		}
 		ny += lineh / 3;
@@ -105379,18 +105438,23 @@ zui_Nodes.prototype = {
 				var ix = ui.inputX - wx;
 				var iy = ui.inputY - wy;
 				if(ui.inputStarted && ix > rx && iy > ry && ix < rx + rw && iy < ry + rh) {
-					_inputStarted = ui.inputStarted = false;
+					this._inputStarted = ui.inputStarted = false;
 					this.rgbaPopup(ui,nhandle,soc2.default_value,rx | 0,ry + ui.t.ELEMENT_H * ui.ops.scaleFactor | 0);
 				}
 			} else {
 				g.set_color(ui.t.LABEL_COL);
 				g.drawString(zui_Nodes.tr(inp.name),nx + 12 * (this.scaleFactor * this.zoom),ny - 3 * (this.scaleFactor * this.zoom));
 			}
+			if(zui_Nodes.onSocketReleased != null && ui.inputEnabled && (ui.inputReleased || ui.inputReleasedR)) {
+				if(ui.inputX > wx + nx && ui.inputX < wx + nx + w && ui.inputY > wy + ny && ui.inputY < wy + ny + lineh) {
+					zui_Nodes.onSocketReleased(inp);
+				}
+			}
 		}
 		ui._x = uiX;
 		ui._y = uiY;
 		ui._w = uiW;
-		ui.inputStarted = _inputStarted;
+		ui.inputStarted = this._inputStarted;
 	}
 	,rgbaPopup: function(ui,nhandle,val,x,y) {
 		this.popup(x,y,140 * this.scaleFactor | 0,ui.t.ELEMENT_H * 9 | 0,function(ui) {
@@ -105437,6 +105501,9 @@ zui_Nodes.prototype = {
 			}
 		}
 		HxOverrides.remove(canvas.nodes,n);
+		if(zui_Nodes.onNodeRemove != null) {
+			zui_Nodes.onNodeRemove(n);
+		}
 	}
 	,popupX: null
 	,popupY: null
@@ -105626,6 +105693,7 @@ zui_Popup.init = function(mx,my,mw,mh) {
 	zui_Popup.hwnd.dragX = 0;
 	zui_Popup.hwnd.dragY = 0;
 	zui_Popup.titleDrawn = false;
+	zui_Popup.hwnd.scrollOffset = 0.0;
 	zui_Popup.show = true;
 };
 var zui_Themes = function() { };
@@ -107276,7 +107344,8 @@ zui_Zui.prototype = {
 		if(bindGlobalG) {
 			this.globalG.begin(false);
 		}
-		this.globalG.fillRect(this.tooltipX,this.tooltipY,tooltipW + 20,this.t.ELEMENT_H * this.ops.scaleFactor * lines.length * 0.6);
+		var fontHeight = this.ops.font.height(this.fontSize);
+		this.globalG.fillRect(this.tooltipX,this.tooltipY,tooltipW + 20,fontHeight * lines.length);
 		this.globalG.set_font(this.ops.font);
 		this.globalG.set_fontSize(this.fontSize);
 		this.globalG.set_color(this.t.ACCENT_COL);
@@ -107321,7 +107390,7 @@ zui_Zui.prototype = {
 			yOffset = 0;
 		}
 		var fullLength = text.length;
-		while(text.length > 0 && this.ops.font.width(this.fontSize,text) > this._w) text = HxOverrides.substr(text,0,text.length - 1);
+		while(text.length > 0 && this.ops.font.width(this.fontSize,text) > this._w - 6) text = HxOverrides.substr(text,0,text.length - 1);
 		if(text.length < fullLength) {
 			text += "..";
 		}
@@ -107750,16 +107819,16 @@ if(ArrayBuffer.prototype.slice == null) {
 AnimationEditor.timeline = null;
 AnimationEditor.dot = null;
 zui_Handle.global = new zui_Handle();
-CollisionEditorDialog.textInputHandle = zui_Handle.global.nest(56,null);
-CollisionEditorDialog.comboBoxHandle = zui_Handle.global.nest(47,null);
+CollisionEditorDialog.textInputHandle = zui_Handle.global.nest(57,null);
+CollisionEditorDialog.comboBoxHandle = zui_Handle.global.nest(48,null);
 CollisionEditorDialog.collisionTypes = ["Rect","Circle"];
 CollisionEditorDialog.shouldTileInit = false;
 CollisionEditorDialog.lastVert = -1;
 ConfigSettingsDialog.localeHandle = zui_Handle.global.nest(29,null);
 ConfigSettingsDialog.languages = [];
-ConfigSettingsDialog.playModeHandle = zui_Handle.global.nest(30,null);
-ConfigSettingsDialog.hideMenuHandle = zui_Handle.global.nest(31,null);
-ConfigSettingsDialog.uiScaleHandle = zui_Handle.global.nest(32,null);
+ConfigSettingsDialog.playModeHandle = zui_Handle.global.nest(31,null);
+ConfigSettingsDialog.hideMenuHandle = zui_Handle.global.nest(32,null);
+ConfigSettingsDialog.uiScaleHandle = zui_Handle.global.nest(33,null);
 ConfigSettingsDialog.changedScale = false;
 CustomExt.lastFiles = [];
 CustomExt.lastFolders = [];
@@ -107774,12 +107843,12 @@ EditorMenu.menuCommands = null;
 EditorMenu.changeStarted = false;
 EditorMenu.showMenuFirst = true;
 EditorMenu.hideMenu = false;
-EditorMenu.drawGridHandle = zui_Handle.global.nest(33,{ selected : true});
-EditorMenu.physicsDebugHandle = zui_Handle.global.nest(34,{ selected : false});
-EditorMenu.camControlLeftHandle = zui_Handle.global.nest(35,null);
-EditorMenu.camControlRightHandle = zui_Handle.global.nest(36,null);
-EditorMenu.camControlUpHandle = zui_Handle.global.nest(37,null);
-EditorMenu.camControlDownHandle = zui_Handle.global.nest(38,null);
+EditorMenu.drawGridHandle = zui_Handle.global.nest(34,{ selected : false});
+EditorMenu.physicsDebugHandle = zui_Handle.global.nest(35,{ selected : false});
+EditorMenu.camControlLeftHandle = zui_Handle.global.nest(36,null);
+EditorMenu.camControlRightHandle = zui_Handle.global.nest(37,null);
+EditorMenu.camControlUpHandle = zui_Handle.global.nest(38,null);
+EditorMenu.camControlDownHandle = zui_Handle.global.nest(39,null);
 EditorMenu.menuItemsCount = [6,2,4,5,3];
 EditorMenuBar.defaultMenubarW = 330;
 EditorTools.redrawArrows = true;
@@ -107804,9 +107873,9 @@ found_App.traitRenders = [];
 found_App.traitRenders2D = [];
 found_App.editorui = null;
 found_App.frameCounter = new found__$App_FPS();
-ProjectCreator.pathInputHandle = zui_Handle.global.nest(94,null);
-ProjectCreator.nameInputHandle = zui_Handle.global.nest(92,null);
-ProjectCreator.typeHandle = zui_Handle.global.nest(93,null);
+ProjectCreator.pathInputHandle = zui_Handle.global.nest(95,null);
+ProjectCreator.nameInputHandle = zui_Handle.global.nest(93,null);
+ProjectCreator.typeHandle = zui_Handle.global.nest(94,null);
 ProjectInit.path = "";
 ProjectInit.project = "";
 ProjectInit.hasHaxeui = true;
@@ -107855,7 +107924,7 @@ found_Found.GRID = 64;
 found_Found.BUFFERWIDTH = found_Found.WIDTH;
 found_Found.BUFFERHEIGHT = found_Found.HEIGHT;
 found_Found.sha = HxOverrides.substr("'5deaa01'",1,7);
-found_Found.date = "2021-01-26 20:15:55".split(" ")[0];
+found_Found.date = "2021-01-28 23:47:12".split(" ")[0];
 found_Found.collisionsDraw = false;
 found_Found.drawGrid = false;
 found_Found.sceneX = 0.0;
@@ -108357,6 +108426,9 @@ zui_Nodes.boxSelectY = 0;
 zui_Nodes.maxButtons = 9;
 zui_Nodes.excludeRemove = [];
 zui_Nodes.onLinkDrag = null;
+zui_Nodes.onSocketReleased = null;
+zui_Nodes.onNodeRemove = null;
+zui_Nodes.onCanvasControl = null;
 zui_Nodes.enumTexts = null;
 zui_Popup.show = false;
 zui_Popup.ui = null;
